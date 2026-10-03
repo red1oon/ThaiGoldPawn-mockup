@@ -92,7 +92,7 @@ window.Views = (function () {
     </table><div class="note">${t('keyOrTick')}</div></fieldset>
     <div class="total"><span>${t('payNow')}</span><span>${fmt(payNow)}</span></div>
     <div class="total"><span>${t('vat')} ${S.set.vat}%</span><span>${fmt(vat)}</span></div>
-    <div class="note">${vatEachPay() ? t('vatEvery') : t('vatAtClose')}</div>
+    <div class="note">${vatEachPay() ? t('vatEvery') : finalOnly() ? t('vatFinal') : t('vatAtClose')}</div>
     <div class="total"><span>${t('cashIn')}</span><span class="big">${fmt(payNow + vat)} ${t('baht')}</span></div></div>`;
   }
 
@@ -103,14 +103,15 @@ window.Views = (function () {
   }
   // VAT base = the interest collected in THIS transaction only (client answer 3; user correction 2026-10-03)
   // VAT base at a close: interest received now; At_Redeem shops also tax earlier installments not yet taxed
-  const untaxedPaid = () => vatEachPay() ? 0 : S.ticket.paidInterest;
+  const finalOnly = () => S.set.taxPoint === 'final';      // VAT once, at the final real redeem (user 2026-10-03, partner to confirm)
+  const untaxedPaid = () => vatEachPay() ? 0 : S.ticket.paidInterest + (finalOnly() ? S.ticket.chainUntaxed : 0);
   const vatBaseAtClose = air => untaxedPaid() + air;
 
   // ---- 3. Top-up / reduce (§5, §5a, answers 5-7) ----
   function change() {
     const tk = S.ticket, w = S.tx, ow = owedNow();
     const ap = C.appraise(tk.weight, +w.todayPrice, pctOf(tk.type), S.set.mode, +S.set.deduct);
-    const vat = C.r2(vatBaseAtClose(ow.amount) * vatPct());
+    const vat = finalOnly() ? 0 : C.r2(vatBaseAtClose(ow.amount) * vatPct());
     const diff = +w.newLoan - tk.loan;
     const net = C.r2(diff - ow.amount - vat);
     const kind = diff >= 0 ? t('topup') : t('reduce');
@@ -131,7 +132,9 @@ window.Views = (function () {
     </div>
     <table><tr><td>${kind}</td><td class="n">${fmt(diff)}</td></tr>
       <tr><td>− ${t('air')}</td><td class="n">${fmt(ow.amount)}</td></tr>
-      <tr><td>− ${t('vatOnInt')} (${fmt(vatBaseAtClose(ow.amount))}${untaxedPaid() ? ' = ' + fmt(ow.amount) + ' + ' + t('untaxed') + ' ' + fmt(untaxedPaid()) : ''})</td><td class="n">${fmt(vat)}</td></tr></table>
+      ${finalOnly()
+        ? `<tr><td>− ${t('vat')}: ${t('vatDeferred')}</td><td class="n">${fmt(0)}</td></tr><tr><td>${t('carryFwd')}</td><td class="n">${fmt(vatBaseAtClose(ow.amount))}</td></tr>`
+        : `<tr><td>− ${t('vatOnInt')} (${fmt(vatBaseAtClose(ow.amount))}${untaxedPaid() ? ' = ' + fmt(ow.amount) + ' + ' + t('untaxed') + ' ' + fmt(untaxedPaid()) : ''})</td><td class="n">${fmt(vat)}</td></tr>`}</table>
     <div class="total"><span>${t('net')} ${whoPays(net)}</span><span class="big">${fmt(Math.abs(net))} ${t('baht')}</span></div></div>`;
   }
 

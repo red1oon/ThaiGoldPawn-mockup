@@ -21,7 +21,7 @@ window.Calc = (function () {
     { from: 1, to: 80, months: 3 }, { from: 81, to: 90, months: 2 }, { from: 91, to: 100, months: 1 }
   ];
   const profiles = {                                 // §5b, user decision 2026-10-03
-    c1: { taxPoint: 'interest',  // partner default 2026-10-03; 'close' (At_Redeem) kept as a branch option
+    c1: { taxPoint: 'interest',  // RD gold-shop manual §3.7.2 (2017): VAT on any consideration received before redemption; 'close'/'final' selectable
           basis: 'month', rounding: 'half' },
     c2: { taxPoint: 'interest', basis: 'day', rounding: 'day' }
   };

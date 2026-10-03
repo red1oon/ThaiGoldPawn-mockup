@@ -11,7 +11,7 @@
     issue: { name: 'สมชาย ตัวอย่าง', phone: '08x-xxx-xxxx', grp: 'standard', cat: 0, item: 0, qty: 1, weight: 15.16, type: 0,
              basis: 'buy', loan: 80000, date: '2025-07-14', months: 4, agreed: '', track: 'BAG-0001', safe: 'SAFE-A1' },
     ticket: { no: 'A100', first: 'A100', name: 'สมชาย ตัวอย่าง', date: '2025-07-14', loan: 80000, weight: 15.16, type: 0, grp: 'standard',
-              paid: [true, false, false, false], lastPaid: '2025-08-14', paidInterest: 1000 },
+              paid: [true, false, false, false], lastPaid: '2025-08-14', paidInterest: 1000, chainUntaxed: 0 },
     tick: [false, true, false, false],
     tx: { today: '2025-09-25', newLoan: 83000, todayPrice: 102000, discount: 0, cash: 50000 },
     overdue: [{ no: 'A087', due: '2025-06-30', weight: 7.58, loan: 38000 }, { no: 'A091', due: '2025-07-15', weight: 3.79, loan: 18500 }]
@@ -63,7 +63,7 @@
         ${f(t('profile'), sel('profile', S.profile, [['c1', t('case1')], ['c2', t('case2')]]))}</div></fieldset>
       <fieldset><legend>${t('branchParams')}</legend><div class="fields">
         ${f(t('taxType'), sel('set.taxType', s.taxType, [['VAT', 'VAT'], ['SBT', 'SBT']]))}
-        ${f(t('taxPoint'), sel('set.taxPoint', s.taxPoint, [['close', t('atClose')], ['interest', t('atInterest')]]))}
+        ${f(t('taxPoint'), sel('set.taxPoint', s.taxPoint, [['interest', t('atInterest')], ['close', t('atClose')], ['final', t('atFinal')]]))}
         ${f(t('incl'), sel('set.incl', s.incl, [['exclude', t('exclude')], ['include', t('include')]]))}
         ${f(t('interestBasis'), sel('set.basis', s.basis, [['month', t('perMonth')], ['day', t('perDay')]]))}
         ${f(t('rounding'), sel('set.rounding', s.rounding, [['month', t('rMonth')], ['half', t('rHalf')], ['week', t('rWeek')], ['day', t('rDay')]]))}
