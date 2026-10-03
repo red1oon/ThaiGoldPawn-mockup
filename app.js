@@ -6,7 +6,7 @@
 
   const S = {
     lang: store.get('gp.lang') || 'th', tab: 'counter', action: 'a1', profile: 'c1', showTicket: false,
-    set: { taxType: 'VAT', taxPoint: 'close', incl: 'exclude', mode: 'P', deduct: 2000, defMonths: 4, rounding: 'half', basis: 'month', vat: 7 },
+    set: { taxType: 'VAT', taxPoint: 'interest', incl: 'exclude', mode: 'P', deduct: 2000, defMonths: 4, rounding: 'half', basis: 'month', vat: 7 },
     price: { buy: 100000, sell: 100200, tax: 99900 },   // sample board, per baht-weight (partner sketch: 100,000)
     issue: { name: 'สมชาย ตัวอย่าง', phone: '08x-xxx-xxxx', grp: 'standard', cat: 0, item: 0, qty: 1, weight: 15.16, type: 0,
              basis: 'buy', loan: 80000, date: '2025-07-14', months: 4, agreed: '', track: 'BAG-0001', safe: 'SAFE-A1' },

@@ -12,7 +12,8 @@ window.Views = (function () {
   const conf = q => `<span class="confirm" title="${t(q)}">❓ ${t('toConfirm')}</span>`;
   const L = obj => S.lang === 'th' ? obj.th : obj.en;
   const vatPct = () => S.set.vat / 100;
-  const isC2 = () => S.set.taxPoint === 'interest';
+  // taxPoint 'interest' = VAT on every interest payment (partner default); 'close' = VAT only at ticket close (xlsx At_Redeem, some shops)
+  const vatEachPay = () => S.set.taxPoint === 'interest';
   const whoPays = net => net >= 0
     ? `<span class="who out">${t('cashOut')}</span>` : `<span class="who in">${t('cashIn')}</span>`;
   const price = basis => S.price[basis];
@@ -83,7 +84,7 @@ window.Views = (function () {
     const tk = S.ticket, ag = agreedOf(tk);
     const rows = [1, 2, 3, 4].map(i => ({ i, date: C.edate(tk.date, i), paid: tk.paid[i - 1], tick: S.tick[i - 1] }));
     const payNow = C.r2(rows.filter(r => !r.paid && r.tick).length * ag);
-    const vat = C.r2(payNow * vatPct());   // every interest payment bears VAT (partner, 2026-10-03)
+    const vat = vatEachPay() ? C.r2(payNow * vatPct()) : 0;
     return `<div class="panel"><h2>${t('a2')}</h2><div class="sub">${tk.no} · ${tk.name} · ${t('loan')} ${fmt(tk.loan)}</div>
     <fieldset><legend>${t('sched')}</legend>
     <table><tr><th></th><th>${t('inst')}</th><th>${t('date')}</th><th class="n">${t('agreed')}</th><th>${t('status')}</th></tr>
@@ -91,7 +92,7 @@ window.Views = (function () {
     </table><div class="note">${t('keyOrTick')}</div></fieldset>
     <div class="total"><span>${t('payNow')}</span><span>${fmt(payNow)}</span></div>
     <div class="total"><span>${t('vat')} ${S.set.vat}%</span><span>${fmt(vat)}</span></div>
-    <div class="note">${t('vatEvery')}</div>
+    <div class="note">${vatEachPay() ? t('vatEvery') : t('vatAtClose')}</div>
     <div class="total"><span>${t('cashIn')}</span><span class="big">${fmt(payNow + vat)} ${t('baht')}</span></div></div>`;
   }
 
@@ -101,7 +102,9 @@ window.Views = (function () {
     return C.owed(tk.loan, ag, C.rateFor(tk.grp, tk.loan), tk.lastPaid, S.tx.today, S.set.rounding);
   }
   // VAT base = the interest collected in THIS transaction only (client answer 3; user correction 2026-10-03)
-  const vatBaseAtClose = air => air;
+  // VAT base at a close: interest received now; At_Redeem shops also tax earlier installments not yet taxed
+  const untaxedPaid = () => vatEachPay() ? 0 : S.ticket.paidInterest;
+  const vatBaseAtClose = air => untaxedPaid() + air;
 
   // ---- 3. Top-up / reduce (§5, §5a, answers 5-7) ----
   function change() {
@@ -128,7 +131,7 @@ window.Views = (function () {
     </div>
     <table><tr><td>${kind}</td><td class="n">${fmt(diff)}</td></tr>
       <tr><td>− ${t('air')}</td><td class="n">${fmt(ow.amount)}</td></tr>
-      <tr><td>− ${t('vatOnInt')} (${fmt(ow.amount)})</td><td class="n">${fmt(vat)}</td></tr></table>
+      <tr><td>− ${t('vatOnInt')} (${fmt(vatBaseAtClose(ow.amount))}${untaxedPaid() ? ' = ' + fmt(ow.amount) + ' + ' + t('untaxed') + ' ' + fmt(untaxedPaid()) : ''})</td><td class="n">${fmt(vat)}</td></tr></table>
     <div class="total"><span>${t('net')} ${whoPays(net)}</span><span class="big">${fmt(Math.abs(net))} ${t('baht')}</span></div></div>`;
   }
 
@@ -147,6 +150,7 @@ window.Views = (function () {
     </div></fieldset>
     <table><tr><td>${t('loan')}</td><td class="n">${fmt(tk.loan)}</td></tr>
       <tr><td>+ ${t('air')}</td><td class="n">${fmt(ow.amount)}</td></tr>
+      ${untaxedPaid() ? `<tr><td>${t('untaxed')}</td><td class="n">${fmt(untaxedPaid())}</td></tr>` : ''}
       <tr><td>− ${t('discount')}</td><td class="n">${fmt(disc)}</td></tr>
       <tr><td>${t('vatBase')}</td><td class="n">${fmt(base)}</td></tr>
       <tr><td>${t('vat')} ${S.set.vat}% ${incl ? '(' + t('include') + ')' : ''}</td><td class="n">${fmt(vat)}</td></tr></table>
