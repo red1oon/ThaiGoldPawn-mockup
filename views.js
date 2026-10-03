@@ -100,8 +100,8 @@ window.Views = (function () {
     const tk = S.ticket, ag = agreedOf(tk);
     return C.owed(tk.loan, ag, C.rateFor(tk.grp, tk.loan), tk.lastPaid, S.tx.today, S.set.rounding);
   }
-  // VAT base at a close: Case 1 = all interest of the ticket not yet taxed; Case 2 = only owed now
-  const vatBaseAtClose = air => isC2() ? air : S.ticket.paidInterest + air;
+  // VAT base = the interest collected in THIS transaction only (client answer 3; user correction 2026-10-03)
+  const vatBaseAtClose = air => air;
 
   // ---- 3. Top-up / reduce (§5, §5a, answers 5-7) ----
   function change() {
@@ -128,7 +128,7 @@ window.Views = (function () {
     </div>
     <table><tr><td>${kind}</td><td class="n">${fmt(diff)}</td></tr>
       <tr><td>− ${t('air')}</td><td class="n">${fmt(ow.amount)}</td></tr>
-      <tr><td>− ${t('vatOnInt')}${isC2() ? '' : ` (${fmt(vatBaseAtClose(ow.amount))})`}</td><td class="n">${fmt(vat)}</td></tr></table>
+      <tr><td>− ${t('vatOnInt')} (${fmt(ow.amount)})</td><td class="n">${fmt(vat)}</td></tr></table>
     <div class="total"><span>${t('net')} ${whoPays(net)}</span><span class="big">${fmt(Math.abs(net))} ${t('baht')}</span></div></div>`;
   }
 
