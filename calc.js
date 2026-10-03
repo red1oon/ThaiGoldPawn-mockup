@@ -21,7 +21,8 @@ window.Calc = (function () {
     { from: 1, to: 80, months: 3 }, { from: 81, to: 90, months: 2 }, { from: 91, to: 100, months: 1 }
   ];
   const profiles = {                                 // §5b, user decision 2026-10-03
-    c1: { taxPoint: 'close', basis: 'month', rounding: 'half' },
+    c1: { taxPoint: 'close',  // = VAT on every interest received, incl. at close (partner 2026-10-03)
+          basis: 'month', rounding: 'half' },
     c2: { taxPoint: 'interest', basis: 'day', rounding: 'day' }
   };
 

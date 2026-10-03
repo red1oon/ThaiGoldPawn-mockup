@@ -83,7 +83,7 @@ window.Views = (function () {
     const tk = S.ticket, ag = agreedOf(tk);
     const rows = [1, 2, 3, 4].map(i => ({ i, date: C.edate(tk.date, i), paid: tk.paid[i - 1], tick: S.tick[i - 1] }));
     const payNow = C.r2(rows.filter(r => !r.paid && r.tick).length * ag);
-    const vat = isC2() ? C.r2(payNow * vatPct()) : 0;
+    const vat = C.r2(payNow * vatPct());   // every interest payment bears VAT (partner, 2026-10-03)
     return `<div class="panel"><h2>${t('a2')}</h2><div class="sub">${tk.no} · ${tk.name} · ${t('loan')} ${fmt(tk.loan)}</div>
     <fieldset><legend>${t('sched')}</legend>
     <table><tr><th></th><th>${t('inst')}</th><th>${t('date')}</th><th class="n">${t('agreed')}</th><th>${t('status')}</th></tr>
@@ -91,7 +91,7 @@ window.Views = (function () {
     </table><div class="note">${t('keyOrTick')}</div></fieldset>
     <div class="total"><span>${t('payNow')}</span><span>${fmt(payNow)}</span></div>
     <div class="total"><span>${t('vat')} ${S.set.vat}%</span><span>${fmt(vat)}</span></div>
-    <div class="note">${isC2() ? t('vatAtPay') : t('vatAtClose')}</div>
+    <div class="note">${t('vatEvery')}</div>
     <div class="total"><span>${t('cashIn')}</span><span class="big">${fmt(payNow + vat)} ${t('baht')}</span></div></div>`;
   }
 
