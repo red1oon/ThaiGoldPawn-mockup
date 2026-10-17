@@ -8,29 +8,34 @@
     lang: store.get('gp.lang') || 'th', tab: 'counter', action: 'a1', profile: 'c1', showTicket: false,
     set: { taxType: 'VAT', taxPoint: 'interest', incl: 'exclude', mode: 'P', deduct: 2000, defMonths: 4, rounding: 'half', basis: 'month', vat: 7 },
     price: { buy: 100000, sell: 100200, tax: 99900 },   // sample board, per baht-weight (partner sketch: 100,000)
-    issue: { name: 'สมชาย ตัวอย่าง', phone: '08x-xxx-xxxx', grp: 'standard', cat: 0, item: 0, qty: 1, weight: 15.16, type: 0,
+    issue: { name: 'สมชาย ตัวอย่าง', phone: '0800000001', grp: 'standard', cat: 0, item: 0, qty: 1, weight: 15.16, type: 0,
              basis: 'buy', loan: 80000, date: '2025-07-14', months: 4, agreed: '', track: 'BAG-0001', safe: 'SAFE-A1' },
     ticket: { no: 'A100', first: 'A100', name: 'สมชาย ตัวอย่าง', date: '2025-07-14', loan: 80000, weight: 15.16, type: 0, grp: 'standard',
               paid: [true, false, false, false], lastPaid: '2025-08-14', paidInterest: 1000, chainUntaxed: 0 },
     tick: [false, true, false, false],
+    j: { tk: null, mode: 'installment', amt: 5000, slip: 'ok', via: 'web', code: '', codeBad: false },
     tx: { today: '2025-09-25', newLoan: 83000, todayPrice: 102000, discount: 0, cash: 50000 },
     overdue: [{ no: 'A087', due: '2025-06-30', weight: 7.58, loan: 38000 }, { no: 'A091', due: '2025-07-15', weight: 3.79, loan: 18500 }]
   };
   const THEMES = {
     quickgold: { header: '#009688', 'header-text': '#ffffff', bg: '#f7f7f8', card: '#ffffff', text: '#22292e', label: '#ff9800', accent: '#00796b', chip: '#e0f2f1', radius: 14, font: 16 },
     gold:      { header: '#b8860b', 'header-text': '#ffffff', bg: '#fbf8f1', card: '#ffffff', text: '#3e2f12', label: '#a0522d', accent: '#8b6508', chip: '#f6ecd2', radius: 10, font: 16 },
-    night:     { header: '#1f2933', 'header-text': '#f5d76e', bg: '#111820', card: '#1b242e', text: '#e8edf2', label: '#f5b041', accent: '#26a69a', chip: '#24343f', radius: 14, font: 16 }
+    night:     { dark: 1, header: '#1f2933', 'header-text': '#f5d76e', bg: '#111820', card: '#1b242e', text: '#e8edf2', label: '#f5b041', accent: '#26a69a', chip: '#24343f', radius: 14, font: 16 }
   };
   let theme = (() => { try { return JSON.parse(store.get('gp.theme')) || { ...THEMES.quickgold }; } catch (e) { return { ...THEMES.quickgold }; } })();
 
   const t = k => (I[k] ? I[k][S.lang === 'th' ? 0 : 1] : k);
+  t.raw = k => (I[k] ? t(k) : k);
+  const F = window.Flow, D = window.Dash, St = window.Story, Net = window.Net;
   const fmt = x => Number(x || 0).toLocaleString(S.lang === 'th' ? 'th-TH' : 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const fd = s => { const [y, m, d] = s.split('-'); return `${d}/${m}/${y}`; };
 
   function applyTheme() {
+    if (!('dark' in theme)) document.documentElement.removeAttribute('data-dark');
     const r = document.documentElement.style;
     Object.entries(theme).forEach(([k, v]) => {
-      if (k === 'radius') r.setProperty('--radius', v + 'px');
+      if (k === 'dark') document.documentElement.toggleAttribute('data-dark', !!v);
+      else if (k === 'radius') r.setProperty('--radius', v + 'px');
       else if (k === 'font') r.setProperty('--font', v + 'px');
       else r.setProperty('--' + k, v);
     });
@@ -41,7 +46,7 @@
   }
 
   // ---- shell ----
-  const NAV = [['counter', 'storefront', 'navCounter'], ['app', 'smartphone', 'navApp'], ['settings', 'tune', 'navSettings'], ['theme', 'palette', 'navTheme']];
+  const NAV = [['counter', 'storefront', 'navCounter'], ['journey', 'swap_horiz', 'navJourney'], ['dash', 'dashboard', 'navDash'], ['settings', 'tune', 'navSettings'], ['theme', 'palette', 'navTheme'], ['thai', 'flag', 'navThai'], ['local', 'cloud_off', 'navLocal'], ['story', 'movie', 'navStory']];
   const ACTIONS = [
     ['grpTicket', [['a1', 'receipt_long', '#fff3e0', '#ef6c00']]],
     ['grpMoney', [['a2', 'payments', '#e8f5e9', '#2e7d32'], ['a3', 'swap_vert', '#e3f2fd', '#1565c0']]],
@@ -92,21 +97,47 @@
       <div>${V.borrower()}</div></div>`;
   }
 
+  function thaiView() {
+    const rows = [['th1', 'ok'], ['th2', 'sim'], ['th3', 'ok'], ['th4', 'ok'], ['th5', 'ok'], ['th6', 'open'], ['th7', 'open'], ['th8', 'open'], ['th9', 'legal'], ['th10', 'sim']];
+    const col = { ok: '--s6', sim: '--s4', open: '--s8', legal: '--s2' };
+    return `<div class="card"><div class="panel"><h2>${t('thaiHead')}</h2><div class="sub">${t('thaiSub')}</div>
+      <table>${rows.map(([k, s]) => `<tr><td>${t(k)}</td><td><span class="chip2" style="--c:var(${col[s]})">${t('th_' + s)}</span></td></tr>`).join('')}</table></div></div>`;
+  }
+  function localView() {
+    const rows = [['lo1', 'ok'], ['lo2', 'ok'], ['lo3', 'ok'], ['lo4', 'ok'], ['lo5', 'ok'], ['lo6', 'ok'], ['lo7', 'open'], ['lo8', 'open'], ['lo9', 'open']];
+    const col = { ok: '--s6', open: '--s8' };
+    return `<div class="card"><div class="panel"><h2>${t('loHead')}</h2><div class="sub">${t('loSub')}</div>
+      <table>${rows.map(([k, s]) => `<tr><td>${t(k)}</td><td><span class="chip2" style="--c:var(${col[s]})">${t(s === 'ok' ? 'lo_ok' : 'lo_open')}</span></td></tr>`).join('')}</table></div></div>`;
+  }
+  function storyView() {
+    return `<div class="card"><div class="panel"><h2>${t('navStory')}</h2><div class="sub">${t('storyHelp')}</div>
+      <div class="fields"><label class="f">${t('cardSecs')}<input data-k="story.cardSecs" type="number" value="${St.st.cardSecs}"></label><label class="f">${t('pace')}<input data-k="story.pace" type="number" step="0.1" value="${St.st.pace}"></label></div>
+      <div class="actions" style="justify-content:flex-start"><button class="btn" data-story="all">${t('playAll')}</button></div>
+      <table>${Array.from({ length: St.count }, (_, i) => `<tr><td>${t('chapter')} ${i + 1}</td><td><b>${t('ch' + (i + 1) + 't')}</b><br><small style="color:var(--muted)">${t('ch' + (i + 1) + 's')}</small></td><td><button class="btn small" data-story="${i}">${t('playOne')}</button></td></tr>`).join('')}</table></div></div>`;
+  }
+
   function render() {
-    V.bind(S, t, fmt, fd);
+    V.bind(S, t, fmt, fd); F.bind(S, t, fmt, fd); D.bind(S, t, fmt, fd); Net.set = S.set;
     document.documentElement.lang = S.lang;
     document.querySelectorAll('[data-t]').forEach(e => e.textContent = t(e.dataset.t));
     document.getElementById('langBtn').textContent = S.lang === 'th' ? 'EN' : 'ไทย';
     document.getElementById('profileChip').textContent = t(S.profile === 'c1' ? 'case1s' : 'case2s') + ' · ' + S.set.taxType;
+    document.body.classList.toggle('solo', Net.solo === 'phone');
     document.getElementById('rail').innerHTML = NAV.map(([k, ic, lab]) =>
       `<button class="${S.tab === k ? 'on' : ''}" data-tab="${k}"><span class="pill">${icon(ic)}</span>${t(lab)}</button>`).join('');
     const v = document.getElementById('view');
-    v.innerHTML = { counter, app: () => V.borrower(), settings, theme: themeView }[S.tab]();
+    v.innerHTML = { counter, journey: () => F.view(), dash: () => D.view(), settings, theme: themeView, thai: thaiView, local: localView, story: storyView }[S.tab]();
+    const ov = document.getElementById('overlay');
+    const c = St.st.card, cp = St.st.caption;
+    ov.innerHTML = (c ? `<div class="chcard"><div class="chn">${t('chapter')} ${c.n}</div><h1>${t(c.t)}</h1><p>${t(c.s)}</p></div>` : '')
+      + (cp ? `<div class="caption">${t(cp)}</div>` : '') + (St.st.playing ? `<button class="btn small stopbtn" data-story="stop">${t('stop')}</button>` : '');
+    ov.className = c ? 'full' : '';
   }
 
   // ---- binding ----
   function setPath(path, val) {
     if (path === 'profile') return applyProfile(val);
+    if (path.startsWith('story.')) { St.st[path.slice(6)] = +val; return; }
     if (path.startsWith('gt.')) { C.goldTypes[+path.slice(3)].pct = +val; return; }
     const ks = path.split('.'); let o = S; ks.slice(0, -1).forEach(k => o = o[k]);
     const last = ks[ks.length - 1], old = o[last];
@@ -130,7 +161,12 @@
     else if (el.dataset.k && el.tagName === 'SELECT') { setPath(el.dataset.k, el.value); render(); }
     else if (el.dataset.tok) render();
   });
-  document.addEventListener('click', e => {
+  document.addEventListener('click', async e => {
+    const jb = e.target.closest('[data-j]');
+    if (jb) { await F.act(jb.dataset.j); if (jb.dataset.j === 'issue') S.tab = 'journey'; return render(); }
+    const sb = e.target.closest('[data-story]');
+    if (sb) { const v = sb.dataset.story; if (v === 'stop') St.stop(); else if (v === 'all') St.play(0, St.count - 1); else St.play(+v, +v); return; }
+    if (S.tab === 'dash' && D.click(e.target)) return render();
     const b = e.target.closest('[data-tab],[data-action],[data-preset],[data-act],#langBtn');
     if (!b) return;
     if (b.id === 'langBtn') { S.lang = S.lang === 'th' ? 'en' : 'th'; store.set('gp.lang', S.lang); }
@@ -141,5 +177,14 @@
     render();
   });
 
-  applyTheme(); render();
+  Net.on(() => render()); window.addEventListener('gp-render', () => render());
+  St.init({ S, render, setTab: k => { S.tab = k; }, preset: k => { theme = { ...THEMES[k] }; applyTheme(); } });
+  window.__app = { S, render, Net, St, D, setTab: k => { S.tab = k; render(); } };
+  (async () => {
+    applyTheme(); render();
+    await Net.init(); Net.sample = await window.Sample.build(48);
+    const h = location.hash;
+    if (h.startsWith('#/t/')) { Net.solo = 'phone'; S.tab = 'journey'; await Net.receiveRaw(h.slice(4), 'phone', 'link'); }
+    window.__ready = true; render();
+  })();
 })();

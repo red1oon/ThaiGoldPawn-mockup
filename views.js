@@ -63,7 +63,7 @@ window.Views = (function () {
       ${o(t('discount'), fmt(perMonth - agreed))}
     </div><div class="note">${t('ratioTerm')} ${rt ?? '-'} ${t('monthsU')} ${conf('qRatio')}</div></fieldset>
     <div class="total"><span>${t('cashOut')}</span><span class="big">${fmt(+x.loan)} ${t('baht')}</span></div>
-    <div class="actions"><button class="btn ghost" data-act="ticket">${t('preview')}</button><button class="btn">${t('save')}</button></div>
+    <div class="actions"><button class="btn ghost" data-act="ticket">${t('preview')}</button><button class="btn" data-j="issue">${t('issueGo')}</button></div>
     <div id="ticketBox">${S.showTicket ? printed(x, due, items[x.item], agreed) : ''}</div></div>`;
   }
 
