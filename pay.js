@@ -86,6 +86,21 @@
     }
   };
 
-  root.Pay = { fold, quote, interestTo, promptpay, crc16, SlipOK, r2, VAT };
+  // ---- NPL / green list (spec §15.7) — all from the fold, thresholds are branch settings ----
+  const open = st => st.status === 'active' || st.status === 'overdue';
+  function arrears(st, today) {
+    return { overdueDays: Math.max(0, C.daysBetween(st.due, today)), lateDays: Math.max(0, C.daysBetween(C.edate(st.paidTo, 1), today)) };
+  }
+  const ceilingNow = (st, price) => r2(st.weight / C.GRAM_PER_BAHT * price * (st.pct || 85) / 100);
+  const upsell = (st, price) => Math.max(0, r2(ceilingNow(st, price) - st.principal));
+  function classify(st, today, o) {
+    o = o || {}; if (!open(st)) return null;
+    const a = arrears(st, today), npl = o.npl == null ? 90 : o.npl;
+    if (a.overdueDays > npl) return 'npl';
+    if (a.overdueDays > 0 || a.lateDays > 0) return 'watch';
+    return st.paid.length >= 1 && upsell(st, o.price || 0) > 0 ? 'green' : 'ok';
+  }
+
+  root.Pay = { arrears, ceilingNow, upsell, classify, fold, quote, interestTo, promptpay, crc16, SlipOK, r2, VAT };
   if (typeof module !== 'undefined') module.exports = root.Pay;
 })(typeof window !== 'undefined' ? window : globalThis);

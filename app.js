@@ -6,7 +6,7 @@
 
   const S = {
     lang: store.get('gp.lang') || 'th', tab: 'counter', action: 'a1', profile: 'c1', showTicket: false,
-    set: { taxType: 'VAT', taxPoint: 'interest', incl: 'exclude', mode: 'P', deduct: 2000, defMonths: 4, rounding: 'half', basis: 'month', vat: 7 },
+    set: { taxType: 'VAT', taxPoint: 'interest', incl: 'exclude', mode: 'P', deduct: 2000, defMonths: 4, rounding: 'half', basis: 'month', vat: 7, nplDays: 90 },
     price: { buy: 100000, sell: 100200, tax: 99900 },   // sample board, per baht-weight (partner sketch: 100,000)
     issue: { name: 'สมชาย ตัวอย่าง', phone: '0800000001', grp: 'standard', cat: 0, item: 0, qty: 1, weight: 15.16, type: 0,
              basis: 'buy', loan: 80000, date: '2025-07-14', months: 4, agreed: '', track: 'BAG-0001', safe: 'SAFE-A1' },
@@ -26,7 +26,7 @@
 
   const t = k => (I[k] ? I[k][S.lang === 'th' ? 0 : 1] : k);
   t.raw = k => (I[k] ? t(k) : k);
-  const F = window.Flow, D = window.Dash, St = window.Story, Net = window.Net;
+  const V2 = window.Views2, F = window.Flow, D = window.Dash, St = window.Story, Net = window.Net;
   const fmt = x => Number(x || 0).toLocaleString(S.lang === 'th' ? 'th-TH' : 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const fd = s => { const [y, m, d] = s.split('-'); return `${d}/${m}/${y}`; };
 
@@ -46,7 +46,7 @@
   }
 
   // ---- shell ----
-  const NAV = [['counter', 'storefront', 'navCounter'], ['journey', 'swap_horiz', 'navJourney'], ['dash', 'dashboard', 'navDash'], ['settings', 'tune', 'navSettings'], ['theme', 'palette', 'navTheme'], ['thai', 'flag', 'navThai'], ['local', 'cloud_off', 'navLocal'], ['story', 'movie', 'navStory']];
+  const NAV = [['counter', 'storefront', 'navCounter'], ['journey', 'swap_horiz', 'navJourney'], ['dash', 'dashboard', 'navDash'], ['books', 'account_balance', 'navBooks'], ['ad', 'schema', 'navAd'], ['settings', 'tune', 'navSettings'], ['theme', 'palette', 'navTheme'], ['thai', 'flag', 'navThai'], ['local', 'cloud_off', 'navLocal'], ['story', 'movie', 'navStory']];
   const ACTIONS = [
     ['grpTicket', [['a1', 'receipt_long', '#fff3e0', '#ef6c00']]],
     ['grpMoney', [['a2', 'payments', '#e8f5e9', '#2e7d32'], ['a3', 'swap_vert', '#e3f2fd', '#1565c0']]],
@@ -75,6 +75,7 @@
         ${f(t('deductMode'), sel('set.mode', s.mode, [['P', t('byPct')], ['A', t('byAmt')]]))}
         ${f(t('deductAmt'), inp('set.deduct', s.deduct))}
         ${f(t('defMonths'), inp('set.defMonths', s.defMonths))}
+        ${f(t('nplDaysLbl'), inp('set.nplDays', s.nplDays))}
       </div>${s.rounding === 'week' ? `<div class="note">${conf('qWeek')} ${t('qWeek')}</div>` : ''}
       ${s.mode === 'A' ? `<div class="note">${conf('qA')} ${t('qA')}</div>` : ''}</fieldset>
       <fieldset><legend>${t('goldTypes')}</legend><table>${C.goldTypes.map((g, i) => `<tr><td>${L(g)}</td><td class="n">${inp('gt.' + i, g.pct)}</td></tr>`).join('')}</table></fieldset>
@@ -117,7 +118,7 @@
   }
 
   function render() {
-    V.bind(S, t, fmt, fd); F.bind(S, t, fmt, fd); D.bind(S, t, fmt, fd); Net.set = S.set;
+    V.bind(S, t, fmt, fd); F.bind(S, t, fmt, fd); D.bind(S, t, fmt, fd); V2.bind(S, t, fmt, fd); Net.set = S.set; Net.price = +S.price.buy; Net.nplDays = +S.set.nplDays || 90;
     document.documentElement.lang = S.lang;
     document.querySelectorAll('[data-t]').forEach(e => e.textContent = t(e.dataset.t));
     document.getElementById('langBtn').textContent = S.lang === 'th' ? 'EN' : 'ไทย';
@@ -126,7 +127,7 @@
     document.getElementById('rail').innerHTML = NAV.map(([k, ic, lab]) =>
       `<button class="${S.tab === k ? 'on' : ''}" data-tab="${k}"><span class="pill">${icon(ic)}</span>${t(lab)}</button>`).join('');
     const v = document.getElementById('view');
-    v.innerHTML = { counter, journey: () => F.view(), dash: () => D.view(), settings, theme: themeView, thai: thaiView, local: localView, story: storyView }[S.tab]();
+    v.innerHTML = { counter, journey: () => F.view(), dash: () => D.view(), books: () => V2.books(), ad: () => V2.ad(), settings, theme: themeView, thai: thaiView, local: localView, story: storyView }[S.tab]();
     const ov = document.getElementById('overlay');
     const c = St.st.card, cp = St.st.caption;
     ov.innerHTML = (c ? `<div class="chcard"><div class="chn">${t('chapter')} ${c.n}</div><h1>${t(c.t)}</h1><p>${t(c.s)}</p></div>` : '')

@@ -6,7 +6,7 @@
   const CHANNELS = ['web', 'qr', 'link', 'email', 'whatsapp', 'line', 'sms', 'nfc'];
   const Net = {
     today: '2025-09-25', shopAcct: 'xxx-x-x5678-x', shopPhone: '0800000000', solo: null,
-    keys: {}, shopL: {}, sample: {}, phoneL: null, wire: [], online: { shop: true, phone: true }, seq: 0, tick: 0, nextNo: 161, claimSeq: 0, listeners: [],
+    keys: {}, shopL: {}, sample: {}, crm: {}, price: 100000, nplDays: 90, phoneL: null, wire: [], online: { shop: true, phone: true }, seq: 0, tick: 0, nextNo: 161, claimSeq: 0, listeners: [],
     clientId: Math.random().toString(36).slice(2),
     all() { return { ...this.sample, ...this.shopL }; },
     on(fn) { this.listeners.push(fn); }, emit() { this.listeners.forEach(f => f()); },
@@ -20,11 +20,20 @@
       }
       try { const pj = JSON.parse(store.get('gp.phone.ledger')); if (pj) this.phoneL = this.hydrate(pj, 'phone'); } catch (e) {}
       try { const sj = JSON.parse(store.get('gp.shop.live') || '[]'); sj.forEach(j => { this.shopL[j.tk] = this.hydrate(j, 'shop'); }); } catch (e) {}
+      try { JSON.parse(store.get('gp.crm') || '[]').forEach(j => { const l = this.hydrate(j, 'shop'); l.live = true; this.crm[j.tk.slice(4)] = l; }); } catch (e) {}
       try { this.bc = new BroadcastChannel('gp-web'); this.bc.onmessage = ev => this.onWeb(ev.data); } catch (e) { this.bc = null; }
     },
+    // ---- CRM follow-up history (spec §15.7): shop-internal signed chain, never put in a token ----
+    crmL(tk) { if (!this.crm[tk]) { const l = new T.Ledger('crm:' + tk, 'shop', this.keys.shop); l.live = !!this.shopL[tk]; this.crm[tk] = l; } return this.crm[tk]; },
+    async logFollowup(tk, f, ts) {
+      const l = this.crmL(tk), body = { ...f }; if (!l.chain.shop.length) body.pub = T.pubOf(this.keys.shop.pub);
+      const e = await l.append('followup', body, ts || this.ts()); if (this.shopL[tk]) l.live = true; this.persist(); this.emit(); return e;
+    },
+    followups(tk) { const l = this.crm[tk]; return l ? l.chain.shop.map(e => ({ ...e.body, ts: e.ts, n: e.n })) : []; },
     hydrate(j, me) { const l = new T.Ledger(j.tk, me, this.keys[me]); l.chain = j.chain; return l; },
     persist() {
       if (this.phoneL) store.set('gp.phone.ledger', JSON.stringify({ tk: this.phoneL.tk, chain: this.phoneL.chain }));
+      store.set('gp.crm', JSON.stringify(Object.values(this.crm).filter(l => l.live).map(l => ({ tk: l.tk, chain: l.chain }))));
       store.set('gp.shop.live', JSON.stringify(Object.values(this.shopL).filter(l => l.live).map(l => ({ tk: l.tk, chain: l.chain }))));
     },
 
