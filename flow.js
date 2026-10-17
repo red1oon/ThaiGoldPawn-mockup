@@ -84,7 +84,7 @@ window.Flow = (function () {
         <div class="row"><span>${t('principalNow')}</span><b>${fmt(st.principal)}</b></div><div class="row"><span>${t('owedToday')}</span><b>${fmt(owed)}</b></div>
         <div class="row"><span>${t('due')}</span><span>${fd(st.due)}</span></div><div class="row"><span>${t('paidTo')}</span><span>${fd(st.paidTo)}</span></div></div>
         ${st.status === 'redeemed' ? `<div class="panel"><div class="okm">✔ ${t('st_redeemed')}</div></div>` : `<div class="panel"><div class="sec-title" style="margin-top:0">${t('payHow')}</div><div class="choices">${choices}</div>
-        ${S.j.mode === 'other' ? `<label class="f">${t('amountToPay')}<input data-k="j.amt" type="number" value="${S.j.amt}"></label>` : ''}
+        ${S.j.mode === 'other' ? `<label class="f">${t('amountToPay')}<input data-k="j.amt" data-num="1" type="text" inputmode="decimal" value="${S.j.amt}"></label>` : ''}
         ${q.error ? `<div class="err">⚠ ${t('amt_' + q.error)}</div>` : `<table><tr><td>${t('int')}</td><td class="n">${fmt(q.int)}</td></tr><tr><td>VAT ${S.set.vat}%</td><td class="n">${fmt(q.vat)}</td></tr><tr><td>${t('principalPart')}</td><td class="n">${fmt(q.principalPart)}</td></tr></table>
         ${q.reissue ? `<div class="note">${t('reissueNote')}</div>` : ''}<div class="total"><span>${t('payTotal')}</span><span class="big">${fmt(q.total)}</span></div>
         <div class="note">${t('ppNote')}</div>${qr(P.promptpay(st.shopPhone || Net.shopPhone, q.total))}

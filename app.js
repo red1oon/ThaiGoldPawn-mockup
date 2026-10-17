@@ -112,7 +112,7 @@
   }
   function storyView() {
     return `<div class="card"><div class="panel"><h2>${t('navStory')}</h2><div class="sub">${t('storyHelp')}</div>
-      <div class="fields"><label class="f">${t('cardSecs')}<input data-k="story.cardSecs" type="number" value="${St.st.cardSecs}"></label><label class="f">${t('pace')}<input data-k="story.pace" type="number" step="0.1" value="${St.st.pace}"></label></div>
+      <div class="fields"><label class="f">${t('cardSecs')}<input data-k="story.cardSecs" data-num="1" type="text" inputmode="decimal" value="${St.st.cardSecs}"></label><label class="f">${t('pace')}<input data-k="story.pace" data-num="1" type="text" inputmode="decimal" value="${St.st.pace}"></label></div>
       <div class="actions" style="justify-content:flex-start"><button class="btn" data-story="all">${t('playAll')}</button></div>
       <table>${Array.from({ length: St.count }, (_, i) => `<tr><td>${t('chapter')} ${i + 1}</td><td><b>${t('ch' + (i + 1) + 't')}</b><br><small style="color:var(--muted)">${t('ch' + (i + 1) + 's')}</small></td><td><button class="btn small" data-story="${i}">${t('playOne')}</button></td></tr>`).join('')}</table></div></div>`;
   }
@@ -147,6 +147,7 @@
   document.addEventListener('input', e => {
     const el = e.target;
     if (el.dataset.k) {
+      if (el.dataset.num) { const c = el.value.replace(/[^0-9.]/g, ''); if (c !== el.value) el.value = c; }
       const k = el.dataset.k, pos = el.selectionStart;
       setPath(k, el.value); render();
       const again = document.querySelector(`[data-k="${k}"]`);

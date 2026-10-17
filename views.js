@@ -5,7 +5,8 @@ window.Views = (function () {
   const bind = (s, tr, f, d) => { S = s; t = tr; fmt = f; fd = d; };
 
   // ---- small builders ----
-  const inp = (k, v, type = 'number', extra = '') => `<input data-k="${k}" type="${type}" value="${v}" ${type === 'number' ? 'step="any"' : ''} ${extra}>`;
+  // numbers are text inputs with a decimal keypad: type=number has no caret API, so the caret jumped to the start on every re-render ("5000" became "0005")
+  const inp = (k, v, type = 'number', extra = '') => type === 'number' ? `<input data-k="${k}" data-num="1" type="text" inputmode="decimal" value="${v}" ${extra}>` : `<input data-k="${k}" type="${type}" value="${v}" ${extra}>`;
   const sel = (k, v, opts) => `<select data-k="${k}">${opts.map(([val, lab]) => `<option value="${val}" ${String(val) === String(v) ? 'selected' : ''}>${lab}</option>`).join('')}</select>`;
   const f = (lab, ctl) => `<label class="f">${lab}${ctl}</label>`;
   const o = (lab, val) => `<label class="f">${lab}<span class="out">${val}</span></label>`;
