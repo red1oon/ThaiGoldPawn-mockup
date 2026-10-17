@@ -1,0 +1,28 @@
+// Contacts import + broadcast strings (spec §15.13). Key → [th, en]. Plain wording.
+Object.assign(window.I18N, {
+  navContacts:['รายชื่อลูกค้า','Contacts'], yes:['ใช่','Yes'], no:['ไม่','No'],
+  ctSub:['นำรายชื่อลูกค้าจากไฟล์ที่ร้านมีอยู่แล้วเข้ามา ตรวจเบอร์ ตัดรายชื่อซ้ำ แล้วเตรียมข้อเสนอหรือข่าวสารส่งให้','Bring in the customer lists the shop already has, check the numbers, remove duplicates, then prepare an offer or news for them.'],
+  ctTotal:['รายชื่อทั้งหมด','Contacts'], ctConsent:['ยินยอมรับข้อเสนอและข่าวสาร','Agreed to offers and news'], ctCustomers:['เป็นลูกค้าที่มีตั๋วแล้ว','Already have a ticket'],
+  ctImport:['นำเข้าจาก','Import from'],
+  ctSrcExcel:['Excel หรือ CSV','Excel or CSV'], ctSrcExcelS:['ไฟล์ .xlsx .csv หรือตารางที่คัดลอกจาก Excel','An .xlsx or .csv file, or a table copied from Excel'],
+  ctSrcVcf:['รายชื่อในโทรศัพท์','Phone contacts'], ctSrcVcfS:['ไฟล์ vCard (.vcf) หรือ CSV ของ Google Contacts','A vCard (.vcf) file or a Google Contacts CSV'],
+  ctSrcLine:['LINE','LINE'], ctSrcLineS:['รายการ LINE user ID หรือไฟล์ประวัติแชท (.txt)','A list of LINE user IDs, or a chat-history file (.txt)'],
+  ctSrcPicker:['เลือกจากโทรศัพท์','Pick on this phone'], ctSrcPickerS:['เลือกรายชื่อโดยตรง (Chrome บน Android)','Choose contacts directly (Chrome on Android)'],
+  ctPaste:['หรือวางตารางที่คัดลอกมา','Or paste a copied table'], ctPastePh:['ชื่อ [Tab] เบอร์ [Tab] อีเมล','Name [Tab] Phone [Tab] Email'], ctRead:['อ่านข้อมูล','Read it'],
+  ctLineNote:['LINE ให้ร้านเป็น user ID และชื่อที่แสดง ไม่ใช่เบอร์โทรศัพท์ รายชื่อจาก LINE จึงเข้ามาเป็น user ID','LINE gives the shop user IDs and display names, not phone numbers, so LINE contacts arrive as user IDs.'],
+  ctReadFail:['อ่านไฟล์ไม่ได้:','Could not read the file:'], ctPasted:['ตารางที่วาง','Pasted table'], ctPicker:['เลือกจากโทรศัพท์','Phone picker'], ctPickFail:['เปิดรายชื่อในโทรศัพท์ไม่ได้','Could not open the phone contacts'],
+  ctReview:['ตรวจก่อนเพิ่ม','Check before adding'], ctAdd:['เพิ่มเข้ารายชื่อ','Add to the list'], ctDiscard:['ยกเลิก','Discard'], ctAdded:['เพิ่มแล้ว','Added'], ctMore:['รายการเพิ่มเติม','more'],
+  cts_read:['แถวที่อ่าน','Rows read'], cts_added:['รายชื่อใหม่','New contacts'], cts_merged:['ซ้ำ รวมเข้าแล้ว','Duplicates merged'], cts_invalid:['เบอร์ไม่ถูกต้อง','Invalid numbers'], cts_noPhone:['ไม่มีช่องทางติดต่อ','No way to reach'], cts_existingCustomers:['เป็นลูกค้าอยู่แล้ว','Already customers'], cts_withLine:['มี LINE ID','With a LINE ID'],
+  ctf_name:['ชื่อ','Name'], ctf_first:['ชื่อจริง','First name'], ctf_last:['นามสกุล','Last name'], ctf_phone:['เบอร์โทร','Phone'], ctf_email:['อีเมล','Email'], ctf_line:['LINE ID','LINE ID'], ctf_address:['ที่อยู่','Address'], ctf_consent:['ความยินยอม','Consent'], ctf_skip:['ข้าม','skip'],
+  ctCustomer:['ลูกค้า','Customer'], ctGreen:['Green list','Green list'],
+  ctAgreeAll:['รายชื่อชุดนี้ยินยอมรับข้อเสนอและข่าวสารแล้ว','This batch has agreed to receive offers and news'], ctConsentNote:['ส่งข้อความการตลาดได้เฉพาะคนที่ยินยอม (พ.ร.บ.คุ้มครองข้อมูลส่วนบุคคล) ถ้าไฟล์มีคอลัมน์ความยินยอม ระบบใช้ตามนั้น','Offers and news go only to people who agreed (PDPA). If the file has a consent column, it is used.'],
+  ctList:['รายชื่อ','Contact list'], ctSearch:['ค้นหาชื่อ เบอร์ อีเมล','Search name, phone, email'],
+  ctBroadcast:['ส่งข้อเสนอหรือข่าวสาร','Send an offer or news'], ctBroadcastSub:['เลือกกลุ่มผู้รับ ช่องทาง และข้อความ ระบบเตรียมข้อความรายคนให้','Choose the audience, the channel and the message. The app prepares one message per person.'],
+  ctPrepare:['เตรียมข้อความ','Prepare the messages'], ctConsentOnly:['ผู้รับคือคนที่ยินยอมเท่านั้น','Only people who agreed are included.'],
+  ctOfferAuto:['ข้อเสนอเขียนให้อัตโนมัติ ใส่วงเงินที่เสนอเพิ่มได้ของแต่ละคน','The offer is written for you, with each customer’s own amount.'], ctDefaultNews:['ลูกค้าดูยอดคงเหลือและชำระผ่านพร้อมเพย์จากโทรศัพท์ได้แล้ว','customers can now see their balance and pay by PromptPay from their phone.'],
+  ct_kind_offer:['ข้อเสนอวงเงินเพิ่ม','Additional lending offer'], ct_kind_news:['ข่าวจากร้าน','News from the shop'],
+  ctPrepared:['ข้อความที่เตรียมไว้','Prepared messages'], ctReady:['พร้อมส่ง','ready'], ctNoAddress:['ไม่มีช่องทางสำหรับช่องทางนี้','no address for this channel'], ctNoConsent:['ไม่ได้ยินยอม ไม่รวม','not agreed, left out'],
+  ctOpenNote:['แต่ละข้อความเปิดในแอปของช่องทางนั้น ร้านกดส่งเอง','Each message opens in that channel’s own app, and the shop presses send.'], ctTo:['ถึง','To'], ctText:['ข้อความ','Message'], ctCopyAll:['คัดลอกทั้งหมด','Copy all'], ctCopied:['คัดลอกแล้ว','Copied.'],
+  ctHistory:['ประวัตินำเข้าและการส่ง','Import and send history'],
+  ch14t:['ย้ายรายชื่อลูกค้าเข้ามา และส่งข้อเสนอหรือข่าวสาร','Bringing in customer lists, and sending offers or news'], ch14s:['นำเข้าจาก Excel รายชื่อในโทรศัพท์ และ LINE ตัดรายชื่อซ้ำ แล้วเตรียมข้อความถึงกลุ่มที่เลือก','Import from Excel, phone contacts and LINE, remove duplicates, then prepare messages for the chosen group.']
+});

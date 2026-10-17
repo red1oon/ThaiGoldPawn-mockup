@@ -29,6 +29,11 @@
       const l = this.crmL(tk), body = { ...f }; if (!l.chain.shop.length) body.pub = T.pubOf(this.keys.shop.pub);
       const e = await l.append('followup', body, ts || this.ts()); if (this.shopL[tk]) l.live = true; this.persist(); this.emit(); return e;
     },
+    // contact imports and broadcasts: signed, shop-internal chain (never put in a token)
+    async logContact(type, body, ts) {
+      const l = this.crmL('_contacts'), b = { ...body }; l.live = true; if (!l.chain.shop.length) b.pub = T.pubOf(this.keys.shop.pub);
+      const e = await l.append(type, b, ts || this.ts()); this.persist(); this.emit(); return e;
+    },
     followups(tk) { const l = this.crm[tk]; return l ? l.chain.shop.map(e => ({ ...e.body, ts: e.ts, n: e.n })) : []; },
     hydrate(j, me) { const l = new T.Ledger(j.tk, me, this.keys[me]); l.chain = j.chain; return l; },
     persist() {

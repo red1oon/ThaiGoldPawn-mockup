@@ -8,6 +8,8 @@ if (window.__film) Object.assign(window.I18N, {
   ch12t:['เหมาะกับประเทศไทย','Made for Thailand'], ch12s:['พร้อมเพย์ ลิงก์ผ่าน LINE WhatsApp และ SMS และหน้าจอภาษาไทยและอังกฤษ','PromptPay, share links through LINE, WhatsApp and SMS, and Thai and English screens.'],
   loSub:['ทำงานอย่างไรเมื่อไม่มีเซิร์ฟเวอร์คลาวด์','How it works without a cloud server.'],
   lo6:['ค่าใช้จ่าย: แกนหลักไม่ต้องมีเซิร์ฟเวอร์ฐานข้อมูลหรือค่าใช้จ่ายต่อผู้ใช้ การตรวจสลิปด้วย SlipOK คิดเป็นแพ็กเกจรายเดือน ตั้งแต่ 0 บาท (100 สลิป) ถึง 2,580 บาท (6,000 สลิป)','Cost: no database server and no per-user charge for the core. The SlipOK slip check is a monthly plan, from 0 baht (100 slips) to 2,580 baht (6,000 slips).'],
+  ch3s:['ชำระผ่านพร้อมเพย์ ร้านตรวจสลิปด้วย SlipOK และบันทึกคำตอบไว้กับรายการชำระ','Payment goes through PromptPay. The shop checks the slip with SlipOK and keeps the answer with the payment record.'],
+  ch8s:['ระบบ ERP หลักอยู่เบื้องหลัง รายการบัญชีและรายงานคำนวณจากรายการเดียวกัน','The kernel ERP is behind this. Journals and reports come from the same events.'],
   lo_ok:['ทำได้','In place'],
   closeS:['ทำงานออฟไลน์ได้ · ไม่ต้องมีเซิร์ฟเวอร์คลาวด์ · ทุกรายการเซ็นกำกับ','Works offline · No cloud server needed · Every record signed']
 });

@@ -3,7 +3,7 @@ window.Views2 = (function () {
   const Net = window.Net, AD = window.AD, Books = window.Books;
   let S, t, fmt, fd;
   const bind = (s, tr, f, d) => { S = s; t = tr; fmt = f; fd = d; };
-  const REF = { 10: 'String', 11: 'Integer', 12: 'Amount', 14: 'Text', 15: 'Date', 17: 'List', 19: 'TableDir', 22: 'Number' };
+  const REF = { 10: 'String', 11: 'Integer', 12: 'Amount', 14: 'Text', 15: 'Date', 17: 'List', 20: 'Yes-No', 19: 'TableDir', 22: 'Number' };
   const nm = a => S.lang === 'th' ? a[2] : a[1];
 
   function books() {

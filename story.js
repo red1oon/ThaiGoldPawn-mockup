@@ -66,7 +66,8 @@ window.Story = (function () {
       Dash.state.edit = false; X.render();
     },
     async () => { X.setTab('thai'); await sleep(st.pace); },
-    async () => { X.setTab('local'); await sleep(st.pace); }
+    async () => { X.setTab('local'); await sleep(st.pace); },
+    async () => { X.setTab('contacts'); await sleep(st.pace); }
   ];
   const sub = i => ({ t: 'ch' + (i + 1) + 't', s: 'ch' + (i + 1) + 's' });
 

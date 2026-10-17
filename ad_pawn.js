@@ -7,7 +7,9 @@ window.AD = (function () {
   const tables = [
     T(1000001, 'Pawn Ticket', 'PAWN_Ticket', 'Folded from offer / ack / payment / closed events'),
     T(1000002, 'Pawn Payment', 'PAWN_Payment', 'Folded from payment_claim / payment_verified / payment_rejected events'),
-    T(1000003, 'Pawn Follow-up', 'PAWN_FollowUp', 'Shop-internal CRM chain (never sent in a token)')
+    T(1000003, 'Pawn Follow-up', 'PAWN_FollowUp', 'Shop-internal CRM chain (never sent in a token)'),
+    T(1000004, 'Pawn Contact', 'PAWN_Contact', 'Customer / prospect contact list (imported from Excel, CSV, vCard, LINE, phone picker)'),
+    T(1000005, 'Pawn Broadcast', 'PAWN_Broadcast', 'Offer or news prepared for an audience of consented contacts')
   ];
   let cid = 2000000;
   // C(table, ColumnName, Name, th, ref, opts)
@@ -53,8 +55,26 @@ window.AD = (function () {
     C(1000003, 'Note', 'Note', 'บันทึก', 14, { seq: 40 }),
     C(1000003, 'DateNext', 'Next follow-up', 'นัดติดตามครั้งถัดไป', 15, { seq: 50 })
   ];
+  columns.push(
+    C(1000004, 'Name', 'Name', 'ชื่อ', 10, { len: 120, m: 1, id: 1, grid: 1, seq: 10 }),
+    C(1000004, 'Phone', 'Phone (normalised 0xxxxxxxxx)', 'โทรศัพท์', 10, { len: 12, sel: 1, grid: 1, seq: 20 }),
+    C(1000004, 'Email', 'Email', 'อีเมล', 10, { len: 120, grid: 1, seq: 30 }),
+    C(1000004, 'LineUserId', 'LINE user ID', 'LINE user ID', 10, { len: 33, seq: 40 }),
+    C(1000004, 'Source', 'Imported from', 'นำเข้าจาก', 17, { list: 'PAWN_ContactSource', sel: 1, grid: 1, ro: 1, seq: 50 }),
+    C(1000004, 'Consent', 'May receive offers and news', 'ยินยอมรับข้อเสนอและข่าวสาร', 20, { sel: 1, grid: 1, def: 'N', seq: 60 }),
+    C(1000005, 'Kind', 'Kind', 'ประเภท', 17, { list: 'PAWN_BcastKind', m: 1, def: 'offer', seq: 10 }),
+    C(1000005, 'Audience', 'Audience', 'กลุ่มผู้รับ', 17, { list: 'PAWN_Audience', m: 1, def: 'green', seq: 20 }),
+    C(1000005, 'Channel', 'Channel', 'ช่องทาง', 17, { list: 'PAWN_BcastChannel', m: 1, def: 'whatsapp', seq: 30 }),
+    C(1000005, 'Title', 'Title', 'หัวข้อ', 10, { len: 80, m: 1, seq: 40 }),
+    C(1000005, 'Body', 'Message', 'ข้อความ', 14, { seq: 50 })
+  );
   const L = (list, value, name, th) => ({ AD_Reference_Name: list, Value: value, Name: name, th, IsActive: 'Y' });
   const refLists = [
+    L('PAWN_ContactSource', 'excel', 'Excel', 'Excel'), L('PAWN_ContactSource', 'csv', 'CSV / pasted table', 'CSV / ตารางที่วาง'), L('PAWN_ContactSource', 'vcf', 'Phone contacts (vCard / Google CSV)', 'รายชื่อในโทรศัพท์ (vCard / Google CSV)'),
+    L('PAWN_ContactSource', 'line', 'LINE', 'LINE'), L('PAWN_ContactSource', 'picker', 'Phone contact picker', 'เลือกจากรายชื่อในโทรศัพท์'), L('PAWN_ContactSource', 'manual', 'Typed in', 'พิมพ์เอง'),
+    L('PAWN_BcastKind', 'offer', 'Offer', 'ข้อเสนอ'), L('PAWN_BcastKind', 'news', 'News', 'ข่าวสาร'),
+    L('PAWN_Audience', 'green', 'Green list customers', 'ลูกค้า Green list'), L('PAWN_Audience', 'customers', 'All customers with a ticket', 'ลูกค้าที่มีตั๋วทั้งหมด'), L('PAWN_Audience', 'prospects', 'Contacts without a ticket', 'ผู้ติดต่อที่ยังไม่มีตั๋ว'), L('PAWN_Audience', 'all', 'Everyone who agreed', 'ทุกคนที่ยินยอม'),
+    L('PAWN_BcastChannel', 'whatsapp', 'WhatsApp', 'WhatsApp'), L('PAWN_BcastChannel', 'sms', 'SMS', 'SMS'), L('PAWN_BcastChannel', 'line', 'LINE', 'LINE'), L('PAWN_BcastChannel', 'email', 'Email', 'อีเมล'),
     L('PAWN_Status', 'offered', 'Offered', 'รอผู้กู้ยืนยัน'), L('PAWN_Status', 'active', 'Active', 'ใช้งานอยู่'), L('PAWN_Status', 'overdue', 'Overdue', 'เกินกำหนด'),
     L('PAWN_Status', 'redeemed', 'Redeemed', 'ไถ่ถอนแล้ว'), L('PAWN_Status', 'forfeited', 'Forfeited', 'หลุดจำนำ'),
     L('PAWN_Category', 'ornament', 'Ornament gold', 'ทองรูปพรรณ'), L('PAWN_Category', 'bar', 'Gold bar', 'ทองแท่ง'), L('PAWN_Category', 'silver', 'Silver', 'เงิน'), L('PAWN_Category', 'other', 'Other', 'อื่นๆ'),
