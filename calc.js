@@ -26,10 +26,13 @@ window.Calc = (function () {
     c2: { taxPoint: 'interest', basis: 'day', rounding: 'day' }
   };
 
+  // Legal ceiling (spec §14): Civil Code §499 — a redemption price above the real price + 15 % a year is cut back to it, so no rate is applied above 15 %/year.
+  // ⚠ confirmed from legal-text sites, not the Royal Gazette; re-check the current text (the sale-with-redemption law has been under reform).
+  const LEGAL = { pctYear: 15, section: 'Civil Code §499', maxMonthly: 15 / 12 };
   function rateFor(grp, amount) {
     const row = rates.find(r => r.grp === grp && amount >= r.from && amount <= r.to)
       || rates.find(r => r.grp === grp);
-    return row ? row.rate : 0;
+    return row ? Math.min(row.rate, LEGAL.maxMonthly) : 0;     // never above the legal ceiling, whatever the table says
   }
   function termByRatio(ratioPct) {
     const p = Math.ceil(ratioPct);
@@ -78,5 +81,5 @@ window.Calc = (function () {
     return { periods, unit: 'month', amount: r2(agreedMonthly * periods), days };
   }
 
-  return { GRAM_PER_BAHT, r2, goldTypes, rates, ratioTerm, profiles, rateFor, termByRatio, appraise, edate, daysBetween, owed, D };
+  return { LEGAL, GRAM_PER_BAHT, r2, goldTypes, rates, ratioTerm, profiles, rateFor, termByRatio, appraise, edate, daysBetween, owed, D };
 })();

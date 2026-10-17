@@ -79,8 +79,8 @@
       </div>${s.rounding === 'week' ? `<div class="note">${conf('qWeek')} ${t('qWeek')}</div>` : ''}
       ${s.mode === 'A' ? `<div class="note">${conf('qA')} ${t('qA')}</div>` : ''}</fieldset>
       <fieldset><legend>${t('goldTypes')}</legend><table>${C.goldTypes.map((g, i) => `<tr><td>${L(g)}</td><td class="n">${inp('gt.' + i, g.pct)}</td></tr>`).join('')}</table></fieldset>
-      <fieldset><legend>${t('rates')}</legend><table><tr><th>${t('rateGrp')}</th><th class="n">${t('from')}</th><th class="n">${t('to')}</th><th class="n">%</th></tr>
-        ${C.rates.map(r => `<tr><td>${r.grp}</td><td class="n">${fmt(r.from)}</td><td class="n">${fmt(r.to)}</td><td class="n">${r.rate}</td></tr>`).join('')}</table></fieldset>
+      <fieldset><legend>${t('rates')}</legend><table><tr><th>${t('rateGrp')}</th><th class="n">${t('from')}</th><th class="n">${t('to')}</th><th class="n">%</th><th class="n">${t('perYear')}</th></tr>
+        ${C.rates.map(r => { const e = Math.min(r.rate, C.LEGAL.maxMonthly); return `<tr><td>${r.grp}</td><td class="n">${fmt(r.from)}</td><td class="n">${fmt(r.to)}</td><td class="n">${e}${e < r.rate ? ' ⚠' : ''}</td><td class="n">${(e * 12).toFixed(2)}%</td></tr>`; }).join('')}</table><div class="note">${t('legalNote')}</div></fieldset>
       <fieldset><legend>${t('ratioTbl')} ${conf('qRatio')}</legend><table>${C.ratioTerm.map(r => `<tr><td>${r.from}–${r.to}%</td><td class="n">${r.months}</td></tr>`).join('')}</table></fieldset>
     </div></div>`;
   }
@@ -99,13 +99,13 @@
   }
 
   function thaiView() {
-    const rows = [['th1', 'ok'], ['th2', 'sim'], ['th3', 'ok'], ['th4', 'ok'], ['th5', 'ok'], ['th6', 'open'], ['th7', 'open'], ['th8', 'open'], ['th9', 'legal'], ['th10', 'sim']];
+    const rows = [['th1', 'ok'], ['th2', 'sim'], ['th3', 'ok'], ['th4', 'ok'], ['th5', 'ok'], ['th6', 'open'], ['th7', 'open'], ['th8', 'open'], ['th9', 'legal'], ['th10', 'sim']].filter(r => !window.__film || (r[1] === 'ok' && r[0] !== 'th4'));
     const col = { ok: '--s6', sim: '--s4', open: '--s8', legal: '--s2' };
     return `<div class="card"><div class="panel"><h2>${t('thaiHead')}</h2><div class="sub">${t('thaiSub')}</div>
       <table>${rows.map(([k, s]) => `<tr><td>${t(k)}</td><td><span class="chip2" style="--c:var(${col[s]})">${t('th_' + s)}</span></td></tr>`).join('')}</table></div></div>`;
   }
   function localView() {
-    const rows = [['lo1', 'ok'], ['lo2', 'ok'], ['lo3', 'ok'], ['lo4', 'ok'], ['lo5', 'ok'], ['lo6', 'ok'], ['lo7', 'open'], ['lo8', 'open'], ['lo9', 'open']];
+    const rows = [['lo1', 'ok'], ['lo2', 'ok'], ['lo3', 'ok'], ['lo4', 'ok'], ['lo5', 'ok'], ['lo6', 'ok'], ['lo7', 'open'], ['lo8', 'open'], ['lo9', 'open']].filter(r => !window.__film || r[1] === 'ok');
     const col = { ok: '--s6', open: '--s8' };
     return `<div class="card"><div class="panel"><h2>${t('loHead')}</h2><div class="sub">${t('loSub')}</div>
       <table>${rows.map(([k, s]) => `<tr><td>${t(k)}</td><td><span class="chip2" style="--c:var(${col[s]})">${t(s === 'ok' ? 'lo_ok' : 'lo_open')}</span></td></tr>`).join('')}</table></div></div>`;
@@ -123,14 +123,14 @@
     document.querySelectorAll('[data-t]').forEach(e => e.textContent = t(e.dataset.t));
     document.getElementById('langBtn').textContent = S.lang === 'th' ? 'EN' : 'ไทย';
     document.getElementById('profileChip').textContent = t(S.profile === 'c1' ? 'case1s' : 'case2s') + ' · ' + S.set.taxType;
-    document.body.classList.toggle('solo', Net.solo === 'phone');
+    document.body.classList.toggle('solo', Net.solo === 'phone'); document.body.classList.toggle('film', !!window.__film);
     document.getElementById('rail').innerHTML = NAV.map(([k, ic, lab]) =>
       `<button class="${S.tab === k ? 'on' : ''}" data-tab="${k}"><span class="pill">${icon(ic)}</span>${t(lab)}</button>`).join('');
     const v = document.getElementById('view');
     v.innerHTML = { counter, journey: () => F.view(), dash: () => D.view(), books: () => V2.books(), ad: () => V2.ad(), settings, theme: themeView, thai: thaiView, local: localView, story: storyView }[S.tab]();
     const ov = document.getElementById('overlay');
     const c = St.st.card, cp = St.st.caption;
-    ov.innerHTML = (c ? `<div class="chcard">${c.n ? `<div class="chn">${t('chapter')} ${c.n}</div>` : ''}<h1>${t(c.t)}</h1><p>${t(c.s)}</p></div>` : '')
+    ov.innerHTML = (c ? `<div class="chcard house">${c.n || c.kick ? `<div class="chn">${c.n ? t('chapter') + ' ' + c.n : t(c.kick)}</div>` : ''}<h1>${c.t ? t(c.t) : ''}${c.l1 ? `<span class="w">${t(c.l1)}</span>` : ''}${c.l2 ? `<span class="b">${t(c.l2)}</span>` : ''}</h1>${c.s ? `<p>${t(c.s)}</p>` : ''}</div>` : '')
       + (cp ? `<div class="caption">${t(cp)}</div>` : '') + (St.st.playing ? `<button class="btn small stopbtn" data-story="stop">${t('stop')}</button>` : '');
     ov.className = c ? 'full' : '';
   }

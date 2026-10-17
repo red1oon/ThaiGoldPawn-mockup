@@ -30,5 +30,11 @@ Object.assign(window.I18N, {
   code_1006:['รูปภาพไม่ถูกต้อง','invalid image'], code_1007:['ไม่พบ QR ในรูปสลิป','no QR in the image'], code_1008:['QR นี้ไม่ใช่ QR ตรวจการชำระเงิน','not a payment-verification QR'], code_1009:['ข้อมูลธนาคารขัดข้องชั่วคราว ตรวจใหม่ภายหลัง','bank data unavailable, check again later'],
   code_1010:['สลิปใหม่เกินไป รอสักครู่แล้วตรวจใหม่','slip too fresh, wait and check again'], code_1011:['QR หมดอายุหรือไม่มีรายการจริง','QR expired or no such transaction'], code_1012:['สลิปนี้เคยใช้แล้ว','this slip was already used'],
   code_1013:['ยอดไม่ตรงกับสลิป','amount does not match the slip'], code_1014:['บัญชีผู้รับไม่ใช่บัญชีหลักของร้าน','receiver is not the shop’s main account'], code_BAD_AMOUNT:['จำนวนเงินนำไปใช้ไม่ได้','the amount cannot be applied'],
-  attached:['มีไฟล์แนบ','attachment kept'], attachHead:['ไฟล์แนบ (AD_Attachment)','Attachments (AD_Attachment)'], attachNote:['คำตอบ JSON จาก SlipOK เก็บไว้กับรายการชำระ ค่า sha256 อยู่ในรายการที่เซ็นกำกับ ถ้าไฟล์ถูกสลับค่าจะไม่ตรง','The JSON answer from SlipOK is kept with the payment record. Its sha256 sits inside the signed event, so a swapped file no longer matches.'], download:['ดาวน์โหลด','Download']
+  attached:['มีไฟล์แนบ','attachment kept'], attachHead:['ไฟล์แนบ (AD_Attachment)','Attachments (AD_Attachment)'], attachNote:['คำตอบ JSON จาก SlipOK เก็บไว้กับรายการชำระ ค่า sha256 อยู่ในรายการที่เซ็นกำกับ ถ้าไฟล์ถูกสลับค่าจะไม่ตรง','The JSON answer from SlipOK is kept with the payment record. Its sha256 sits inside the signed event, so a swapped file no longer matches.'], download:['ดาวน์โหลด','Download'],
+  openK:['ระบบสินเชื่อรายย่อยท้องถิ่น','Localised Micro Financing System'], openL1:['ปลอดภัย ใช้งานง่าย','Secure. Easy to use.'], openL2:['ค่าบำรุงรักษาต่ำ','Low cost to maintain.'],
+  openS:['ขายฝากทองและสินเชื่อรายย่อย · ทำงานออฟไลน์ได้ · ทุกรายการเซ็นกำกับ','Gold pawn and small loans · Works offline · Every record signed'],
+  endK:['ข้อมูลตัวอย่าง · ต้นแบบ','Sample data · Mockup'],
+  legalCap:['เพดานตามกฎหมาย (15% ต่อปี)','Legal ceiling (15% a year)'], overLegal:['ผลประโยชน์เกิน 15% ต่อปีไม่ได้ (ป.พ.พ. ม.499) ใช้ค่าสูงสุดที่อนุญาต:','Interest above 15% a year is not allowed (Civil Code §499). Using the legal maximum:'],
+  legalNote:['อัตราผลประโยชน์ทุกกลุ่มถูกจำกัดไม่เกิน 15% ต่อปี (1.25% ต่อเดือน) ตามประมวลกฎหมายแพ่งและพาณิชย์ มาตรา 499','Every rate group is held to 15% a year (1.25% a month) at most, as set by Civil Code §499.'],
+  perYear:['ต่อปี','Per year']
 });

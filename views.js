@@ -29,7 +29,8 @@ window.Views = (function () {
     const rate = C.rateFor(x.grp, +x.loan);
     const perMonth = C.r2(x.loan * rate / 100);
     const perDay = C.r2(x.loan * rate / 100 * 12 / 365);
-    const agreed = x.agreed === '' || x.agreed == null ? perMonth : +x.agreed;
+    const asked = x.agreed === '' || x.agreed == null ? perMonth : +x.agreed;
+    const maxAgreed = C.r2(+x.loan * C.LEGAL.maxMonthly / 100), overLegal = asked > maxAgreed + 0.004, agreed = overLegal ? maxAgreed : asked;   // spec §14: ≤ 15 %/year
     const due = C.edate(x.date, +x.months);
     const rt = C.termByRatio(ratio);
     const cats = S.lang === 'th' ? ['ทองรูปพรรณ', 'ทองแท่ง', 'เงิน', 'อื่นๆ'] : ['Ornament gold', 'Gold bar', 'Silver', 'Other'];
@@ -60,9 +61,10 @@ window.Views = (function () {
       ${f(t('months'), inp('issue.months', x.months))}${o(t('due'), fd(due))}
       ${o(t('rate'), rate + '%')}
       ${S.set.basis === 'day' ? o(t('intDay'), fmt(perDay)) : o(t('intMonth'), fmt(perMonth))}
-      ${f(t('agreed'), inp('issue.agreed', agreed))}
+      ${f(t('agreed'), inp('issue.agreed', x.agreed === '' || x.agreed == null ? agreed : x.agreed))}
+      ${o(t('legalCap'), fmt(maxAgreed) + ' / ' + t('perMonth'))}
       ${o(t('discount'), fmt(perMonth - agreed))}
-    </div><div class="note">${t('ratioTerm')} ${rt ?? '-'} ${t('monthsU')} ${conf('qRatio')}</div></fieldset>
+    </div>${overLegal ? `<div class="err">⚠ ${t('overLegal')} ${fmt(maxAgreed)}</div>` : ''}<div class="note">${t('legalNote')}</div><div class="note">${t('ratioTerm')} ${rt ?? '-'} ${t('monthsU')} ${conf('qRatio')}</div></fieldset>
     <div class="total"><span>${t('cashOut')}</span><span class="big">${fmt(+x.loan)} ${t('baht')}</span></div>
     <div class="actions"><button class="btn ghost" data-act="ticket">${t('preview')}</button><button class="btn" data-j="issue">${t('issueGo')}</button></div>
     <div id="ticketBox">${S.showTicket ? printed(x, due, items[x.item], agreed) : ''}</div></div>`;
@@ -195,7 +197,7 @@ window.Views = (function () {
         <div class="note">${t('daysLeft')} ${left} ${t('days')}</div>
       </div>
       <div class="actions" style="padding:0 14px 14px"><button class="btn small">${t('appPay')}</button><button class="btn small ghost" style="color:var(--accent)">${t('appTop')}</button><button class="btn small ghost" style="color:var(--accent)">${t('appReduce')}</button></div></div>
-      <div class="note" style="padding:0 14px 14px">${conf('appQ')} ${t('appQ')}</div></div>`;
+      ${window.__film ? '' : `<div class="note" style="padding:0 14px 14px">${conf('appQ')} ${t('appQ')}</div>`}</div>`;
   }
 
   return { bind, issue, pay, change, redeem, forfeit, borrower, sel, inp, f, o, conf, L };

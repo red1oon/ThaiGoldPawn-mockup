@@ -1,6 +1,6 @@
 // Thai / English strings. Key → [th, en].
 window.I18N = {
-  appTitle:['ระบบขายฝากทอง','Gold Pawn System'],
+  appTitle:['ระบบสินเชื่อรายย่อยท้องถิ่น','Localised Micro Financing System'],
   mockup:['ต้นแบบหน้าจอเพื่อรีวิว — ตัวเลขและชื่อทั้งหมดเป็นข้อมูลตัวอย่าง','Review mockup — all names and numbers are sample data'],
   navCounter:['หน้าร้าน','Counter'], navApp:['แอปลูกค้า','Borrower app'], navSettings:['ตั้งค่า','Settings'], navTheme:['ธีม','Theme'],
   profile:['รูปแบบ','Profile'], case1:['กรณี 1 ร้านทองทั่วไป (ค่าเริ่มต้น)','Case 1 Normal gold shop (default)'], case2:['กรณี 2 บริษัทมหาชน + แอป (ข้อยกเว้น)','Case 2 Public company + app (exception)'],
