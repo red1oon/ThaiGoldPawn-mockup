@@ -130,7 +130,7 @@
     v.innerHTML = { counter, journey: () => F.view(), dash: () => D.view(), books: () => V2.books(), ad: () => V2.ad(), settings, theme: themeView, thai: thaiView, local: localView, story: storyView }[S.tab]();
     const ov = document.getElementById('overlay');
     const c = St.st.card, cp = St.st.caption;
-    ov.innerHTML = (c ? `<div class="chcard"><div class="chn">${t('chapter')} ${c.n}</div><h1>${t(c.t)}</h1><p>${t(c.s)}</p></div>` : '')
+    ov.innerHTML = (c ? `<div class="chcard">${c.n ? `<div class="chn">${t('chapter')} ${c.n}</div>` : ''}<h1>${t(c.t)}</h1><p>${t(c.s)}</p></div>` : '')
       + (cp ? `<div class="caption">${t(cp)}</div>` : '') + (St.st.playing ? `<button class="btn small stopbtn" data-story="stop">${t('stop')}</button>` : '');
     ov.className = c ? 'full' : '';
   }

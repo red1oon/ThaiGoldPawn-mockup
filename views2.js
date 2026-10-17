@@ -30,6 +30,7 @@ window.Views2 = (function () {
         <div class="tablewrap"><table><tr><th>ColumnName</th><th>${t('name')}</th><th>AD_Reference</th><th>${t('refList')}</th><th>Len</th><th>Mand.</th><th>Sel.</th><th>Grid</th><th>Fold / SQL</th></tr>
         ${AD.cols(tb.TableName).map(c => `<tr><td><code>${c.ColumnName}</code></td><td>${gl(c)}</td><td>${c.AD_Reference_ID} ${REF[c.AD_Reference_ID] || ''}</td><td>${c.AD_Reference_Value_ID || ''}</td><td>${c.FieldLength || ''}</td><td>${c.IsMandatory}</td><td>${c.IsSelectionColumn}</td><td>${c.IsDisplayedGrid}</td><td><small>${c.ColumnSQL || ''}</small></td></tr>`).join('')}</table></div>`).join('')}
       <div class="sec-title">AD_Ref_List</div><div class="tablewrap"><table>${[...new Set(AD.refLists.map(r => r.AD_Reference_Name))].map(n => `<tr><td><code>${n}</code></td><td>${AD.list(n).map(r => `${r.Value} = ${S.lang === 'th' ? r.th : r.Name}`).join(' · ')}</td></tr>`).join('')}</table></div>
+      <div class="sec-title">AD_Attachment</div><table>${AD.attachments.map(x => `<tr><td><code>${x.AD_Table}</code></td><td>${x.Title} · ${x.ContentType} · ${x.Description}</td></tr>`).join('')}</table>
       <div class="sec-title">AD_Window / AD_Tab</div><table>${AD.windows.map(w => `<tr><td><b>${w.Name}</b></td><td>${w.tabs.map(x => `${x.Name} → ${AD.tables.find(tb => tb.AD_Table_ID === x.AD_Table_ID).TableName} (level ${x.TabLevel})`).join(' · ')}</td></tr>`).join('')}</table></div></div>`;
   }
   return { bind, books, ad };

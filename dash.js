@@ -164,6 +164,15 @@ window.Dash = (function () {
   }
   const jlines = e => e.lines.map(l => `${l.dr ? 'Dr' : 'Cr'} ${lang() === 'th' ? Books.ACCT[l.acct][2] : Books.ACCT[l.acct][1]} ${fmt(l.dr || l.cr)}`).join(' · ');
 
+  // AD_Attachment: the SlipOK JSON response kept with the payment record; sha256 is inside the signed event, so a swapped file is detected
+  const bankName = c => (window.Pay.SlipOK.BANKS[c] || c || '');
+  function atts(st, l) {
+    const all = [...l.chain.shop].filter(e => e.body && e.body.attachment).map(e => ({ ...e.body.attachment, ts: e.ts, type: e.type, hash: e.hash }));
+    if (!all.length) return '';
+    return `<h3 style="margin-top:14px">${t('attachHead')}</h3><div class="note">${t('attachNote')}</div><div class="tablewrap"><table><tr><th>AD_Attachment</th><th>${t('detail')}</th><th>sha256</th><th>${t('check')}</th><th></th></tr>
+      ${all.map(a => { const d = a.json.data || {}, ok = true; const href = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(a.json, null, 2));
+        return `<tr><td>${a.AD_Table} · ${a.title}</td><td>${a.json.success ? 'SlipOK ✔' : 'SlipOK ' + a.json.code} · ${bankName(d.sendingBank)} → ${bankName(d.receivingBank)} · ${d.transDate || ''} ${d.transTime || ''} · ${fmt(d.amount || 0)} · ${d.transRef || ''}</td><td><code>${a.sha256.slice(0, 10)}</code></td><td>${D.hist && D.hist.att && a.sha256 in D.hist.att ? (D.hist.att[a.sha256] ? '<span class="okm">✔ ' + t('verified') + '</span>' : '<span class="badm">✖ ' + t('broken') + '</span>') : '…'}</td><td><a href="${href}" download="${a.title}">${t('download')}</a></td></tr>`; }).join('')}</table></div>`;
+  }
   function history() {
     if (!D.hist) return '';
     const l = Net.all()[D.hist.tk]; if (!l) return '';
@@ -172,7 +181,7 @@ window.Dash = (function () {
     const mk = (arr, e) => { const x = arr.find(y => y.by === e.by && y.n === e.n); return x ? (x.ok ? `<span class="okm">✔ ${t('verified')}</span>` : `<span class="badm">✖ ${t('broken')} (${x.why})</span>`) : '…'; };
     const sum = e => { const b = e.body; return { offer: `${t('loan')} ${fmt(b.loan)} · ${b.rate}%`, ack: t('ackd'), payment_claim: `${AD.label('PAWN_PayMode', b.mode, lang())} ${fmt(b.amount)}`,
       payment_verified: `${AD.label('PAWN_PayMode', b.mode, lang())} ${fmt(b.amt)} (${t('int')} ${fmt(b.int)} + VAT ${fmt(b.vat)} + ${t('principalPart')} ${fmt(b.principalPart)})${b.reissue ? ' → ' + b.reissue.no : ''}`,
-      payment_rejected: b.reason, closed: b.how }[e.type] || ''; };
+      payment_rejected: `${b.reason} ${t.raw('code_' + b.reason)}${b.attachment ? ' · ' + t('attached') : ''}`, payment_wait: `${b.code} ${t.raw('code_' + b.code)}`, closed: b.how }[e.type] || ''; };
     const allOk = v.length && v.every(x => x.ok), crmL = Net.crm[st.no], fu = crmL ? crmL.chain.shop : [];
     const risk = P.classify(st, Net.today, { npl: Net.nplDays, price: Net.price }), ar = P.arrears(st, Net.today), fcols = AD.cols('PAWN_FollowUp').filter(c => c.IsDisplayed === 'Y');
     return `<div class="hist"><h3>${t('history')}: ${st.no} · ${st.name} <span class="${allOk ? 'okm' : 'badm'}">${v.length ? (allOk ? '✔ ' + t('chainOk') : '✖ ' + t('chainBroken')) : ''}</span> ${risk ? chip('risk', risk) : ''}</h3>
@@ -181,6 +190,7 @@ window.Dash = (function () {
       ${evs.map(e => `<tr><td>${e.n}</td><td>${t('by_' + e.by)}</td><td>${e.type}</td><td>${new Date(e.ts).toISOString().slice(0, 10)}</td><td>${sum(e)}</td><td><code>${e.hash.slice(0, 8)}</code></td><td>${mk(v, e)}</td></tr>`).join('')}</table></div>
       <div class="actions" style="justify-content:flex-start">${st.paid.length ? (l.tamper ? `<button class="btn small" data-repair="${st.no}">${t('repair')}</button>` : `<button class="btn small" style="background:var(--s8)" data-tamper="${st.no}">${t('tamper')}</button>`) : ''}</div>
       <div class="note">${t('tamperNote')}</div>
+      ${atts(st, l)}
       <h3 style="margin-top:14px">${t('crmHead')}</h3><div class="note">${t('crmNote')}</div>
       ${fu.length ? `<div class="tablewrap"><table><tr><th>#</th>${fcols.map(c => `<th>${gl(c)}</th>`).join('')}<th>${t('check')}</th></tr>
       ${fu.map(e => `<tr><td>${e.n}</td>${fcols.map(c => `<td>${c.AD_Reference_ID === 17 ? AD.label(c.AD_Reference_Value_ID, e.body[c.ColumnName], lang()) : c.AD_Reference_ID === 15 && e.body[c.ColumnName] ? fd(e.body[c.ColumnName]) : (e.body[c.ColumnName] || '')}</td>`).join('')}<td>${mk(cv, e)}</td></tr>`).join('')}</table></div>` : `<div class="note">${t('noContact')}</div>`}
@@ -204,7 +214,11 @@ window.Dash = (function () {
     const a = D.layout.findIndex(w => w.id === id); if (a < 0) return; const [w] = D.layout.splice(a, 1);
     const b = beforeId ? D.layout.findIndex(x => x.id === beforeId) : D.layout.length; D.layout.splice(b < 0 ? D.layout.length : b, 0, w); save();
   }
-  async function showHist(tk) { D.hist = { tk, verify: null, crmVerify: null }; D.hist.verify = await Net.all()[tk].verifyAll(); D.hist.crmVerify = Net.crm[tk] ? await Net.crm[tk].verifyAll() : []; }
+  async function showHist(tk) {
+    D.hist = { tk, verify: null, crmVerify: null, att: {} }; const l = Net.all()[tk];
+    D.hist.verify = await l.verifyAll(); D.hist.crmVerify = Net.crm[tk] ? await Net.crm[tk].verifyAll() : [];
+    for (const e of l.chain.shop) if (e.body && e.body.attachment) D.hist.att[e.body.attachment.sha256] = (await window.Token.sha(window.Token.canon(e.body.attachment.json))) === e.body.attachment.sha256;
+  }
   async function logFu(tk) {
     const f = {}; let bad = false;
     AD.cols('PAWN_FollowUp').filter(c => c.IsDisplayed === 'Y').forEach(c => { const v = document.getElementById('fu_' + c.ColumnName).value; if (c.IsMandatory === 'Y' && !v) bad = true; f[c.ColumnName] = v; });

@@ -32,7 +32,7 @@ window.Flow = (function () {
         <div class="kv"><span>${t('name')}</span><b>${st.name}</b><span>${t('phone')}</span><b>${st.phone}</b><span>${t('loan')}</span><b>${fmt(st.loan)}</b><span>${t('code')}</span><b>${off.code}</b></div>
         <div class="note">${t('fundNote')}</div>${qr(link)}
         <div class="note">${t('sendOffer')}</div><div class="chs">${['qr', 'link', 'email', 'whatsapp', 'line', 'sms', 'nfc', 'web'].map(c => `<button class="chbtn" data-j="send|shop|${c}|${tk}" title="${t('ch_' + c)}">${icon(CH[c])}<small>${t('ch_' + c)}</small></button>`).join('')}</div>
-        <div class="sec-title">${t('claimsIn')}</div>${st.claims.length ? st.claims.map(c => `<div class="row2"><span>#${c.claimNo} ${t('m_' + c.mode)} ${fmt(c.amount)}</span><span class="chip2" style="--c:var(${c.status === 'verified' ? '--s6' : c.status === 'rejected' ? '--s8' : '--muted'})">${t('cl_' + c.status)}${c.reason ? ' · ' + c.reason : ''}</span></div>`).join('') : `<div class="note">–</div>`}
+        <div class="sec-title">${t('claimsIn')}</div>${st.claims.length ? st.claims.map(c => `<div class="row2"><span>#${c.claimNo} ${t('m_' + c.mode)} ${fmt(c.amount)}</span><span class="chip2" style="--c:var(${c.status === 'verified' ? '--s6' : c.status === 'rejected' ? '--s8' : '--s4'})">${t('cl_' + c.status)}${c.reason ? ' · ' + c.reason + ' ' + t.raw('code_' + c.reason) : ''}</span>${c.status === 'waiting' ? `<button class="btn small" data-j="retry|${tk}">${t('retryCheck')}</button>` : ''}</div>`).join('') : `<div class="note">–</div>`}
         <div class="sec-title">${t('recvHere')}</div><textarea id="recv_shop" placeholder="${t('pasteTok')}" rows="2"></textarea>
         <div class="actions" style="justify-content:flex-start"><button class="btn small" data-j="recv|shop">${t('receive')}</button>${tks.length > 1 ? sel('j.tk', tk, tks.map(k => [k, k])) : ''}<button class="btn small ghost" style="color:var(--accent)" data-j="issue">${t('issueAnother')}</button></div>`;
     }
@@ -88,10 +88,10 @@ window.Flow = (function () {
         ${q.error ? `<div class="err">⚠ ${t('amt_' + q.error)}</div>` : `<table><tr><td>${t('int')}</td><td class="n">${fmt(q.int)}</td></tr><tr><td>VAT ${S.set.vat}%</td><td class="n">${fmt(q.vat)}</td></tr><tr><td>${t('principalPart')}</td><td class="n">${fmt(q.principalPart)}</td></tr></table>
         ${q.reissue ? `<div class="note">${t('reissueNote')}</div>` : ''}<div class="total"><span>${t('payTotal')}</span><span class="big">${fmt(q.total)}</span></div>
         <div class="note">${t('ppNote')}</div>${qr(P.promptpay(st.shopPhone || Net.shopPhone, q.total))}
-        <label class="f">${t('slipSim')}${sel('j.slip', S.j.slip, ['ok', 'duplicate', 'wrongAmount', 'wrongReceiver'].map(k => [k, t('slip_' + k)]))}</label>
+        <label class="f">${t('slipSim')}${sel('j.slip', S.j.slip, ['ok', 'duplicate', 'wrongAmount', 'wrongReceiver', 'tooFresh', 'noQR'].map(k => [k, t('slip_' + k)]))}</label>
         <label class="f">${t('returnVia')}${sel('j.via', S.j.via, chOpts())}</label>
         <div class="actions"><button class="btn" data-j="pay">${t('submitSlip')}</button></div>`}</div>`}
-        ${st.claims.length ? `<div class="panel"><div class="sec-title" style="margin-top:0">${t('myPayments')}</div>${st.claims.map(c => `<div class="row2"><span>#${c.claimNo} ${t('m_' + c.mode)} ${fmt(c.amount)}</span><span class="chip2" style="--c:var(${c.status === 'verified' ? '--s6' : c.status === 'rejected' ? '--s8' : '--s4'})">${t('cl_' + c.status)}${c.reason ? ' · ' + c.reason : ''}</span></div>`).join('')}</div>` : ''}
+        ${st.claims.length ? `<div class="panel"><div class="sec-title" style="margin-top:0">${t('myPayments')}</div>${st.claims.map(c => `<div class="row2"><span>#${c.claimNo} ${t('m_' + c.mode)} ${fmt(c.amount)}</span><span class="chip2" style="--c:var(${c.status === 'verified' ? '--s6' : c.status === 'rejected' ? '--s8' : '--s4'})">${t('cl_' + c.status)}${c.reason ? ' · ' + c.reason + ' ' + t.raw('code_' + c.reason) : ''}</span></div>`).join('')}</div>` : ''}
         <div class="panel"><span class="chip2" style="--c:var(${behind || pending ? '--s4' : '--s6'})">${pending ? t('queued') : behind ? t('behind') + ' ' + behind : t('inSync')}</span></div></div>`;
     }
     return `<div class="phone">${top}${main}</div>`;
@@ -110,6 +110,7 @@ window.Flow = (function () {
     if (a === 'issue') { S.j.tk = await Net.issueOffer(buildOffer()); }
     else if (a === 'send') { S.j.tk = d || S.j.tk; const w = await Net.send(b, c, d || S.j.tk); if (c === 'nfc' && w) { const r = await Net.nfcWrite(Net.share('link', w.token).link); w.note = r.ok ? 'NFC written' : 'NFC ' + r.why; } }
     else if (a === 'deliver') await Net.deliver(+b);
+    else if (a === 'retry') await Net.shopRetry(b);
     else if (a === 'lose') Net.lose(+b);
     else if (a === 'dup') Net.dup(+b);
     else if (a === 'openOffer') await Net.openOffer(S.j.tk || Object.keys(Net.shopL).pop());

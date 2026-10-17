@@ -42,6 +42,8 @@ window.AD = (function () {
     C(1000002, 'TaxAmt', 'VAT', 'ภาษีมูลค่าเพิ่ม', 12, { ro: 1 }),
     C(1000002, 'PrincipalAmt', 'Principal part', 'ส่วนเงินต้น', 12, { ro: 1 }),
     C(1000002, 'SlipRef', 'Slip reference (transRef)', 'เลขอ้างอิงสลิป', 10, { len: 40, ro: 1 }),
+    C(1000002, 'SlipBank', 'Sending bank (SlipOK)', 'ธนาคารผู้โอน (SlipOK)', 10, { len: 3, ro: 1 }),
+    C(1000002, 'SlipTimestamp', 'Slip time (SlipOK transTimestamp)', 'เวลาตามสลิป', 15, { ro: 1 }),
     C(1000002, 'ClaimStatus', 'Claim status', 'สถานะการตรวจสลิป', 17, { list: 'PAWN_ClaimStatus', sel: 1, ro: 1 }),
     // PAWN_FollowUp (CRM)
     C(1000003, 'PAWN_Ticket_ID', 'Ticket', 'ใบขายฝาก', 19, { m: 1, hide: 1 }),
@@ -61,7 +63,7 @@ window.AD = (function () {
     L('PAWN_Ageing', 'over30', 'Overdue > 30 days', 'เกินกำหนด > 30 วัน'), L('PAWN_Ageing', 'over0', 'Overdue 1–30 days', 'เกินกำหนด 1–30 วัน'), L('PAWN_Ageing', 'd30', 'Due in 30 days', 'ครบใน 30 วัน'),
     L('PAWN_Ageing', 'd60', 'Due in 31–60 days', 'ครบใน 31–60 วัน'), L('PAWN_Ageing', 'later', 'Due after 60 days', 'ครบหลัง 60 วัน'),
     L('PAWN_PayMode', 'installment', 'Installment', 'ส่งงวด'), L('PAWN_PayMode', 'full', 'Pay in full (redeem)', 'ชำระเต็มจำนวน (ไถ่ถอน)'), L('PAWN_PayMode', 'other', 'Another amount', 'จำนวนอื่น'),
-    L('PAWN_ClaimStatus', 'pending', 'Waiting for the shop', 'รอร้านตรวจ'), L('PAWN_ClaimStatus', 'verified', 'Verified', 'ตรวจแล้ว'), L('PAWN_ClaimStatus', 'rejected', 'Rejected', 'ไม่ผ่าน'),
+    L('PAWN_ClaimStatus', 'pending', 'Waiting for the shop', 'รอร้านตรวจ'), L('PAWN_ClaimStatus', 'waiting', 'Waiting for bank check', 'รอตรวจกับธนาคาร'), L('PAWN_ClaimStatus', 'verified', 'Verified', 'ตรวจแล้ว'), L('PAWN_ClaimStatus', 'rejected', 'Rejected', 'ไม่ผ่าน'),
     L('PAWN_Channel', 'call', 'Phone call', 'โทรศัพท์'), L('PAWN_Channel', 'line', 'LINE', 'LINE'), L('PAWN_Channel', 'sms', 'SMS', 'SMS'), L('PAWN_Channel', 'visit', 'Visit', 'พบที่ร้าน/เยี่ยม'), L('PAWN_Channel', 'email', 'Email', 'อีเมล'),
     L('PAWN_Outcome', 'promised', 'Promised to pay', 'รับปากว่าจะชำระ'), L('PAWN_Outcome', 'paid', 'Paid', 'ชำระแล้ว'), L('PAWN_Outcome', 'noanswer', 'No answer', 'ติดต่อไม่ได้'),
     L('PAWN_Outcome', 'upsell', 'Offered more lending', 'เสนอวงเงินเพิ่ม'), L('PAWN_Outcome', 'other', 'Other', 'อื่นๆ')
@@ -70,6 +72,8 @@ window.AD = (function () {
   const windows = [{ AD_Window_ID: 1000001, Name: 'Pawn Ticket', WindowType: 'M',
     tabs: [{ AD_Tab_ID: 1000001, Name: 'Ticket', AD_Table_ID: 1000001, TabLevel: 0 }, { AD_Tab_ID: 1000002, Name: 'Payment', AD_Table_ID: 1000002, TabLevel: 1 }, { AD_Tab_ID: 1000003, Name: 'Follow-up', AD_Table_ID: 1000003, TabLevel: 1 }] }];
 
+  // AD_Attachment: files kept with a record (the SlipOK JSON response is stored on the payment); content type + sha256 held in the signed event
+  const attachments = [{ AD_Table: 'PAWN_Payment', Title: 'slipok_<transRef>.json', ContentType: 'application/json', Description: 'SlipOK check-slip response (success or 1012/1013/1014 with data)' }];
   const tableOf = n => tables.find(t => t.TableName === n);
   const cols = n => columns.filter(c => c.AD_Table_ID === tableOf(n).AD_Table_ID).sort((a, b) => a.SeqNo - b.SeqNo);
   const list = n => refLists.filter(r => r.AD_Reference_Name === n);
@@ -77,5 +81,5 @@ window.AD = (function () {
   // ColumnName → key in the dashboard row (the fold's field name)
   const ROWKEY = { Status: 'status', Category: 'cat', RateGroup: 'grp', Risk: 'risk', Ageing: 'ageing', DateTicket: 'month' };
   const dimensions = () => cols('PAWN_Ticket').filter(c => c.IsSelectionColumn === 'Y' && ROWKEY[c.ColumnName]).map(c => ({ dim: ROWKEY[c.ColumnName], col: c }));
-  return { tables, columns, refLists, windows, tableOf, cols, list, label, ROWKEY, dimensions };
+  return { tables, columns, refLists, windows, attachments, tableOf, cols, list, label, ROWKEY, dimensions };
 })();

@@ -6,7 +6,7 @@
   const CHANNELS = ['web', 'qr', 'link', 'email', 'whatsapp', 'line', 'sms', 'nfc'];
   const Net = {
     today: '2025-09-25', shopAcct: 'xxx-x-x5678-x', shopPhone: '0800000000', solo: null,
-    keys: {}, shopL: {}, sample: {}, crm: {}, price: 100000, nplDays: 90, phoneL: null, wire: [], online: { shop: true, phone: true }, seq: 0, tick: 0, nextNo: 161, claimSeq: 0, listeners: [],
+    keys: {}, shopL: {}, sample: {}, slipok: { refs: {}, attempts: {} }, slipokPackage: 'ok', crm: {}, price: 100000, nplDays: 90, phoneL: null, wire: [], online: { shop: true, phone: true }, seq: 0, tick: 0, nextNo: 161, claimSeq: 0, listeners: [],
     clientId: Math.random().toString(36).slice(2),
     all() { return { ...this.sample, ...this.shopL }; },
     on(fn) { this.listeners.push(fn); }, emit() { this.listeners.forEach(f => f()); },
@@ -115,28 +115,38 @@
       await l.append('payment_claim', { claimNo, mode, amount: q.total, ask: amount || 0, slip }, this.ts());
       this.persist(); await this.phoneSend(via || 'web'); return { ok: true, q, slip };
     },
-    // ---- shop: pick up claims, verify slip (mock SlipOK), book, notify ----
-    async shopProcess(tk) {
+    // ---- shop: pick up claims, call SlipOK (mock, real response shape), book, attach the response, notify ----
+    async shopProcess(tk, opt) {
       const l = this.shopL[tk]; if (!l || !this.online.shop) return;
-      const st = P.fold(l, this.today), set = this.set || { taxPoint: 'interest' };
-      let seen = [...st.seenRefs], did = false;
-      for (const c of st.claims.filter(x => x.status === 'pending')) {
+      const retry = !!(opt && opt.retry), set = this.set || { taxPoint: 'interest' };
+      let did = false;
+      const todo = P.fold(l, this.today).claims.filter(x => x.status === 'pending' || (retry && x.status === 'waiting'));
+      for (const c of todo) {
         const cur = P.fold(l, this.today);
         // money paid is what the slip proves: if the quote moved since the claim (an earlier payment landed first), allocate the
         // slip amount interest-first as 'other' instead of refusing paid money
         let q = P.quote(cur, c.mode, c.ask, this.today, set), re = false;
         if (q.error || Math.abs(q.total - c.amount) > 0.005) { q = P.quote(cur, 'other', c.amount, this.today, set); re = true; }
-        const res = q.error ? { success: false, code: 'BAD_AMOUNT' } : P.SlipOK.verify(c.slip, { amount: c.amount, receiver: this.shopAcct }, seen);
+        if (q.error) { await l.append('payment_rejected', { claimNo: c.claimNo, reason: 'BAD_AMOUNT', message: 'amount cannot be applied' }, this.ts()); did = true; continue; }
+        const req = { amount: c.amount, log: true }; if (c.slip.qrData) req.data = c.slip.qrData; else req.files = 'slip-image';
+        const res = P.SlipOK.call(c.slip, req, this.slipok, { shopAcct: this.shopAcct, package: this.slipokPackage });
         if (res.success) {
+          const json = { success: true, data: res.data };
+          const attachment = { AD_Table: 'PAWN_Payment', title: 'slipok_' + res.data.transRef + '.json', contentType: 'application/json', sha256: await T.sha(T.canon(json)), json };
           await l.append('payment_verified', { claimNo: c.claimNo, mode: c.mode, realloc: re, amt: q.total, int: q.int, vat: q.vat, principalPart: q.principalPart,
             coverTo: q.coverTo, credit: q.credit, untaxed: q.untaxed, reissue: q.reissue ? { no: 'A' + (this.nextNo++), ref: tk, first: tk } : null,
-            slip: { transRef: c.slip.transRef } }, this.ts());
-          seen.push(c.slip.transRef);
-        } else await l.append('payment_rejected', { claimNo: c.claimNo, reason: res.code }, this.ts());
+            slip: { transRef: res.data.transRef }, attachment }, this.ts());
+        } else if (P.SlipOK.WAIT_CODES.includes(res.code)) {                    // not the borrower's fault: wait and re-check (spec §15.3)
+          await l.append('payment_wait', { claimNo: c.claimNo, code: res.code, message: res.message, delay: res.data && res.data.delay || null, shopAlert: res.code === '1003' || res.code === '1004' }, this.ts());
+        } else {
+          const att = res.data ? { AD_Table: 'PAWN_Payment', title: 'slipok_' + (res.data.transRef || c.slip.transRef) + '_' + res.code + '.json', contentType: 'application/json', sha256: await T.sha(T.canon(res)), json: res } : null;
+          await l.append('payment_rejected', { claimNo: c.claimNo, reason: res.code, message: res.message, ...(att ? { attachment: att } : {}) }, this.ts());
+        }
         did = true;
       }
       if (did) { this.persist(); await this.send('shop', 'web', tk); }       // notify the borrower automatically
     },
+    async shopRetry(tk) { await this.shopProcess(tk, { retry: true }); this.emit(); },
     share(channel, token) {
       const base = (typeof location !== 'undefined' ? location.href.split('#')[0] : 'https://red1oon.github.io/ThaiGoldPawn-mockup/');
       const link = base + '#/t/' + token, q = encodeURIComponent;
