@@ -11,6 +11,7 @@ window.Forfeit = (function () {
   function canSell(st) { if (!st) return { ok: false, why: 'none' }; if (st.status === 'sold') return { ok: false, why: 'already-sold' }; if (st.status !== 'forfeited') return { ok: false, why: 'not-forfeited' }; return { ok: true }; }
   const own = tk => { let l = Net.shopL[tk]; if (!l && Net.sample[tk]) { l = Net.sample[tk]; l.live = true; Net.shopL[tk] = l; } return l; };   // a sample ticket worked on becomes the shop's own (persisted) record
   async function forfeit(tk, appraised) {
+    { const g = window.Auth && window.Auth.check('forfeit'); if (g && !g.ok) return { ok: false, why: 'role' }; }
     const st = fold(tk), g = canForfeit(st); if (!g.ok) return g;
     const l = own(tk), val = appraised != null && appraised !== '' ? C.r2(+appraised) : appraise(st);
     if (!(val > 0)) return { ok: false, why: 'appraisal' };
@@ -19,6 +20,7 @@ window.Forfeit = (function () {
     Net.persist(); Net.emit(); return { ok: true, appraised: val, gainLoss: C.r2(val - st.principal), event: e };
   }
   async function sale(tk, o) {
+    { const g = window.Auth && window.Auth.check('sale'); if (g && !g.ok) return { ok: false, why: 'role' }; }
     const st = fold(tk), g = canSell(st); if (!g.ok) return g;
     const price = C.r2(+o.price); if (!(price > 0)) return { ok: false, why: 'price' };
     const l = own(tk), e = await l.append('sale', { price, buyer: String(o.buyer || '').trim(), tender: o.tender || 'cash', appraised: st.appraised }, Net.ts());

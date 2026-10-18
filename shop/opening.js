@@ -44,6 +44,7 @@
   }
   // one signed offer (opening) + one opening event per valid row, on a fresh ledger; then ONE signed import event (file, sha256, counts)
   async function commit(valid, meta) {
+    { const g = root.Auth && root.Auth.check('openingImport'); if (g && !g.ok) return { added: 0, principal: 0, denied: true }; }
     const set = Net.set || {}; let n = 0, principal = 0;
     for (const v of valid) {
       const l = new T.Ledger(v.tk, 'shop', Net.keys.shop); l.live = true, t0 = Date.parse(v.date + 'T09:00:00Z');

@@ -25,6 +25,7 @@ window.DayEnd = (function () {
   function history() { return histFn(); }
   const histFn = () => { const l = Net.crm && Net.crm._dayend; return l ? l.chain.shop.filter(e => e.type === 'dayend').map(e => ({ ...e.body, ts: e.ts, n: e.n })).reverse() : []; };
   async function save(d, counted, note, vaultVar, opening) {
+    { const g = window.Auth && window.Auth.check('dayend'); if (g && !g.ok) return { ok: false, why: 'role' }; }
     const x = expected(d, opening), c = +counted; if (isNaN(c) || c < 0) return { ok: false, why: 'counted' };
     const e = await Net.logInternal('_dayend', 'dayend', { date: d, openingFloat: x.opening, netMovement: x.net, expectedCash: x.expected, countedCash: c, variance: variance(c, x.expected), vaultVariance: +vaultVar || 0, note: String(note || '').trim() });
     return { ok: true, event: e, variance: variance(c, x.expected) };

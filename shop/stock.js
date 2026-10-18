@@ -28,6 +28,7 @@ window.Stock = (function () {
     return [...a, ...b].filter(e => e.body).sort((x, y) => x.ts - y.ts || x.n - y.n);
   }
   async function log(type, body, ts) {
+    { const g = window.Auth && window.Auth.check(type === 'count' ? 'count' : 'locate'); if (g && !g.ok) return null; }
     const l = Net.crmL('_loc'), b = { ...body }; l.live = true; if (!l.chain.shop.length) b.pub = T.pubOf(Net.keys.shop.pub);
     const e = await l.append(type, b, ts || Net.ts()); Net.persist(); Net.emit(); return e;
   }

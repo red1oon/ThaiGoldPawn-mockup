@@ -40,6 +40,7 @@
     get peer() { return this.me === 'shop' ? 'phone' : 'shop'; }
     head(by) { const c = this.chain[by]; const e = c[c.length - 1]; return e ? { n: e.n, h: e.hash } : { n: 0, h: '' }; }
     async append(type, body, ts) {
+      if (this.me === 'shop' && Ledger.actorFn && body && typeof body === 'object' && !Array.isArray(body)) { const a = Ledger.actorFn(); if (a && body.actor === undefined) body = { ...body, actor: a }; }   // who acted (spec §20.8), inside the signed body
       const mine = this.chain[this.me], seen = this.head(this.peer);
       const e = { tk: this.tk, by: this.me, n: mine.length + 1, prev: this.head(this.me).h, seen, type, body, ts };
       e.hash = await hashOf(e); e.sig = await sign(this.key.priv, e.hash);
@@ -149,6 +150,7 @@
     static clone(l) { return JSON.parse(JSON.stringify({ chain: l.chain })); }
   }
 
+  Ledger.actorFn = null;
   root.Token = { canon, sha, b64u, unb64u, newKey, pubOf, Ledger, hashOf };
   if (typeof module !== 'undefined') module.exports = root.Token;
 })(typeof window !== 'undefined' ? window : globalThis);

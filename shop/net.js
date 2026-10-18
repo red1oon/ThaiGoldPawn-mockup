@@ -36,11 +36,21 @@
       try { const pj = JSON.parse(store.get('gp.phone.ledger')); if (pj) this.phoneL = this.hydrate(pj, 'phone'); } catch (e) {}
       try { const sj = JSON.parse(store.get('gp.shop.live') || '[]'); sj.forEach(j => { this.shopL[j.tk] = this.hydrate(j, 'shop'); }); } catch (e) {}
       try { JSON.parse(store.get('gp.crm') || '[]').forEach(j => { const l = this.hydrate(j, 'shop'); l.live = true; this.crm[j.tk.slice(4)] = l; }); } catch (e) {}
+      this.prefix = store.get('gp.counter.prefix') || 'A'; this.seqSync();
       try { this.bc = new BroadcastChannel('gp-web'); this.bc.onmessage = ev => this.onWeb(ev.data); } catch (e) { this.bc = null; }
+    },
+    // ticket numbers: each counter has its own prefix, and the next number follows the highest one already held (also after a reload or a merge)
+    seqSync() { const p = this.prefix || 'A', re = new RegExp('^' + p + '(\\d+)$'); let m = 160; Object.keys(this.shopL).forEach(k => { const x = re.exec(k); if (x) m = Math.max(m, +x[1]); }); this.nextNo = Math.max(this.nextNo, m + 1); },
+    reloadFromStore() {                                     // after a merge: pick up longer chains / new tickets written to the store (never replaces a longer local chain)
+      const len = l => l.chain.shop.length + l.chain.phone.length;
+      try { JSON.parse(store.get('gp.shop.live') || '[]').forEach(j => { const cur = this.shopL[j.tk], n = this.hydrate(j, 'shop'); if (!cur || len(n) > len(cur)) { n.live = true; this.shopL[j.tk] = n; } }); } catch (e) {}
+      try { JSON.parse(store.get('gp.crm') || '[]').forEach(j => { const k = j.tk.slice(4), cur = this.crm[k], n = this.hydrate(j, 'shop'); if (!cur || len(n) > len(cur)) { n.live = true; this.crm[k] = n; } }); } catch (e) {}
+      this.seqSync(); this.emit();
     },
     // ---- CRM follow-up history (spec §15.7): shop-internal signed chain, never put in a token ----
     crmL(tk) { if (!this.crm[tk]) { const l = new T.Ledger('crm:' + tk, 'shop', this.keys.shop); l.live = !!this.shopL[tk]; this.crm[tk] = l; } return this.crm[tk]; },
     async logFollowup(tk, f, ts) {
+      { const g = root.Auth && root.Auth.check('followup'); if (g && !g.ok) return null; }
       const l = this.crmL(tk), body = { ...f }; if (!l.chain.shop.length) body.pub = T.pubOf(this.keys.shop.pub);
       const e = await l.append('followup', body, ts || this.ts()); if (this.shopL[tk]) l.live = true; this.persist(); this.emit(); return e;
     },
@@ -49,6 +59,7 @@
       const e = await l.append('kyc', b, this.ts()); this.persist(); this.emit(); return e;
     },
     async logInternal(chain, type, body) {                 // generic shop-internal signed event (never in a token)
+      { const need = { _open: 'openingImport', _price: 'price', _dayend: 'dayend', _staff: 'staff', _counter: 'counter' }[chain]; const g = need && root.Auth && root.Auth.check(need); if (g && !g.ok) return null; }
       const l = this.crmL(chain), b = { ...body }; l.live = true; if (!l.chain.shop.length) b.pub = T.pubOf(this.keys.shop.pub);
       const e = await l.append(type, b, this.ts()); this.persist(); this.emit(); return e;
     },
@@ -67,7 +78,8 @@
 
     // ---- shop: issue (spec §15.2.1) ----
     async issueOffer(o) {
-      const tk = 'A' + (this.nextNo++), l = new T.Ledger(tk, 'shop', this.keys.shop); l.live = true;
+      { const g = root.Auth && root.Auth.check('issue'); if (g && !g.ok) return null; }
+      const tk = (this.prefix || 'A') + (this.nextNo++), l = new T.Ledger(tk, 'shop', this.keys.shop); l.live = true;
       const code = String(100000 + Math.floor(Math.random() * 899999));
       await l.append('offer', { ...o, pub: T.pubOf(this.keys.shop.pub), ecdh: this.ecdh.shop.pub, code, shopAcct: this.shopAcct, shopPhone: this.shopPhone }, this.ts());
       this.shopL[tk] = l; this.persist(); this.emit(); return tk;
@@ -188,6 +200,7 @@
     },
     // ---- lost phone (spec §20.7): the shop revokes the phone's key and hands out a NEW one-time code; the new device enrols with proof of that code ----
     async shopRevoke(tk, reason) {
+      { const g = root.Auth && root.Auth.check('revoke'); if (g && !g.ok) return { ok: false, why: 'role' }; }
       const l = this.shopL[tk]; if (!l || !l.chain.phone.length) return { ok: false, why: 'no-phone' };
       const code2 = String(100000 + Math.floor(Math.random() * 899999)); await l.revokePhone(reason, code2, this.ts());
       const token = S.wrap(await S.sealCode(l.reenrolPlain(), code2, tk)); this.persist(); this.emit(); return { ok: true, code: code2, token, link: this.share('link', token).link };
@@ -201,7 +214,8 @@
     async kidOf(pub) { const k = pub.x; if (!this.kids[k]) this.kids[k] = await S.kidOf(pub); return this.kids[k]; },
     kidText(pub) { if (!pub) return ''; const c = this.kids[pub.x]; if (c) return c.slice(0, 12); this.kidOf(pub).then(() => this.emit()); return '…'; },
     // ---- shop: pick up claims, call SlipOK (mock, real response shape), book, attach the response, notify ----
-    async shopProcess(tk, opt) {
+    shopProcess(tk, opt) { return root.Auth ? root.Auth.withSystem(() => this._shopProcess(tk, opt)) : this._shopProcess(tk, opt); },      // automated booking is stamped 'system', not the person at the counter
+    async _shopProcess(tk, opt) {
       const l = this.shopL[tk]; if (!l || !this.online.shop) return;
       const retry = !!(opt && opt.retry), set = this.set || { taxPoint: 'interest' };
       let did = false;

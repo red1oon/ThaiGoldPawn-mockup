@@ -10,6 +10,7 @@ window.Price = (function () {
   const latest = on => { const L = list().filter(p => !on || p.date <= on); return L[L.length - 1] || null; };
   const prev = () => { const L = list(); return L[L.length - 2] || null; };
   async function record(p) {
+    { const g = window.Auth && window.Auth.check('price'); if (g && !g.ok) return { ok: false, why: 'role' }; }
     const b = { date: p.date, time: p.time || '09:00', buy: +p.buy, sell: +p.sell, tax: +p.tax, source: 'manual' };
     if (!(b.buy > 0 && b.sell > 0 && b.tax > 0) || !/^\d{4}-\d{2}-\d{2}$/.test(b.date)) return { ok: false, why: 'invalid' };
     return { ok: true, event: await Net.logInternal('_price', 'price', b) };

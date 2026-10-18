@@ -71,20 +71,31 @@
         for (let i = 0; i < n; i++) if (a[i].hash !== b[i].hash) { div = true; break; }
         if (a.length > b.length) newer = true; else if (a.length < b.length) older = true;
       });
-      return { kind: l.kind, tk: l.tk, state: div ? 'diverged' : newer ? 'newer-local' : older ? 'newer-backup' : 'same' };
+      return { kind: l.kind, tk: l.tk, state: div ? 'diverged' : (newer && older) ? 'both-ahead' : newer ? 'newer-local' : older ? 'newer-backup' : 'same' };
     });
   }
   // apply: valid chains only, longer chain wins; diverged and newer-local are never overwritten
   async function apply(bundle, store, opt) {
-    opt = opt || {}; const ver = opt.verified || await verify(bundle), cmp = compare(bundle, store), put = { shop: [], crm: [], phone: null }, skipped = []; let applied = 0;
+    opt = opt || {}; const ver = opt.verified || await verify(bundle), cmp = compare(bundle, store), put = { shop: [], crm: [], phone: null }, skipped = [], mergedJobs = []; let applied = 0;
     const cur = { shop: J(store, 'gp.shop.live') || [], crm: J(store, 'gp.crm') || [], phone: J(store, 'gp.phone.ledger') };
     const keep = (arr, tk) => arr.find(x => x.tk === tk);
     bundle.ledgers.forEach((l, i) => {
       const v = ver[i], c = cmp[i];
       if (!v.ok) { skipped.push({ tk: l.tk, why: 'verify' }); return; }
+      if (c.state === 'both-ahead') {                       // each side has events the other lacks (e.g. shop events here, phone events there): keep the LONGER chain per author; prefix-consistent, so this loses nothing
+        const mine = (l.kind === 'phone' ? (cur.phone && cur.phone.tk === l.tk ? cur.phone : null) : keep(cur[l.kind], l.tk)) || {}, mc = mine.chain || { shop: [], phone: [] };
+        const merged = { shop: (mc.shop.length >= l.chain.shop.length ? mc.shop : l.chain.shop), phone: (mc.phone.length >= l.chain.phone.length ? mc.phone : l.chain.phone) };
+        const lg = new T.Ledger(l.tk, l.kind === 'phone' ? 'phone' : 'shop', null); lg.chain = merged; mergedJobs.push({ l, merged, lg });
+        return;
+      }
       if (c.state === 'diverged' || c.state === 'newer-local' || c.state === 'same') { if (c.state !== 'same') skipped.push({ tk: l.tk, why: c.state }); return; }
       applied++; if (l.kind === 'phone') put.phone = { tk: l.tk, chain: l.chain }; else put[l.kind].push({ tk: l.tk, chain: l.chain });
     });
+    for (const j of mergedJobs) {                         // a merged chain is applied only if it verifies end to end
+      const v = await j.lg.verifyAll();
+      if (!v.every(x => x.ok)) { skipped.push({ tk: j.l.tk, why: 'merge-verify' }); continue; }
+      applied++; if (j.l.kind === 'phone') put.phone = { tk: j.l.tk, chain: j.merged }; else put[j.l.kind].push({ tk: j.l.tk, chain: j.merged });
+    }
     const merge = (old, add) => { const m = {}; old.forEach(x => m[x.tk] = x); add.forEach(x => m[x.tk] = x); return Object.values(m); };
     store.set('gp.shop.live', JSON.stringify(merge(cur.shop, put.shop)));
     store.set('gp.crm', JSON.stringify(merge(cur.crm, put.crm)));

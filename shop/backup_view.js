@@ -98,6 +98,7 @@ window.BackupView = (function () {
 
   async function click(el) {
     const n = el.closest('[data-bk]'); if (!n) return false; const a = n.dataset.bk;
+    { const need = { gen: 'backup', save: 'backup', send: 'backup', share: 'backup', jsend: 'backup', jaudit: 'backup', apply: 'restore', fetch: 'restore', jrestore: 'restore' }[a]; if (need && window.Auth && !window.Auth.check(need).ok) { V.msg = V.wmsg = V.smsg = V.jmsg = '⚠ ' + t('roleDenied'); return true; } }
     if (a === 'gen') { V.shown = B.recoveryCode(); V.code = V.shown; V.msg = ''; return true; }
     if (a === 'save') {
       V.msg = '';
@@ -161,6 +162,7 @@ window.BackupView = (function () {
     const ver = await B.verify(bundle); V.pending = { bundle, ver, cmp: B.compare(bundle, store) }; return true;
   }
   async function file(el) {
+    if (window.Auth && !window.Auth.check('restore').ok) { V.msg = '⚠ ' + t('roleDenied'); el.value = ''; return true; }
     V.msg = ''; V.pending = null; const f = el.files && el.files[0]; if (!f) return true;
     return openText(await f.text());
   }

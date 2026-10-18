@@ -112,7 +112,7 @@ window.Flow = (function () {
   // ---------- actions ----------
   async function act(spec) {
     const [a, b, c, d] = spec.split('|');
-    if (a === 'issue') { const ck = C.checkIssue(S.issue, S.set); S.j.limitMsg = ck.blocking.length ? ck.blocking.map(b => t('lim_block_' + b)).join(' · ') : ''; if (ck.blocking.length) return; const o = buildOffer(); S.j.tk = await Net.issueOffer(o); if (ck.kycNeeded || S.issue.idNo) await Net.logKyc(S.j.tk, { idNo: S.issue.idNo, copy: !!S.issue.idCopy, needed: ck.kycNeeded }); if (window.Stock) await window.Stock.putAway(S.j.tk, window.Stock.defaultLoc(o.loan, 'VAULT')); }
+    if (a === 'issue') { const ck = C.checkIssue(S.issue, S.set); S.j.limitMsg = ck.blocking.length ? ck.blocking.map(b => t('lim_block_' + b)).join(' · ') : ''; if (ck.blocking.length) return; const o = buildOffer(), tkNew = await Net.issueOffer(o); if (!tkNew) { S.j.limitMsg = t('roleDenied'); return; } S.j.tk = tkNew; if (ck.kycNeeded || S.issue.idNo) await Net.logKyc(S.j.tk, { idNo: S.issue.idNo, copy: !!S.issue.idCopy, needed: ck.kycNeeded }); if (window.Stock) await window.Stock.putAway(S.j.tk, window.Stock.defaultLoc(o.loan, 'VAULT')); }
     else if (a === 'send') { S.j.tk = d || S.j.tk; const w = await Net.send(b, c, d || S.j.tk); if (c === 'nfc' && w) { const r = await Net.nfcWrite(Net.share('link', w.token).link); w.note = r.ok ? 'NFC written' : 'NFC ' + r.why; } }
     else if (a === 'deliver') await Net.deliver(+b);
     else if (a === 'retry') await Net.shopRetry(b);
