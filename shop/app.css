@@ -181,3 +181,14 @@ button.chip2{background:transparent;color:var(--text);font:inherit;cursor:pointe
 .spark{width:100%;height:34px;margin:2px 0}
 .lockic{vertical-align:middle;color:var(--s6)}.lockic .material-symbols-rounded{font-size:15px}
 .denied{background:#fde8e8;color:#8a1c1c;padding:8px 16px;font-size:.9em;border-bottom:1px solid #f3b8b8}.actor-chip{cursor:pointer}
+
+/* grouped navigation */
+.rail .rg{display:none;font-size:.68em;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:10px 8px 2px;align-self:stretch}
+.rail .morebtn{display:none}
+@media(min-width:1200px){.rail{overflow-y:auto}.rail .rg{display:block}}
+@media(min-width:600px) and (max-width:1199px){.rail{overflow-y:auto}.rail .rg{display:none}}
+.moresheet{position:fixed;left:0;right:0;bottom:66px;max-height:70vh;overflow:auto;background:var(--card);border-top:1px solid var(--line);box-shadow:0 -6px 24px rgba(0,0,0,.18);z-index:7;padding:8px 12px 14px;border-radius:16px 16px 0 0}
+.moresheet .rg{font-size:.7em;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:10px 4px 4px}.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.moresheet button{border:0;background:transparent;font:inherit;font-size:.74em;color:var(--text);display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 2px;cursor:pointer;border-radius:14px}.moresheet button .pill{width:48px;height:30px;border-radius:15px;display:grid;place-items:center;background:var(--chip)}.moresheet button.on{color:var(--accent);font-weight:600}
+@media(min-width:600px){.moresheet{display:none!important}}
+@media(max-width:599px){.rail button:not(.pri):not(.morebtn){display:none}.rail .morebtn{display:flex}.rail{overflow-x:visible;justify-content:space-around}.rail button{flex:1 1 0;min-width:0}}

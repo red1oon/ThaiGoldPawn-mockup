@@ -49,6 +49,10 @@
 
   // ---- shell ----
   const NAV = [['counter', 'storefront', 'navCounter'], ['journey', 'swap_horiz', 'navJourney'], ['dash', 'dashboard', 'navDash'], ['locator', 'inventory_2', 'navLocator'], ['slipuse', 'fact_check', 'navSlip'], ['books', 'account_balance', 'navBooks'], ['ad', 'schema', 'navAd'], ['settings', 'tune', 'navSettings'], ['theme', 'palette', 'navTheme'], ['thai', 'flag', 'navThai'], ['local', 'cloud_off', 'navLocal'], ['contacts', 'contacts', 'navContacts'], ['staff', 'badge', 'navStaff'], ['remind', 'notifications_active', 'navRemind'], ['dayend', 'point_of_sale', 'navDayEnd'], ['forfeit', 'gavel', 'navForfeit'], ['price', 'monitoring', 'navPrice'], ['opening', 'upload_file', 'navOpening'], ['backup', 'cloud_upload', 'navBackup'], ['story', 'movie', 'navStory']];
+  // the side rail is grouped by job; on a phone the bottom bar keeps the four daily tabs and a More sheet opens the rest
+  const GROUPS = [['gDaily', ['counter', 'journey', 'dash', 'remind', 'dayend']], ['gGold', ['locator', 'forfeit', 'price']], ['gMoney', ['slipuse', 'books']], ['gPeople', ['contacts', 'opening']], ['gAdmin', ['staff', 'backup', 'settings', 'theme', 'ad']], ['gAbout', ['thai', 'local', 'story']]];
+  const PRIMARY = ['counter', 'journey', 'dash', 'remind'];
+  const navBtn = ([k, ic, lab]) => `<button class="${S.tab === k ? 'on' : ''} ${PRIMARY.includes(k) ? 'pri' : ''}" data-tab="${k}"><span class="pill">${icon(ic)}</span>${t(lab)}</button>`;
   const ACTIONS = [
     ['grpTicket', [['a1', 'receipt_long', '#fff3e0', '#ef6c00']]],
     ['grpMoney', [['a2', 'payments', '#e8f5e9', '#2e7d32'], ['a3', 'swap_vert', '#e3f2fd', '#1565c0']]],
@@ -129,8 +133,11 @@
     document.getElementById('langBtn').textContent = S.lang === 'th' ? 'EN' : 'ไทย';
     document.getElementById('profileChip').textContent = t(S.profile === 'c1' ? 'case1s' : 'case2s') + ' · ' + S.set.taxType + (Auth.enabled() ? ' · ' + Auth.state.name + ' (' + t('role_' + Auth.state.role) + ')' : '');
     document.body.classList.toggle('solo', Net.solo === 'phone'); document.body.classList.toggle('film', !!window.__film);
-    document.getElementById('rail').innerHTML = NAV.map(([k, ic, lab]) =>
-      `<button class="${S.tab === k ? 'on' : ''}" data-tab="${k}"><span class="pill">${icon(ic)}</span>${t(lab)}</button>`).join('');
+    const byKey = Object.fromEntries(NAV.map(n => [n[0], n]));
+    document.getElementById('rail').innerHTML = GROUPS.map(([g, ks]) => `<div class="rg">${t(g)}</div>` + ks.filter(k => byKey[k]).map(k => navBtn(byKey[k])).join('')).join('')
+      + `<button class="morebtn ${PRIMARY.includes(S.tab) ? '' : 'on'}" data-more="1"><span class="pill">${icon('apps')}</span>${t('navMore')}</button>`;
+    document.getElementById('more').innerHTML = S.more ? GROUPS.map(([g, ks]) => `<div class="rg">${t(g)}</div><div class="mgrid">${ks.filter(k => byKey[k]).map(k => navBtn(byKey[k])).join('')}</div>`).join('') : '';
+    document.getElementById('more').hidden = !S.more;
     const v = document.getElementById('view');
     v.innerHTML = { counter, journey: () => F.view(), dash: () => D.view(), books: () => V2.books(), ad: () => V2.ad(), settings, theme: themeView, thai: thaiView, local: localView, contacts: () => CV.view(), locator: () => SK.view(), slipuse: () => SK.slipView(), backup: () => BK.view(), opening: () => OP.view(), price: () => PR.view(), forfeit: () => FF.view(), dayend: () => DE.view(), remind: () => RM.view(), staff: () => ST.view(), story: storyView }[S.tab]();
     const ov = document.getElementById('overlay');
@@ -209,10 +216,12 @@
     if (sb) { const v = sb.dataset.story; if (v === 'stop') St.stop(); else if (v === 'all') St.play(0, St.count - 1); else St.play(+v, +v); return; }
     if (S.tab === 'dash' && D.click(e.target)) return render();
     if (S.tab === 'contacts' && e.target.closest('[data-ct],[data-ct-consent]') && !e.target.closest('label.src')) { if (CV.click(e.target)) return render(); return; }
+    if (e.target.closest('[data-more]')) { S.more = !S.more; return render(); }
+    if (S.more && !e.target.closest('#more')) { S.more = false; }
     const b = e.target.closest('[data-tab],[data-action],[data-preset],[data-act],#langBtn');
     if (!b) return;
     if (b.id === 'langBtn') { S.lang = S.lang === 'th' ? 'en' : 'th'; store.set('gp.lang', S.lang); }
-    else if (b.dataset.tab) S.tab = b.dataset.tab;
+    else if (b.dataset.tab) { S.tab = b.dataset.tab; S.more = false; }
     else if (b.dataset.action) S.action = b.dataset.action;
     else if (b.dataset.preset) { theme = { ...THEMES[b.dataset.preset] }; applyTheme(); }
     else if (b.dataset.act === 'ticket') S.showTicket = !S.showTicket;

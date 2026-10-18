@@ -157,3 +157,4 @@ Object.assign(window.I18N, {
   stSynced:['ซิงก์แล้ว','Synced'], stNew:['ตั๋วใหม่','new tickets'], stUpdated:['ตั๋วที่อัปเดต','tickets updated'], stConflictsN:['ข้อขัดแย้ง','conflicts'], stConflicts:['ข้อขัดแย้งที่ต้องดูเอง','Conflicts to resolve'], stMine:['ของเคาน์เตอร์นี้ (ร้าน/ผู้กู้ · แฮช)','This counter (shop/borrower · hash)'], stTheirs:['ของเคาน์เตอร์อื่น','The other counter'],
   stConflictNote:['เก็บฉบับของเคาน์เตอร์นี้ไว้ ไม่ได้รวมของอีกฝั่ง ให้ตรวจรายการที่ต่างกันแล้วบันทึกซ้ำด้วยมือ','This counter’s version is kept; the other side’s was not merged. Check what differs and re-enter it by hand.']
 });
+Object.assign(window.I18N, { navMore:['เมนูอื่น','More'], gDaily:['งานประจำวัน','Daily'], gGold:['ทองและหลักประกัน','Gold and collateral'], gMoney:['เงินและบัญชี','Money'], gPeople:['ลูกค้า','Customers'], gAdmin:['ผู้ดูแลระบบ','Admin'], gAbout:['เกี่ยวกับระบบ','About'] });
