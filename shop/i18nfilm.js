@@ -11,5 +11,10 @@ if (window.__film) Object.assign(window.I18N, {
   ch3s:['ชำระผ่านพร้อมเพย์ ร้านตรวจสลิปด้วย SlipOK และบันทึกคำตอบไว้กับรายการชำระ','Payment goes through PromptPay. The shop checks the slip with SlipOK and keeps the answer with the payment record.'],
   ch8s:['ระบบ ERP หลักอยู่เบื้องหลัง รายการบัญชีและรายงานคำนวณจากรายการเดียวกัน','The kernel ERP is behind this. Journals and reports come from the same events.'],
   lo_ok:['ทำได้','In place'],
-  closeS:['ทำงานออฟไลน์ได้ · ไม่ต้องมีเซิร์ฟเวอร์คลาวด์ · ทุกรายการเซ็นกำกับ','Works offline · No cloud server needed · Every record signed']
+  closeS:['ทำงานออฟไลน์ได้ · ไม่ต้องมีเซิร์ฟเวอร์คลาวด์ · ทุกรายการเซ็นกำกับ','Works offline · No cloud server needed · Every record signed'],
+  demoDate:['วันที่วันนี้','Today’s date'],
+  fpL1:['การชำระเงิน','Payment done'], fpL2:['เจาะลึก','in depth'], fpS:['ใบเสนอที่เข้ารหัส และการชำระเงินหนึ่งรายการจากโทรศัพท์ถึงสมุดบัญชีของร้าน','The sealed offer, and one payment from the phone to the shop\'s ledger'],
+  fpAt:['เข้ารหัสใบเสนอ','Sealing the offer'], fpAs:['เปิดได้ด้วยรหัสครั้งเดียว ข้อความทุกชิ้นมีแม่กุญแจ','Events, keys and wire format: what is signed, what is sealed, and what a carrier can see.'],
+  fpBt:['การชำระเงินหนึ่งรายการ เจาะลึก','One payment, in depth'], fpBs:['ตั้งแต่เลือกจำนวนเงิน จนร้านบันทึกและส่งใบเสร็จกลับ','Quote, claim, SlipOK check, signed record, evidence, refusals, receipt, usage.'],
+  fpCloseS:['ทุกขั้นเป็นเหตุการณ์ที่เล่นซ้ำและตรวจสอบได้','Every step is an event that can be replayed and verified.']
 });
