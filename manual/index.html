@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>User manual</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Localised Micro Financing System — User Manual</h1>
+<p class="subtitle">Secured small loans on one ledger: counter, borrower
+phone, back office</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#about-this-manual" id="toc-about-this-manual">0. About
+this manual</a></li>
+<li><a href="#what-the-system-does" id="toc-what-the-system-does">1.
+What the system does</a></li>
+<li><a href="#the-ideas-you-need" id="toc-the-ideas-you-need">2. The
+ideas you need</a></li>
+<li><a href="#before-the-first-loan-setup-checklist"
+id="toc-before-the-first-loan-setup-checklist">3. Before the first loan
+— setup checklist</a></li>
+<li><a href="#opening-the-shop-the-daily-start"
+id="toc-opening-the-shop-the-daily-start">4. Opening the shop — the
+daily start</a></li>
+<li><a href="#issuing-a-loan" id="toc-issuing-a-loan">5. Issuing a
+loan</a></li>
+<li><a href="#handing-over-to-the-borrower-and-taking-payments"
+id="toc-handing-over-to-the-borrower-and-taking-payments">6. Handing
+over to the borrower, and taking payments</a></li>
+<li><a href="#when-payments-are-late" id="toc-when-payments-are-late">7.
+When payments are late</a></li>
+<li><a href="#redeeming-closing-a-loan-well"
+id="toc-redeeming-closing-a-loan-well">8. Redeeming — closing a loan
+well</a></li>
+<li><a href="#screen-by-screen-reference"
+id="toc-screen-by-screen-reference">9. Screen-by-screen reference</a>
+<ul>
+<li><a href="#daily" id="toc-daily">9.1 Daily</a></li>
+<li><a href="#gold-and-collateral" id="toc-gold-and-collateral">9.2 Gold
+and collateral</a></li>
+<li><a href="#money" id="toc-money">9.3 Money</a></li>
+<li><a href="#customers" id="toc-customers">9.4 Customers</a></li>
+<li><a href="#admin" id="toc-admin">9.5 Admin</a></li>
+<li><a href="#about" id="toc-about">9.6 About</a></li>
+<li><a href="#import-existing-tickets-opening-balances"
+id="toc-import-existing-tickets-opening-balances">9.7 Import existing
+tickets (opening balances)</a></li>
+</ul></li>
+<li><a href="#the-rules-the-system-applies"
+id="toc-the-rules-the-system-applies">10. The rules the system
+applies</a>
+<ul>
+<li><a href="#interest" id="toc-interest">10.1 Interest</a></li>
+<li><a href="#tax-on-interest-th-vat-7"
+id="toc-tax-on-interest-th-vat-7">10.2 Tax on interest [TH: VAT
+7%]</a></li>
+<li><a href="#lending-limit" id="toc-lending-limit">10.3 Lending
+limit</a></li>
+<li><a href="#statutory-limits-th" id="toc-statutory-limits-th">10.4
+Statutory limits [TH]</a></li>
+<li><a href="#choosers-where-shops-differ"
+id="toc-choosers-where-shops-differ">10.5 Choosers — where shops
+differ</a></li>
+</ul></li>
+<li><a href="#keeping-the-records-safe"
+id="toc-keeping-the-records-safe">11. Keeping the records safe</a>
+<ul>
+<li><a href="#what-signed-and-chained-gives-you"
+id="toc-what-signed-and-chained-gives-you">11.1 What “signed and
+chained” gives you</a></li>
+<li><a href="#backup" id="toc-backup">11.2 Backup</a></li>
+<li><a href="#restore" id="toc-restore">11.3 Restore</a></li>
+<li><a href="#the-automatic-journal-black-box"
+id="toc-the-automatic-journal-black-box">11.4 The automatic journal
+(“black box”)</a></li>
+<li><a href="#sealed-messages-and-the-borrowers-phone"
+id="toc-sealed-messages-and-the-borrowers-phone">11.5 Sealed messages
+and the borrower’s phone</a></li>
+<li><a href="#roles" id="toc-roles">11.6 Roles</a></li>
+<li><a href="#several-counters" id="toc-several-counters">11.7 Several
+counters</a></li>
+</ul></li>
+<li><a href="#what-should-always-be-true-your-daily-checks"
+id="toc-what-should-always-be-true-your-daily-checks">12. What should
+always be true — your daily checks</a></li>
+<li><a href="#what-is-real-in-this-edition-and-what-is-a-stand-in"
+id="toc-what-is-real-in-this-edition-and-what-is-a-stand-in">13. What is
+real in this edition, and what is a stand-in</a></li>
+<li><a href="#adapting-the-system-to-another-kind-of-lending"
+id="toc-adapting-the-system-to-another-kind-of-lending">14. Adapting the
+system to another kind of lending</a></li>
+<li><a href="#troubleshooting" id="toc-troubleshooting">15.
+Troubleshooting</a></li>
+<li><a href="#glossary" id="toc-glossary">16. Glossary</a></li>
+</ul>
+</nav>
+<h1 id="about-this-manual">0. About this manual</h1>
+<p>This manual explains how to run a small <strong>secured-lending
+business</strong> (a shop that lends money against an item the borrower
+leaves as security) with the Localised Micro Financing System. The
+worked example throughout is a <strong>gold pawn /
+sale-with-right-of-redemption shop (ขายฝาก)</strong>, because that is
+the business the system was shaped around. Nothing in the
+<em>method</em> is specific to gold: other collateral (watches, phones,
+vehicles’ papers, equipment) follows the same steps with different
+categories and rate tables. Where a rule comes from Thai law or practice
+it is marked <strong>[TH]</strong>; a shop elsewhere replaces those
+settings.</p>
+<p><strong>Status of this edition.</strong> The screens, rules and
+records described here all run, on sample data, in the demonstration
+application. Some outside connections are stand-ins and are called out
+where they appear: <em>[stub]</em> = a stand-in with the same shape as
+the real thing. Section 13 lists exactly what is real and what is a
+stand-in. Do not use this edition to run real money.</p>
+<p><strong>How to read it.</strong> Sections 1–3 give the ideas and the
+first-day setup. Sections 4–7 are the daily routine, in the order a day
+goes. Section 8 is a screen-by-screen reference. Sections 9–11 cover the
+rules, record-keeping and safety. Section 12 is troubleshooting. Section
+14 shows how to adapt the system to another kind of lending.</p>
+<hr />
+<h1 id="what-the-system-does">1. What the system does</h1>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>You want to…</th>
+<th>The system…</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Lend against an item and keep the item safe</td>
+<td>Issues a <strong>ticket</strong> (the loan contract), records the
+item, its weight/value, and <strong>where it is stored</strong>
+(warehouse, aisle, bin, level, lot)</td>
+</tr>
+<tr class="even">
+<td>Charge interest correctly and legally</td>
+<td>Computes interest by your rules, caps it at the legal ceiling, adds
+tax when your setting says so</td>
+</tr>
+<tr class="odd">
+<td>Let the borrower see and pay from a phone</td>
+<td>Gives the borrower a sealed <strong>offer</strong> (QR/link +
+one-time code), then payment by bank-transfer QR with slip checking</td>
+</tr>
+<tr class="even">
+<td>Know what is happening today</td>
+<td>A <strong>dashboard</strong> that gives the big picture at a glance:
+loan lifecycle, risk, price cushion, vault map, quota, data safety</td>
+</tr>
+<tr class="odd">
+<td>Follow up late payers</td>
+<td>Overdue list, reminders with the borrower’s own amounts, a contact
+history</td>
+</tr>
+<tr class="even">
+<td>Close the day</td>
+<td>A cash count and vault count against what the records say should be
+there</td>
+</tr>
+<tr class="odd">
+<td>Never lose or quietly change a record</td>
+<td>Every event is <strong>signed and chained</strong>; changes are
+detected; backups are encrypted; an optional black-box journal keeps a
+second copy</td>
+</tr>
+<tr class="even">
+<td>Work with several staff and counters</td>
+<td>Roles (owner, cashier, viewer) and several counters on one
+ledger</td>
+</tr>
+</tbody>
+</table>
+<p>The system keeps <strong>one ledger of events</strong>. Every figure
+you see — a balance, a status, a total — is <em>calculated from those
+events</em> every time you look. There are no hidden running totals that
+can drift out of step. That is why a restored backup shows exactly the
+same numbers as before.</p>
+<h1 id="the-ideas-you-need">2. The ideas you need</h1>
+<p><strong>Ticket.</strong> One loan: borrower, collateral, amount,
+rate, term, due date. It has a number such as <code>A161</code>. The
+letter is the counter’s prefix.</p>
+<p><strong>Principal.</strong> The money lent and still owed.
+<strong>Interest</strong> is charged on the principal outstanding.
+Paying interest does not reduce principal; paying principal does.</p>
+<p><strong>Status.</strong> A ticket moves through: <em>Offered</em>
+(shop issued, borrower has not acknowledged) → <em>Active</em>
+(acknowledged, in term) → <em>Overdue</em> (past the due date) →
+<em>Redeemed</em> (paid in full, collateral returned)
+<strong>or</strong> <em>Forfeited</em> (collateral kept by the shop) →
+<em>Sold</em> (forfeited item sold).</p>
+<p><strong>Closed tickets never change.</strong> A top-up, a
+part-repayment or a renewal does not edit the ticket. The old ticket is
+<strong>closed</strong> and a <strong>new ticket</strong> is issued that
+refers to it. Only the <em>difference</em> in money moves. This is the
+single most important habit of the system: <em>you never “fix” a record,
+you add a correcting one.</em></p>
+<p><strong>Collateral and location.</strong> The item is described once
+(category, weight, bag/pack number) and has a <strong>lot</strong> (one
+per ticket chain, so a renewal keeps the same lot) and a
+<strong>locator</strong> (aisle–bin–level,
+e.g. <code>A-03-2</code>).</p>
+<p><strong>Signed record.</strong> When something happens (a ticket is
+issued, a payment is booked, an item is moved) the system writes an
+<em>event</em>, signs it, and chains it to the one before. If anyone
+later changes an old event, the signature and chain no longer match and
+the system shows it in red.</p>
+<p><strong>Chooser (setting).</strong> Where shops legitimately differ
+(how tax is charged, how part-periods round, the late-loan threshold)
+the system offers a choice instead of forcing one answer. Choosers are
+listed in section 10.</p>
+<p><strong>The three parties.</strong> The <strong>shop</strong>
+(counter and back office), the <strong>borrower</strong> (phone), and
+the <strong>ledger</strong> they share. Each side keeps its own copy and
+they exchange small signed messages (“tokens”), so the system keeps
+working when one side is offline.</p>
+<h1 id="before-the-first-loan-setup-checklist">3. Before the first loan
+— setup checklist</h1>
+<p>Do these once, in this order. Each has a screen in the
+<strong>Admin</strong> group unless noted.</p>
+<ol type="1">
+<li><strong>Language.</strong> The button at the top right switches Thai
+/ English at any time.</li>
+<li><strong>Settings.</strong> Pick your <strong>profile</strong>
+(<em>Case 1</em>: monthly interest, normal shop; <em>Case 2</em>: daily
+interest, company with a borrower app). Check the tax type and
+<strong>when tax is charged</strong>, the <strong>rounding of
+part-periods</strong>, the <strong>lending limit mode</strong>, and the
+<strong>late-loan threshold</strong>. Check the two <strong>statutory
+limits</strong> (customer identification and cash-report amounts): you
+may set them stricter, never looser <strong>[TH]</strong>.</li>
+<li><strong>Gold price</strong> (<em>Gold and collateral</em> group).
+Record today’s price, with date. Appraisals use it. Record it every day;
+a price older than a day triggers a warning.</li>
+<li><strong>Staff and counters.</strong> Add your staff and give each a
+PIN. The first time you add someone you set the <strong>owner
+PIN</strong>. Set this counter’s <strong>ID and ticket prefix</strong>
+(for example <code>C1</code> / <code>A</code>). With no staff defined,
+you work alone as the owner and nothing is restricted.</li>
+<li><strong>Theme.</strong> Optional: colours, corner radius and text
+size so the screens match your shop.</li>
+<li><strong>Existing loans.</strong> If you already have live tickets,
+use <strong>Import existing tickets</strong> (section 8.12) to bring
+them in as opening balances.</li>
+<li><strong>Backup.</strong> Create your <strong>recovery code</strong>,
+write it down, and save a first backup (section 11.2). Do this
+<em>before</em> the first real day.</li>
+</ol>
+<blockquote>
+<p><strong>Write the recovery code on paper and keep it somewhere
+safe.</strong> It is shown once and is never stored. Without it a backup
+cannot be opened.</p>
+</blockquote>
+<h1 id="opening-the-shop-the-daily-start">4. Opening the shop — the
+daily start</h1>
+<ol type="1">
+<li>Open the <strong>Dashboard</strong>. Look at the
+<strong>data-safety</strong> tile: when was the last backup, and is the
+journal up to date?</li>
+<li>Record <strong>today’s gold price</strong> (<em>Gold price</em>).
+The dashboard shows the change and the <strong>cushion</strong> (value
+of collateral minus the money lent out).</li>
+<li>Open <strong>Due-date reminders</strong>. It lists tickets due soon
+or overdue. Prepare and send the messages (section 7.2).</li>
+<li>If you keep a cash drawer, the <strong>Day-end</strong> screen shows
+the opening float: yesterday’s counted cash.</li>
+</ol>
+<h1 id="issuing-a-loan">5. Issuing a loan</h1>
+<p>Use <strong>Counter → Issue ticket</strong>, then hand over in
+<strong>Loan hand-over</strong>.</p>
+<p><strong>5.1 Fill in the ticket</strong></p>
+<ol type="1">
+<li><strong>Customer</strong>: name, phone (the phone number is the
+borrower’s identity in the system), rate group.</li>
+<li><strong>Collateral</strong>: category, item, quantity, weight, gold
+type (the percentage the shop lends), the price basis, bag/pack
+number.</li>
+<li>The screen shows <strong>market value</strong>, <strong>the
+ceiling</strong> (the most you may lend), your
+<strong>headroom</strong>, and the <strong>loan-to-value ratio</strong>,
+which sets the longest term.</li>
+<li>Enter the <strong>loan amount</strong>, never above the ceiling.
+Interest runs on what is drawn, not on the ceiling.</li>
+<li><strong>Terms</strong>: date, months, rate (from the table), and the
+<strong>agreed interest</strong> per month. You may agree a lower figure
+(a discount). <strong>The system refuses anything above the legal
+ceiling and uses the maximum instead [TH 15% a year]</strong>.</li>
+<li><strong>Statutory limits panel</strong>:
+<ul>
+<li><em>Customer identification</em>: from a set amount the ID number
+and a copy are required before issue. The ID number is kept
+<strong>inside your shop only</strong>, never sent to the borrower.</li>
+<li><em>Term limit</em>: a redemption right may not run more than
+<strong>3 years from the first sale</strong> [TH]. A term over the limit
+is cut to the maximum.</li>
+<li><em>Cash report</em>: a cash payout at or above the threshold is
+flagged on the dashboard so you can make the required report
+yourself.</li>
+</ul></li>
+<li>Choose <strong>how you pay out</strong>: cash or bank transfer.</li>
+</ol>
+<p><strong>5.2 Issue</strong></p>
+<p>Press <strong>Issue</strong>. A ticket number is assigned, the loan
+is recorded, and a free <strong>locator</strong> is suggested by loan
+value so the item has a place from the start. The screen then takes you
+to <strong>Loan hand-over</strong>.</p>
+<blockquote>
+<p>If you are signed in as a <em>viewer</em>, or as a cashier without
+the right, the action is refused, a red banner explains why, and
+<strong>nothing is written</strong>.</p>
+</blockquote>
+<h1 id="handing-over-to-the-borrower-and-taking-payments">6. Handing
+over to the borrower, and taking payments</h1>
+<p><strong>6.1 Hand-over (Loan hand-over)</strong></p>
+<p>The offer is <strong>sealed</strong>: it can only be opened with a
+<strong>one-time code</strong>.</p>
+<ol type="1">
+<li>The screen shows a <strong>QR</strong> and a <strong>link</strong>
+for the offer, and the <strong>code</strong>.</li>
+<li>Give the code to the borrower <strong>by another route</strong> (a
+text message, or say it). The QR/link alone opens nothing.</li>
+<li>The borrower scans the QR or opens the link, enters the code, reads
+the terms (loan, rate, due date, schedule), and presses
+<strong>Acknowledge</strong>.</li>
+<li>The acknowledgement comes back to the shop by any channel (web, QR,
+WhatsApp, LINE, SMS, e-mail, NFC, pasted). When it arrives the ticket
+becomes <strong>Active</strong>.</li>
+</ol>
+<p>The <em>wire</em> panel shows every message with a padlock, so you
+can see that nothing travelled in the clear. If a message is lost or
+arrives twice or out of order, the next message repairs it and
+duplicates are ignored. If the borrower is offline, the acknowledgement
+waits and is sent when they are back.</p>
+<p><strong>6.2 Taking a payment</strong></p>
+<p>The borrower can choose:</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Choice</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Installment</strong></td>
+<td>The next scheduled interest payment (plus tax if your setting adds
+it)</td>
+</tr>
+<tr class="even">
+<td><strong>Pay in full</strong></td>
+<td>Redeem: principal + interest owed + tax</td>
+</tr>
+<tr class="odd">
+<td><strong>Another amount</strong></td>
+<td>Applied to interest and tax first; any rest reduces the principal
+(see 6.4)</td>
+</tr>
+</tbody>
+</table>
+<p>Payment is by <strong>bank-transfer QR</strong>. The borrower then
+sends the <strong>bank slip</strong>. The shop’s system checks the slip
+with the slip-check service <em>[stub in this edition]</em>. A good
+check <strong>books the payment</strong>, attaches the service’s reply
+to the record as evidence, and sends the borrower a signed receipt. A
+<strong>duplicate slip</strong>, a <strong>wrong amount</strong>, a
+<strong>wrong receiving account</strong>, or an unreadable slip is
+<strong>refused with the reason shown to the borrower</strong>. If the
+bank or the service is down, the payment <strong>waits</strong> and is
+checked again; the borrower is not blamed.</p>
+<p><em>Money that was really paid is never refused because the quote had
+gone stale</em>: the amount on the slip is applied to interest first, as
+“another amount”.</p>
+<p><strong>6.3 Cash at the counter</strong></p>
+<p>A payment taken in cash is entered at the counter. It is marked
+<strong>cash</strong> and appears in the day-end count. (Bank-transfer
+payments never appear in the cash drawer.)</p>
+<p><strong>6.4 Top-up, part-repayment, renewal — one
+mechanism</strong></p>
+<p>For every change to an open loan the system does the same three
+things:</p>
+<ol type="1">
+<li>The <strong>old ticket is closed</strong> by a <em>non-cash
+receipt</em> (no principal moves in cash).</li>
+<li>A <strong>new ticket</strong> is issued, referring to the old one,
+with the new principal.</li>
+<li><strong>Only the difference</strong> is paid: <em>new principal −
+old principal − interest owed</em>. If positive the shop pays the
+customer; if negative the customer pays the shop.</li>
+</ol>
+<p>A <strong>top-up</strong> can go as high as the ceiling at
+<em>today’s</em> gold price. The shop keeps its percentage as a cushion
+against a falling price.</p>
+<h1 id="when-payments-are-late">7. When payments are late</h1>
+<p><strong>7.1 Watching risk</strong></p>
+<p>The dashboard classes each open ticket automatically:</p>
+<ul>
+<li><strong>Green list</strong> — not late, at least one installment
+paid, room left under the ceiling. These are good customers you may
+offer a top-up.</li>
+<li><strong>Watch</strong> — overdue, or late on an installment.</li>
+<li><strong>NPL (non-performing)</strong> — overdue by more than your
+threshold (default 90 days).</li>
+</ul>
+<p>Click any figure to see the tickets behind it; click a ticket to see
+its <strong>history</strong>, with a mark beside every event showing
+whether it still verifies.</p>
+<p><strong>7.2 Reminders and follow-up</strong></p>
+<p><em>Due-date reminders</em> lists open tickets due within a number of
+days you set, or already overdue.</p>
+<ul>
+<li>A message is prepared <strong>per person</strong>, in Thai or
+English, with that ticket’s own numbers: interest owed, the amount to
+redeem, the next installment, and the statement that the rate is within
+the legal limit.</li>
+<li><strong>Only people who have agreed to receive messages are
+included.</strong> If a borrower has not agreed, press <em>Record
+consent</em> when they agree at the counter.</li>
+<li>You choose the channel (WhatsApp, SMS, LINE, e-mail). The system
+<strong>opens the messaging application with the text ready; you press
+send</strong>. Each prepared message is written into the ticket’s
+<strong>follow-up history</strong> (date, channel, outcome, next date).
+Follow-up notes stay <strong>inside the shop</strong>; they are never
+sent to the borrower.</li>
+</ul>
+<p><strong>7.3 Forfeiting and selling</strong></p>
+<p>When a ticket is past due and not redeemed, the shop may
+<strong>forfeit</strong> it (<em>Forfeit and sale</em>).</p>
+<ol type="1">
+<li>Select the overdue ticket. The system proposes a
+<strong>re-appraisal</strong> at today’s buy price; you may change
+it.</li>
+<li>The screen shows the gain or loss against the principal and the
+unpaid interest that is written off.</li>
+<li>Press <strong>Forfeit</strong>. The item moves to the <em>forfeited
+stock</em> locator and the shop owns it at the appraised value.</li>
+<li>Later, <strong>Sell</strong>: enter price, buyer and how paid. The
+item leaves stock; the system shows gain or loss against the appraised
+value.</li>
+</ol>
+<p>You <strong>cannot</strong> forfeit a ticket that is not yet due, or
+already redeemed, or already forfeited, and you can only sell forfeited
+items. <em>Tax on the sale of forfeited gold is set by your accountant;
+the system does not guess it.</em></p>
+<h1 id="redeeming-closing-a-loan-well">8. Redeeming — closing a loan
+well</h1>
+<ol type="1">
+<li>Open <strong>Counter → Redeem</strong> for the ticket.</li>
+<li>Check the figures: loan, interest owed to date, discount if any,
+<strong>tax base</strong>, tax, <strong>total</strong>. The tax base is
+<strong>only the interest collected in this transaction</strong>: never
+the gold, never principal [TH].</li>
+<li>Take the money: <strong>cash</strong> and <strong>transfer</strong>
+amounts must add up to the total.</li>
+<li>Press <strong>Show receipt / tax invoice</strong> and then
+<strong>Print</strong>. The receipt lists each ticket (weight,
+redemption value, pawn value, tax base, tax), the total received, the
+cash/transfer split, and the signature lines. A receipt whose cash and
+transfer do not add up to the amount received is refused.</li>
+<li>Return the item. In <strong>Collateral locator</strong>, take it
+out; the vault count falls by one.</li>
+</ol>
+<hr />
+<h1 id="screen-by-screen-reference">9. Screen-by-screen reference</h1>
+<p>Menu groups on a computer are down the left; on a phone the bottom
+bar holds the four daily tabs and a <strong>More</strong> sheet holds
+the rest.</p>
+<h2 id="daily">9.1 Daily</h2>
+<p><strong>Counter.</strong> The staff screens: <em>Issue</em>, <em>Pay
+interest</em>, <em>Top-up / reduce</em>, <em>Redeem</em>,
+<em>Forfeit</em> (the original counter flow), plus <em>Borrower app</em>
+(what the borrower sees).</p>
+<p><strong>Loan hand-over.</strong> The shop panel, the message wire and
+the borrower’s phone side by side. Use it to issue offers, see the code,
+send by any channel, simulate offline/online, and, if a phone is lost,
+<strong>revoke and re-enrol</strong> (section 11.5).</p>
+<p><strong>Dashboard.</strong> The big picture. Top row: <em>Loan
+lifecycle</em> (counts by status), <em>Open principal by risk</em>
+(donut), <em>NPL ratio</em> (gauge), <em>Slip-check quota</em> (meter).
+Next: <em>Vault map</em>, <em>Cash collected per month</em>, <em>Data
+safety</em>, <em>Gold price</em>, <em>Price cushion</em>. Then tiles and
+lists (open loans, principal, interest owed, overdue, NPL, green list,
+items not located, cash to report, due soon). Click any element to drill
+down. <strong>Customise</strong> lets you drag widgets, resize them,
+hide them, add one from a form, or edit the layout as text; the layout
+is saved for your shop.</p>
+<p><strong>Due-date reminders.</strong> Section 7.2.</p>
+<p><strong>Day-end.</strong> Pick the day. The screen lists the day’s
+cash movements (payouts out, counter receipts in, cash sales), shows
+<strong>expected closing cash = opening float + net movement</strong>,
+and the number of bank transfers that are <em>not</em> counted as cash.
+Enter the <strong>cash counted</strong>; the <strong>variance = counted
+− expected</strong> shows in red if not zero (a negative number means
+cash is short). Add a note and <strong>Save</strong>: a signed record is
+kept in the history. Tomorrow’s opening float is today’s counted cash.
+The vault count from <em>Collateral locator</em> is saved alongside.</p>
+<h2 id="gold-and-collateral">9.2 Gold and collateral</h2>
+<p><strong>Collateral locator.</strong> The vault map (aisles down, bins
+across, number = bags). Tap a cell to list what is there. <em>Put away /
+move</em>: choose the ticket, the locator and the bag number. The
+<em>Not located</em> list must be <strong>empty</strong> (it flags any
+open ticket without a place). <em>Day-end count</em>: expected per
+locator against what you counted. <em>Movements</em>: the log of
+put-aways, moves, take-outs and forfeits.</p>
+<p><strong>Forfeit and sale.</strong> Section 7.3.</p>
+<p><strong>Gold price.</strong> Record a dated price: buy-back, sell,
+tax-base. Each ticket <strong>keeps a copy of the price it was issued
+at</strong>, so a later price change never alters an issued ticket. The
+<em>cushion</em> panel shows collateral value at today’s buy price
+against principal out, and counts tickets where principal now
+<strong>exceeds</strong> the gold value.</p>
+<h2 id="money">9.3 Money</h2>
+<p><strong>Slip-check usage.</strong> Slips checked this month against
+your plan’s quota, how many were over quota, <strong>estimated
+cost</strong>, cost per verified payment, share rejected, and a
+six-month chart. It warns at 80% and 100% of quota. It is an
+<strong>estimate</strong>: your provider’s invoice is the authority.</p>
+<p><strong>Books (GL).</strong> The accounting entries each event would
+post, a trial balance, an income statement (interest, gain/loss) and a
+tax summary, all calculated from the same events. <em>This edition shows
+a preview; it does not post to a general ledger.</em></p>
+<h2 id="customers">9.4 Customers</h2>
+<p><strong>Contacts.</strong> Import customer lists from Excel, CSV, a
+pasted table, a phone-contacts file, a Google Contacts file, the phone’s
+contact picker, or LINE ids. The system normalises Thai phone numbers,
+<strong>removes duplicates</strong> (phone, then e-mail, then LINE id,
+filling blanks and never overwriting), and shows a review before
+anything is added. Each contact has <strong>consent</strong>; offers and
+news go <strong>only to consented contacts</strong>. Choose an audience
+(green-list customers, all with a ticket, contacts without a ticket,
+everyone who agreed), write or use the offer text, pick the channel, and
+the system prepares <strong>one message per person</strong>; you press
+send. Every import and broadcast is recorded.</p>
+<p><strong>Import existing tickets.</strong> Section 8.12 below.</p>
+<h2 id="admin">9.5 Admin</h2>
+<p><strong>Staff and counters.</strong> Staff, roles and the
+<strong>who-can-do-what</strong> table; sign in by name and PIN; counter
+ID and ticket prefix; <strong>Sync with the other counters</strong>; the
+conflicts list.</p>
+<p><strong>Backup.</strong> Recovery code, save to file, send to a web
+address, share/e-mail, the <strong>automatic journal</strong>, restore.
+Section 11.</p>
+<p><strong>Settings.</strong> The choosers (section 10) and the legal
+limits.</p>
+<p><strong>Theme.</strong> Colour tokens, corner radius, font size, and
+ready-made looks. The change is shown live on the borrower phone and the
+dashboard.</p>
+<p><strong>Data model (AD).</strong> The data dictionary: every table
+and column the system uses, with types, lists and which screens use
+them. The forms, columns and group-by choices on other screens are
+<em>generated from this dictionary</em>, so hiding a column here removes
+it everywhere.</p>
+<h2 id="about">9.6 About</h2>
+<p><strong>Fit for Thailand.</strong> What is already in line with Thai
+practice and what is not yet. <strong>Offline, no cloud.</strong> How
+the system works without a server, and its limits. <strong>Film
+chapters.</strong> A guided walk-through of the whole system.</p>
+<h2 id="import-existing-tickets-opening-balances">9.7 Import existing
+tickets (opening balances)</h2>
+<p>For a shop that already has live loans.</p>
+<ol type="1">
+<li>Download the <strong>template</strong>; fill one row per open
+ticket: ticket number, date, name, phone, loan, months, rate (or group),
+<strong>paid-to date</strong>, category, weight, locator.</li>
+<li>Choose the file (Excel or CSV) or paste the table.</li>
+<li><strong>Review</strong>: rows read, rows valid, rows invalid with
+the <strong>reason</strong> (missing number, bad date, future date,
+repeated number, paid-to outside the loan’s life, months outside 1–36,
+unknown category), the principal that would be imported, tickets needing
+identification, rates cut to the legal ceiling.</li>
+<li><strong>Import</strong>. One signed record per ticket is made;
+<strong>no payment history is invented</strong> — only the principal and
+the date interest is paid to. Importing the same file again adds
+nothing.</li>
+<li>The imported tickets appear in <strong>Not located</strong> until
+you put them away.</li>
+</ol>
+<hr />
+<h1 id="the-rules-the-system-applies">10. The rules the system
+applies</h1>
+<h2 id="interest">10.1 Interest</h2>
+<ul>
+<li><strong>Rate</strong> is looked up from your table by <em>rate
+group</em> and <em>loan band</em>; the system never applies more than
+the <strong>legal ceiling [TH: 15% a year, 1.25% a month]</strong>.</li>
+<li><strong>Agreed interest</strong> defaults to the table rate and may
+be set lower (a discount, shown).</li>
+<li><strong>Part-periods</strong> (paying part-way through a period)
+follow your chooser: <em>month</em>, <em>half-month (15 days)</em>,
+<em>week</em>, or <em>pro-rata by day</em>.</li>
+<li><strong>Case 1</strong> charges by month; <strong>Case 2</strong>
+charges by day (rate × 12 ÷ 365).</li>
+<li>Interest owed to date is always calculated from the paid-to date,
+never stored.</li>
+</ul>
+<h2 id="tax-on-interest-th-vat-7">10.2 Tax on interest [TH: VAT 7%]</h2>
+<ul>
+<li>Tax is on <strong>interest only</strong>; the item and the principal
+are not taxed.</li>
+<li><strong>When</strong> it is charged is a chooser: <em>at every
+interest payment</em> (default, in line with the tax authority’s
+gold-shop guidance), <em>only at ticket close</em>, or <em>once at final
+redeem</em> (flagged: not in line with the guidance, for your
+accountant).</li>
+<li>It may be shown <strong>on top</strong> (exclusive) or
+<strong>inside</strong> (inclusive).</li>
+<li>A discount on the interest lowers the tax base.</li>
+</ul>
+<h2 id="lending-limit">10.3 Lending limit</h2>
+<p>Either a <strong>percentage</strong> of the appraised value by gold
+type (for example 87 / 84 / 82%), or a <strong>fixed amount deducted per
+baht-weight</strong> of gold. The loan may not exceed the ceiling. The
+loan-to-value ratio sets the longest term (for example up to 80% → 3
+months).</p>
+<h2 id="statutory-limits-th">10.4 Statutory limits [TH]</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Limit</th>
+<th>What the system does</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Interest ceiling 15%/year</td>
+<td>Refuses a higher rate, uses the maximum</td>
+</tr>
+<tr class="even">
+<td>Redemption right ≤ 3 years from the first sale</td>
+<td>Cuts a term to the maximum; blocks a renewal that would pass it</td>
+</tr>
+<tr class="odd">
+<td>Customer identification from a set amount</td>
+<td>Requires the ID number and a copy before issue</td>
+</tr>
+<tr class="even">
+<td>Cash report from a set amount</td>
+<td>Flags a cash payout at or above the threshold</td>
+</tr>
+</tbody>
+</table>
+<p>The two amounts are settings; your shop may set them lower.
+<strong>Re-check the current rules before using them in a real
+business.</strong></p>
+<h2 id="choosers-where-shops-differ">10.5 Choosers — where shops
+differ</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Chooser</th>
+<th>Choices</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Profile</td>
+<td>Case 1 (monthly) / Case 2 (daily)</td>
+</tr>
+<tr class="even">
+<td>When tax is charged</td>
+<td>every payment / at close / at final redeem</td>
+</tr>
+<tr class="odd">
+<td>Tax display</td>
+<td>on top / inside</td>
+</tr>
+<tr class="even">
+<td>Part-period rounding</td>
+<td>month / half-month / week / day</td>
+</tr>
+<tr class="odd">
+<td>Lending limit</td>
+<td>percentage / amount per baht-weight</td>
+</tr>
+<tr class="even">
+<td>Price basis</td>
+<td>bar buy-back / bar sell / tax-base price</td>
+</tr>
+<tr class="odd">
+<td>Default term</td>
+<td>months</td>
+</tr>
+<tr class="even">
+<td>Late-loan (NPL) threshold</td>
+<td>days</td>
+</tr>
+<tr class="odd">
+<td>Customer-identification and cash-report amounts</td>
+<td>at or below the statutory figures</td>
+</tr>
+<tr class="even">
+<td>Slip-check plan</td>
+<td>by plan</td>
+</tr>
+</tbody>
+</table>
+<h1 id="keeping-the-records-safe">11. Keeping the records safe</h1>
+<h2 id="what-signed-and-chained-gives-you">11.1 What “signed and
+chained” gives you</h2>
+<p>Every event carries a signature and a link to the one before. If an
+old event is edited, deleted or re-ordered, the history view shows
+<strong>✖ in red</strong> at that event and at everything after it. You
+can check any ticket’s history at any time. This proves <em>nothing was
+altered</em>; it does not prove that what was originally entered was
+true.</p>
+<h2 id="backup">11.2 Backup</h2>
+<ol type="1">
+<li><strong>Recovery code</strong>: press <em>Create a new recovery
+code</em>. <strong>Write it down.</strong> It encrypts backups and opens
+them.</li>
+<li><strong>Save to a file</strong>: an encrypted <code>.gpb</code>
+file. Keep copies off the machine.</li>
+<li><strong>Send to a web address</strong>: the encrypted file goes to a
+server you control. The server holds only data it cannot read.</li>
+<li><strong>Share / e-mail</strong>: on a phone, the share sheet; on a
+computer, the file is saved and your mail program opens with a summary —
+<em>attach the file yourself</em>. A browser cannot send mail on its
+own.</li>
+<li>A banner reminds you when the last backup is old or many records are
+new.</li>
+</ol>
+<h2 id="restore">11.3 Restore</h2>
+<p>Choose the file and type the recovery code. The system <strong>opens
+it, checks every ticket’s chain, and shows a summary</strong> (what is
+new, same, or conflicting) before changing anything. A ticket that fails
+the check is <strong>not restored</strong>. Newer data on this device is
+<strong>never overwritten</strong>. If the code is wrong or the file was
+altered, nothing opens and nothing is changed.</p>
+<h2 id="the-automatic-journal-black-box">11.4 The automatic journal
+(“black box”)</h2>
+<p>Turn it on and every new record is encrypted and sent, a moment after
+you stop working, to the journal server. The server can only
+<strong>add</strong> to its record, cannot edit or delete, and
+<strong>cannot read</strong> the content. You see how many records are
+<em>sent</em> and <em>not yet sent</em>. <strong>Audit against the
+server</strong> checks that nothing was dropped or changed and shows the
+result. After a disaster, <em>Restore from the journal</em> on a new
+device, with your recovery code, rebuilds everything up to the last
+record sent. <strong>Records not yet sent when the device is lost are
+lost</strong> — that is why the “not yet sent” count is on the
+dashboard.</p>
+<h2 id="sealed-messages-and-the-borrowers-phone">11.5 Sealed messages
+and the borrower’s phone</h2>
+<ul>
+<li>Messages between shop and borrower are <strong>encrypted to each
+other</strong>; a link or QR passed through any channel reveals
+nothing.</li>
+<li>The first offer opens <strong>only with the one-time code</strong>;
+a wrong code opens nothing and is forgotten.</li>
+<li>The borrower’s phone keys are <strong>bound to that device</strong>
+and cannot be copied out.</li>
+<li><strong>If the borrower’s phone is lost:</strong> on the ticket in
+<em>Loan hand-over</em> press <em>Phone lost: revoke the key and
+re-enrol a new device</em>. The shop gets a <strong>new code</strong>
+and a link; the new device opens it with the new code. The old phone can
+no longer sign anything new; the history stays and still checks.</li>
+</ul>
+<h2 id="roles">11.6 Roles</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Owner</th>
+<th>Cashier</th>
+<th>Viewer</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Issue, take payment, redeem, put away, count, record price, day-end,
+reminders, follow-up</td>
+<td>✔</td>
+<td>✔</td>
+<td>–</td>
+</tr>
+<tr class="even">
+<td>Forfeit, sell, import tickets, change settings, backup/restore,
+revoke a phone, manage staff and counters</td>
+<td>✔</td>
+<td>–</td>
+<td>–</td>
+</tr>
+</tbody>
+</table>
+<p>Who acted, and in which role, is written into every signed event.
+<strong>The PIN is a convenience gate in a static demonstration page,
+not real security.</strong> A shop needs a server or a key per person
+for real enforcement.</p>
+<h2 id="several-counters">11.7 Several counters</h2>
+<p>Counters share one ledger through the journal. Each has its own
+<strong>ticket prefix</strong>. <em>Sync</em> first sends this counter’s
+records, then pulls the others and merges them. If counter A and counter
+B changed <strong>the same ticket at the same point</strong>, the system
+<strong>does not merge</strong> it: it keeps this counter’s version and
+lists the <strong>conflict</strong> with both versions’ fingerprints, so
+a person decides. Re-enter what differs.</p>
+<h1 id="what-should-always-be-true-your-daily-checks">12. What should
+always be true — your daily checks</h1>
+<p>A well-run shop can check these at any time. The system is built so
+that each one holds.</p>
+<ol type="1">
+<li>Every event in a ticket’s history shows <strong>✔</strong>.</li>
+<li><strong>Vault count = open tickets</strong>; <em>Not located =
+0</em>.</li>
+<li><strong>Principal out (dashboard) = the receivable in the books
+preview.</strong></li>
+<li>The <strong>trial balance balances</strong> (debits = credits).</li>
+<li>Cash counted at day-end equals expected, or the <strong>variance is
+written down with a reason</strong>. Never adjusted away.</li>
+<li>Tax collected equals the tax on the tax invoices for the
+period.</li>
+<li>No payment on a closed ticket; no interest above the legal ceiling;
+no negative principal.</li>
+<li>A backup is <strong>recent</strong>, and the journal shows <strong>0
+not yet sent</strong> or a small, explained number.</li>
+<li>After a restore, <strong>the same numbers</strong> appear as
+before.</li>
+</ol>
+<h1 id="what-is-real-in-this-edition-and-what-is-a-stand-in">13. What is
+real in this edition, and what is a stand-in</h1>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Area</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Tickets, interest, tax, limits, receipts, redeem, forfeit, sale</td>
+<td>Working on sample data</td>
+</tr>
+<tr class="even">
+<td>Signed, chained records; tamper detection</td>
+<td>Working</td>
+</tr>
+<tr class="odd">
+<td>Sealed messages; device-bound phone keys; revoke and re-enrol</td>
+<td>Working in the browser</td>
+</tr>
+<tr class="even">
+<td>Backup (file, web address, share), restore with checks</td>
+<td>Working</td>
+</tr>
+<tr class="odd">
+<td>Journal and audit</td>
+<td>Working; a real server program exists, the demonstration uses an
+in-page stand-in <em>[stub]</em></td>
+</tr>
+<tr class="even">
+<td>Slip checking service</td>
+<td><em>[stub]</em> — same reply shape as the real service; not
+connected</td>
+</tr>
+<tr class="odd">
+<td>Posting to a general ledger</td>
+<td><em>[preview only]</em> — entries are shown, not posted</td>
+</tr>
+<tr class="even">
+<td>Sending messages</td>
+<td>You press send; automatic bulk sending is <strong>not</strong>
+connected</td>
+</tr>
+<tr class="odd">
+<td>Gold price</td>
+<td>You enter it; there is no live feed</td>
+</tr>
+<tr class="even">
+<td>Staff PIN</td>
+<td>Convenience only; not security</td>
+</tr>
+<tr class="odd">
+<td>Legal figures</td>
+<td>Taken from public sources and a 2017 manual <strong>[TH]</strong>;
+must be re-checked</td>
+</tr>
+</tbody>
+</table>
+<h1 id="adapting-the-system-to-another-kind-of-lending">14. Adapting the
+system to another kind of lending</h1>
+<p>The same flow fits other secured loans. What you change is
+<strong>data</strong>, not method.</p>
+<ol type="1">
+<li><strong>Collateral categories and items.</strong> Replace the list
+(for example <em>phone</em>, <em>watch</em>, <em>motorbike papers</em>).
+Keep <em>weight/size</em>, <em>description</em>, <em>serial
+number</em>.</li>
+<li><strong>Valuation.</strong> Replace “weight ÷ 15.16 × price” by your
+own appraisal source (a price list, a quoted value). The ceiling is
+<em>appraised value × the percentage you lend</em>.</li>
+<li><strong>Rate table.</strong> Rate by group and loan band, effective
+dates, and a promotion row if you run one. <strong>Always keep your
+jurisdiction’s ceiling in place.</strong></li>
+<li><strong>Term rules.</strong> Default term, the ratio-to-term table,
+the longest redemption period your law allows.</li>
+<li><strong>Tax.</strong> Whether interest is taxed, when, and whether
+shown inside or on top. Remove it if not applicable.</li>
+<li><strong>Locations.</strong> Warehouses and locators (safe, shelf,
+bin) match your premises; forfeited stock may be a different location
+from customer collateral.</li>
+<li><strong>Forfeit and sale.</strong> Replace with your repossession
+rules (notice periods, auction) as additional steps before forfeit.</li>
+<li><strong>Identification and reporting limits.</strong> Enter your
+jurisdiction’s figures.</li>
+<li><strong>Language and wording.</strong> Add a language; notices on
+tickets, receipts and messages follow your wording.</li>
+<li><strong>What stays the same:</strong> one signed ledger; closed
+tickets never change; every figure calculated from events; backups
+encrypted; roles; the daily checks in section 12.</li>
+</ol>
+<h1 id="troubleshooting">15. Troubleshooting</h1>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Problem</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A red banner says an action is not allowed for the role</td>
+<td>Sign in as a person with the right, or ask the owner. Nothing was
+written.</td>
+</tr>
+<tr class="even">
+<td>A ticket history shows ✖</td>
+<td>An event was changed or is missing. Restore the ticket from a backup
+or the journal; do not edit.</td>
+</tr>
+<tr class="odd">
+<td>The borrower cannot open the offer</td>
+<td>Check they typed the <strong>one-time code</strong> you gave them,
+not the ticket number. A wrong code opens nothing.</td>
+</tr>
+<tr class="even">
+<td>Payment stays “waiting”</td>
+<td>The bank or slip service may be down; use <em>check again</em>.
+Quota problems show on the <em>Slip-check usage</em> screen.</td>
+</tr>
+<tr class="odd">
+<td>Slip rejected as duplicate</td>
+<td>That slip was already used. Ask for the new transfer slip.</td>
+</tr>
+<tr class="even">
+<td>A ticket is <em>Not located</em></td>
+<td>Open <em>Collateral locator</em>, choose it, choose a locator,
+save.</td>
+</tr>
+<tr class="odd">
+<td>Cash at day-end is short</td>
+<td>Do not change the expected figure. Record the variance and a note;
+investigate the day’s cash movements listed on the screen.</td>
+</tr>
+<tr class="even">
+<td>A restore says “cannot open”</td>
+<td>Wrong recovery code or an altered file. Try the code again exactly
+as written; use another copy.</td>
+</tr>
+<tr class="odd">
+<td>Sync lists a conflict</td>
+<td>Two counters changed the same ticket at once. Keep this counter’s
+version, check what the other counter recorded, and re-enter it by
+hand.</td>
+</tr>
+<tr class="even">
+<td>The new price is not used on an issued ticket</td>
+<td>By design: a ticket keeps the price it was issued at.</td>
+</tr>
+<tr class="odd">
+<td>An imported file is refused row by row</td>
+<td>Read the reason column; correct the file and import again. Rows
+already imported are skipped.</td>
+</tr>
+<tr class="even">
+<td>You lost the recovery code</td>
+<td>Backups made with it cannot be opened. Create a new code and make a
+new backup; this is why the code is written on paper.</td>
+</tr>
+</tbody>
+</table>
+<h1 id="glossary">16. Glossary</h1>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Ticket (ใบขายฝาก)</td>
+<td>The loan contract and its record</td>
+</tr>
+<tr class="even">
+<td>Principal</td>
+<td>Money lent and still owed</td>
+</tr>
+<tr class="odd">
+<td>Redeem (ไถ่ถอน)</td>
+<td>Pay in full and take the collateral back</td>
+</tr>
+<tr class="even">
+<td>Forfeit (ทำหลุด)</td>
+<td>The shop keeps the collateral after the due date passes</td>
+</tr>
+<tr class="odd">
+<td>Dummy / non-cash receipt</td>
+<td>Closing an old ticket on paper, with no principal in cash, when it
+is replaced by a new one</td>
+</tr>
+<tr class="even">
+<td>Baht-weight (บาททอง)</td>
+<td>15.16 grams of gold</td>
+</tr>
+<tr class="odd">
+<td>Ceiling (วงเงิน)</td>
+<td>The most the shop may lend against an item</td>
+</tr>
+<tr class="even">
+<td>Headroom</td>
+<td>Ceiling minus loan</td>
+</tr>
+<tr class="odd">
+<td>NPL</td>
+<td>Loan overdue beyond the shop’s threshold</td>
+</tr>
+<tr class="even">
+<td>Green list</td>
+<td>Good customers with room to lend more</td>
+</tr>
+<tr class="odd">
+<td>Locator</td>
+<td>Aisle–bin–level place where an item is kept</td>
+</tr>
+<tr class="even">
+<td>Lot</td>
+<td>One per ticket chain; stays the same through renewals</td>
+</tr>
+<tr class="odd">
+<td>Token</td>
+<td>A small signed (and sealed) message between shop and borrower</td>
+</tr>
+<tr class="even">
+<td>Journal</td>
+<td>The encrypted second copy kept on a server that can only append</td>
+</tr>
+<tr class="odd">
+<td>Recovery code</td>
+<td>The code that encrypts and opens backups</td>
+</tr>
+<tr class="even">
+<td>Chooser</td>
+<td>A setting where shops differ</td>
+</tr>
+<tr class="odd">
+<td>Cushion</td>
+<td>Collateral value minus principal lent</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>
