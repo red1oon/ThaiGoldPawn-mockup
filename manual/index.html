@@ -48,7 +48,13 @@ daily start</a></li>
 loan</a></li>
 <li><a href="#handing-over-to-the-borrower-and-taking-payments"
 id="toc-handing-over-to-the-borrower-and-taking-payments">6. Handing
-over to the borrower, and taking payments</a></li>
+over to the borrower, and taking payments</a>
+<ul>
+<li><a
+href="#when-the-phone-and-the-shop-need-to-talk-and-when-they-dont"
+id="toc-when-the-phone-and-the-shop-need-to-talk-and-when-they-dont">6.5
+When the phone and the shop need to talk — and when they don’t</a></li>
+</ul></li>
 <li><a href="#when-payments-are-late" id="toc-when-payments-are-late">7.
 When payments are late</a></li>
 <li><a href="#redeeming-closing-a-loan-well"
@@ -237,6 +243,18 @@ the system shows it in red.</p>
 (how tax is charged, how part-periods round, the late-loan threshold)
 the system offers a choice instead of forcing one answer. Choosers are
 listed in section 10.</p>
+<p><strong>Local-first: the borrower carries the whole history.</strong>
+The borrower’s phone holds a complete, signed copy of their own ticket:
+the offer, the schedule, the rate they agreed, every payment and
+receipt. Everything that can be <em>worked out</em> from that history —
+what is due and when, the interest owed today, what it would cost to
+redeem on any day, whether a receipt is genuine — the phone works out
+<strong>by itself, with no connection at all</strong>. So the phone can
+remind its owner against the timeline, show balances, and prepare a
+payment, entirely offline. It only needs to talk to the shop for things
+the phone cannot know on its own (section 6.5). The shop is local-first
+in the same way: its dashboard, books and counter work with no phone
+connected.</p>
 <p><strong>The three parties.</strong> The <strong>shop</strong>
 (counter and back office), the <strong>borrower</strong> (phone), and
 the <strong>ledger</strong> they share. Each side keeps its own copy and
@@ -422,6 +440,182 @@ customer; if negative the customer pays the shop.</li>
 <p>A <strong>top-up</strong> can go as high as the ceiling at
 <em>today’s</em> gold price. The shop keeps its percentage as a cushion
 against a falling price.</p>
+<h2 id="when-the-phone-and-the-shop-need-to-talk-and-when-they-dont">6.5
+When the phone and the shop need to talk — and when they don’t</h2>
+<p>Two-way communication is <strong>not</strong> a constant background
+link. The phone works alone; it talks to the shop only for the cases
+below. Everything travels as small signed messages over <strong>whatever
+pipe is available</strong> — the shop’s web server, a QR, a link,
+WhatsApp, LINE, SMS, e-mail, an NFC tap, or a pasted text. It can arrive
+late, twice or out of order; the signatures and the chain sort it
+out.</p>
+<p><strong>What the phone does alone (no communication at
+all)</strong></p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Scenario</th>
+<th>Why no contact is needed</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Looking at the ticket: terms, schedule, due date, payment
+history</td>
+<td>It is all in the phone’s own copy</td>
+</tr>
+<tr class="even">
+<td>Reminders before each due date</td>
+<td>Calculated from the schedule against the phone’s clock</td>
+</tr>
+<tr class="odd">
+<td>“How much is owed today?” and “what will redeem cost on the
+20th?”</td>
+<td>Principal, paid-to date and the <strong>rate fixed in the signed
+offer</strong> are all on the phone</td>
+</tr>
+<tr class="even">
+<td>Checking a receipt is genuine</td>
+<td>The receipt is signed by the shop’s key; the phone verifies it
+itself</td>
+</tr>
+<tr class="odd">
+<td>Checking the history has not been changed</td>
+<td>The chain is verified locally</td>
+</tr>
+<tr class="even">
+<td>Preparing a payment</td>
+<td>The phone builds the bank-transfer QR with the amount from the
+shop’s account details in the offer</td>
+</tr>
+<tr class="odd">
+<td>Starting a claim while offline</td>
+<td>The claim (with the slip) is <strong>queued</strong> and sent when a
+connection returns</td>
+</tr>
+</tbody>
+</table>
+<p><strong>What needs a message, and which way</strong></p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Scenario</th>
+<th>Direction</th>
+<th>Why</th>
+<th>How urgent</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Acknowledging an offer</td>
+<td>phone → shop</td>
+<td>The shop must hear that the borrower accepted before the ticket is
+<em>Active</em></td>
+<td>Soon; waits offline</td>
+</tr>
+<tr class="even">
+<td>Claiming a payment (slip)</td>
+<td>phone → shop</td>
+<td>Only the shop can check the slip and book the payment</td>
+<td>Soon after paying</td>
+</tr>
+<tr class="odd">
+<td>The shop’s answer: receipt, or rejected with the reason</td>
+<td>shop → phone</td>
+<td>Only the shop knows the check result</td>
+<td>Soon after paying</td>
+</tr>
+<tr class="even">
+<td><strong>A payment taken in cash at the counter, a discount, a
+correction</strong></td>
+<td>shop → phone</td>
+<td>The phone cannot know what happened at the counter; until it hears,
+its figures are out of date</td>
+<td>When the borrower next looks</td>
+</tr>
+<tr class="odd">
+<td>Today’s <strong>gold price</strong>, and room left to borrow
+more</td>
+<td>shop → phone</td>
+<td>The price lives with the shop and changes daily</td>
+<td>Only when the borrower wants a top-up</td>
+</tr>
+<tr class="even">
+<td>A <strong>changed rate</strong> or new terms (for a new ticket or a
+top-up)</td>
+<td>shop → phone</td>
+<td>An existing ticket keeps its signed rate; only a <em>new</em> ticket
+gets new terms</td>
+<td>Only for new tickets</td>
+</tr>
+<tr class="odd">
+<td><strong>Renewal, top-up, reduction</strong> (a new linked
+ticket)</td>
+<td>both ways</td>
+<td>A new document must be issued and acknowledged</td>
+<td>When the borrower asks</td>
+</tr>
+<tr class="even">
+<td><strong>Forfeit or sale</strong></td>
+<td>shop → phone</td>
+<td>A shop-side event the phone cannot foresee</td>
+<td>At the time</td>
+</tr>
+<tr class="odd">
+<td><strong>Phone lost</strong>: new device</td>
+<td>shop → new phone</td>
+<td>A new code and the history must be delivered</td>
+<td>At the time</td>
+</tr>
+<tr class="even">
+<td>Offers and news</td>
+<td>shop → phone</td>
+<td>Only the shop has them; sent only to people who agreed</td>
+<td>Optional</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The “Check for latest” idea.</strong> Where the phone cannot
+know, it <strong>shows what it knows and says how old that is</strong>
+(“as of your last contact, 12 Sep”) and offers a <strong>Check for
+latest</strong> button. Pressing it does not download “the system”: the
+phone says which events it has already seen, and the shop sends back
+<strong>only the missing signed events</strong> (a few small pieces of
+JSON), through the same pipe the two have been using, or any other. A
+tiny signed <strong>status token</strong> (just “I have up to this
+event, as of this time”) lets either side see at a glance whether the
+other is <strong>in sync, behind, or ahead</strong>. If there is nothing
+new, the shop’s reply says so, signed, so the phone can show <strong>“up
+to date as of <time>”</strong>. If the pipe is not available, nothing is
+lost: the figures stay on screen, marked with their age, and the check
+can be done later.</p>
+<p><strong>Why stale figures are not dangerous.</strong> If the borrower
+pays from an out-of-date figure (for example, they did not know a cash
+payment had been taken yesterday), the shop applies the money to
+interest first and the difference stays as a credit or reduces
+principal; the shop never refuses money that was really paid because a
+quote was old. The shop’s own books are always the authority, and the
+phone’s copy is corrected by the next message.</p>
+<p><strong>Which scenarios need the shop’s reply to be quick?</strong>
+Only paying and being told the result. Everything else can wait for the
+next time the borrower looks or the next time there is a connection,
+which is why the system works with a weak or intermittent signal.</p>
+<p><strong>In this edition.</strong> The demonstration shows the
+<em>behind / in sync</em> indicator on the borrower’s phone, queues
+messages while the phone is “offline”, delivers them when it is
+“online”, and repairs a lost or repeated message with the next one. A
+separate <strong>Check for latest</strong> button and the “up to date as
+of” mark are the intended design, not yet a screen of their own.</p>
 <h1 id="when-payments-are-late">7. When payments are late</h1>
 <p><strong>7.1 Watching risk</strong></p>
 <p>The dashboard classes each open ticket automatically:</p>
@@ -437,17 +631,21 @@ threshold (default 90 days).</li>
 its <strong>history</strong>, with a mark beside every event showing
 whether it still verifies.</p>
 <p><strong>7.2 Reminders and follow-up</strong></p>
-<p><strong>You do not need to nag on-time borrowers.</strong> Because
-the system is <em>local-first</em>, the borrower’s phone already holds
-the full ticket and can work out, by itself and offline, what is due,
-when, and how much. The intended routine is: the phone reminds its own
-owner (a banner each time the app is opened, and an optional calendar
-entry for each due date), and <strong>the shop only chases the
-late</strong>. This also avoids message costs and the need for each
-borrower’s permission to be messaged about their own loan. <em>This
-borrower-side reminder is the rule of the system but is <strong>not
-built in this edition</strong>; the shop-side screen below is what the
-demonstration has.</em></p>
+<p><strong>The shop does not nag on-time borrowers; the phone reminds
+its own owner.</strong> Because the borrower has the whole history
+(section 2), the phone knows every due date and amount and can remind
+against the timeline <strong>even offline</strong>: a banner each time
+the app is opened (“installment due in 3 days · interest owed today ·
+cost to redeem”), and an optional calendar entry for each due date that
+works in any calendar program without a connection. The shop sends no
+reminder to someone paying on time; this also avoids message costs and
+the need for permission to message people about their own loan.
+<strong>The shop chases the late.</strong> <em>Borrower-side reminders
+are the rule of the system but are <strong>not built in this
+edition</strong>: the demonstration phone already shows due date and
+interest owed from its own copy; banners and calendar entries are not
+yet there. The shop-side screen below is what the demonstration
+has.</em></p>
 <p><em>Due-date reminders</em> (shop side) is therefore for three uses:
 borrowers who have <strong>no phone app</strong> or are not enrolled
 (counter-only tickets, imported opening balances), <strong>late</strong>
@@ -923,21 +1121,27 @@ connected</td>
 <td><em>[preview only]</em> — entries are shown, not posted</td>
 </tr>
 <tr class="even">
+<td>Phone works alone from its own copy (due dates, interest owed,
+what-if redeem, receipt checks)</td>
+<td>Working in the demonstration; the <em>Check for latest</em> button
+and “up to date as of” mark are design only</td>
+</tr>
+<tr class="odd">
 <td>Reminders</td>
 <td>Borrower-side (phone reminds its own owner) is the rule but
 <strong>not built</strong>; the shop-side screen is for counter-only and
 late tickets. Sending: you press send; automatic sending is
 <strong>not</strong> connected</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Gold price</td>
 <td>You enter it; there is no live feed</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Staff PIN</td>
 <td>Convenience only; not security</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Legal figures</td>
 <td>Taken from public sources and a 2017 manual <strong>[TH]</strong>;
 must be re-checked</td>
@@ -1117,18 +1321,32 @@ is replaced by a new one</td>
 <td>A small signed (and sealed) message between shop and borrower</td>
 </tr>
 <tr class="even">
+<td>Status token</td>
+<td>A tiny signed note of “how far I have got”; shows whether the other
+side is in sync, behind or ahead</td>
+</tr>
+<tr class="odd">
+<td>Check for latest</td>
+<td>The phone asks the shop only for the events it has not seen yet</td>
+</tr>
+<tr class="even">
+<td>Local-first</td>
+<td>Each side keeps its own full copy and works alone; messages only
+bring the other side up to date</td>
+</tr>
+<tr class="odd">
 <td>Journal</td>
 <td>The encrypted second copy kept on a server that can only append</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Recovery code</td>
 <td>The code that encrypts and opens backups</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Chooser</td>
 <td>A setting where shops differ</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Cushion</td>
 <td>Collateral value minus principal lent</td>
 </tr>
