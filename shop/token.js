@@ -16,12 +16,13 @@
   const unb64u = t => { const r = atob(t.replace(/-/g, '+').replace(/_/g, '/')); return dec.decode(Uint8Array.from(r, c => c.charCodeAt(0))); };
 
   const ALG = { name: 'ECDSA', namedCurve: 'P-256' }, SIG = { name: 'ECDSA', hash: 'SHA-256' };
-  async function newKey() {
-    const k = await subtle.generateKey(ALG, true, ['sign', 'verify']);
-    return { priv: await subtle.exportKey('jwk', k.privateKey), pub: await subtle.exportKey('jwk', k.publicKey) };
+  // bound = true: the private key is a NON-EXTRACTABLE CryptoKey (spec §16.1: can sign, can never be exported); false: exportable JWK (the shop's key, which §19 backs up)
+  async function newKey(opts) {
+    const bound = !!(opts && opts.bound), k = await subtle.generateKey(ALG, !bound, ['sign', 'verify']);
+    return { priv: bound ? k.privateKey : await subtle.exportKey('jwk', k.privateKey), pub: await subtle.exportKey('jwk', k.publicKey), bound };
   }
   const pubOf = jwk => ({ kty: jwk.kty, crv: jwk.crv, x: jwk.x, y: jwk.y });
-  const sign = async (privJwk, h) => hex(await subtle.sign(SIG, await subtle.importKey('jwk', privJwk, ALG, false, ['sign']), enc.encode(h)));
+  const sign = async (priv, h) => hex(await subtle.sign(SIG, (priv && priv.type === 'private') ? priv : await subtle.importKey('jwk', priv, ALG, false, ['sign']), enc.encode(h)));
   const verifySig = async (pubJwk, h, sig) => {
     try { return await subtle.verify(SIG, await subtle.importKey('jwk', pubOf(pubJwk), ALG, false, ['verify']), unhex(sig), enc.encode(h)); }
     catch (e) { return false; }
@@ -45,6 +46,25 @@
       mine.push(e); return e;
     }
     pubKey(by) { const f = this.chain[by][0]; return f && f.body.pub; }     // each author's first event carries its key
+    // Signer key valid for event `e` of author `by` (spec §20.7). The first event pins the key. The phone's key changes ONLY through an `enrol` event
+    // signed by the NEW key, accepted only after the shop has signed a `revoke` of the key then in force (device lost -> re-enrolment).
+    static same(a, b) { return !!a && !!b && a.x === b.x && a.y === b.y; }
+    isRevoked(pub, atTs) { return this.chain.shop.some(r => r.type === 'revoke' && Ledger.same(r.body.pub, pub) && (atTs == null || r.ts <= atTs)); }
+    pubFor(by, e) {
+      const c = this.chain[by]; if (e.n === 1) return e.body.pub; let key = c[0] && c[0].body.pub; if (by !== 'phone') return key;
+      for (let i = 1; i < e.n - 1 && i < c.length; i++) if (c[i].type === 'enrol' && this.isRevoked(key)) key = c[i].body.pub;
+      if (e.type === 'enrol' && this.isRevoked(key)) return e.body.pub;
+      return key;
+    }
+    // extra rules after the signature checks: a revoked key signs nothing new; an enrol must carry the proof of the NEW one-time code the shop recorded in the revoke
+    async keyRule(by, e, pub) {
+      if (by !== 'phone') return null;
+      if (e.type === 'enrol') {
+        const old = this.pubFor(by, { ...e, type: 'x' }), rv = this.chain.shop.find(r => r.type === 'revoke' && Ledger.same(r.body.pub, old));
+        if (!rv) return 'no-revoke'; if (!e.body.proof || e.body.proof !== rv.body.codeHash) return 'proof'; return null;
+      }
+      if (this.isRevoked(pub, e.ts)) return 'revoked'; return null;
+    }
     // Verify one event against the chain as held (does not mutate)
     async checkEvent(e, pub) {
       if (await hashOf(e) !== e.hash) return 'hash';
@@ -57,7 +77,8 @@
       for (const by of ['shop', 'phone']) {
         let prev = '';
         for (const e of this.chain[by]) {
-          let why = await this.checkEvent(e, this.pubKey(by));
+          const pk = this.pubFor(by, e); let why = await this.checkEvent(e, pk);
+          if (!why) why = await this.keyRule(by, e, pk);
           if (!why && e.prev !== prev) why = 'link';
           if (!why && e.seen.n > 0) {              // `seen` must point at a real event of the other chain
             const o = this.chain[by === 'shop' ? 'phone' : 'shop'][e.seen.n - 1];
@@ -68,6 +89,16 @@
       }
       return out;
     }
+    // ---- re-enrolment after a lost device (spec §20.7): shop revokes -> new device enrols with the proof of the NEW one-time code ----
+    currentPhonePub() { const c = this.chain.phone; let key = c[0] && c[0].body.pub; for (let i = 1; i < c.length; i++) if (c[i].type === 'enrol') key = c[i].body.pub; return key; }
+    async revokePhone(reason, newCode, ts) {                  // shop side; the code itself is never stored, only its hash
+      return this.append('revoke', { pub: this.currentPhonePub(), reason: reason || '', codeHash: await sha(String(newCode).trim() + '|' + this.tk) }, ts);
+    }
+    reenrolPlain() { return JSON.stringify({ v: 1, tk: this.tk, from: 'shop', events: this.chain.shop, peer: this.chain.phone, head: this.head('shop'), seen: this.head('phone') }); }   // sealed with the new code by the caller
+    static async fromReenrol(plain, key) {                    // new device: take the shop chain + the phone history, then enrol with the new key
+      const t = JSON.parse(plain), l = new Ledger(t.tk, 'phone', key); l.chain.shop = t.events; l.chain.phone = t.peer; return l;
+    }
+    async enrol(newCode, ts, extra) { return this.append('enrol', { ...(extra || {}), pub: pubOf(this.key.pub), proof: await sha(String(newCode).trim() + '|' + this.tk) }, ts); }
     // Token = own events the peer has not yet `seen` (so a lost token is healed by the next one) + heads
     makeToken(forceAll) {
       const peerChain = this.chain[this.peer], ack = peerChain.length ? peerChain[peerChain.length - 1].seen.n : 0;
@@ -87,8 +118,9 @@
         const c = this.chain[by];
         if (e.n <= c.length) { if (c[e.n - 1].hash === e.hash) res.dup++; else res.bad.push({ n: e.n, why: 'fork' }); continue; }
         if (e.n > c.length + 1) { this.pending.push(e); continue; }               // gap: hold until filled
-        const pub = e.n === 1 ? e.body.pub : this.pubKey(by);
+        const pub = this.pubFor(by, e);
         let why = await this.checkEvent(e, pub);
+        if (!why) why = await this.keyRule(by, e, pub);
         if (!why && e.prev !== this.head(by).h) why = 'link';
         if (why) { res.bad.push({ n: e.n, why }); continue; }
         c.push(e); res.accepted++;

@@ -20,7 +20,7 @@
     const settings = {}; Object.keys(SETTINGS).forEach(k => { const v = store.get(SETTINGS[k]); if (v != null) settings[k] = v; });
     const sk = J(store, 'gp.key.shop');
     const b = { v: 1, kind: 'gp-backup', created: new Date().toISOString(), shop: { pub: sk && sk.pub ? sk.pub : null }, ledgers, contacts: J(store, 'gp.contacts') || [], settings };
-    if (opt.withKeys) b.keys = { shop: sk, phone: J(store, 'gp.key.phone') };
+    if (opt.withKeys) b.keys = { shop: sk, phone: J(store, 'gp.key.phone'), ecdhShop: J(store, 'gp.ecdh.shop') };      // the shop's signing + sealing keys are exportable on purpose (backup); the phone's device-bound keys never leave the device
     return b;
   }
   const events = b => b.ledgers.reduce((a, l) => a + l.chain.shop.length + l.chain.phone.length, 0);
@@ -91,7 +91,7 @@
     if (put.phone) store.set('gp.phone.ledger', JSON.stringify(put.phone));
     if (bundle.contacts && bundle.contacts.length && !(J(store, 'gp.contacts') || []).length) store.set('gp.contacts', JSON.stringify(bundle.contacts));
     Object.keys(bundle.settings || {}).forEach(k => { if (store.get(SETTINGS[k]) == null) store.set(SETTINGS[k], bundle.settings[k]); });
-    if (bundle.keys) { if (bundle.keys.shop && store.get('gp.key.shop') == null) store.set('gp.key.shop', JSON.stringify(bundle.keys.shop)); if (bundle.keys.phone && store.get('gp.key.phone') == null) store.set('gp.key.phone', JSON.stringify(bundle.keys.phone)); }
+    if (bundle.keys) { if (bundle.keys.shop && store.get('gp.key.shop') == null) store.set('gp.key.shop', JSON.stringify(bundle.keys.shop)); if (bundle.keys.phone && store.get('gp.key.phone') == null) store.set('gp.key.phone', JSON.stringify(bundle.keys.phone)); if (bundle.keys.ecdhShop && store.get('gp.ecdh.shop') == null) store.set('gp.ecdh.shop', JSON.stringify(bundle.keys.ecdhShop)); }
     return { applied, skipped };
   }
   // 19.4 channel 3: the mail text carries a digest only (never ciphertext); the file travels as an attachment / share-sheet file

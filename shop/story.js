@@ -17,7 +17,7 @@ window.Story = (function () {
     async () => {                                  // 2 scan + ack
       X.setTab('journey'); const tk = live(); X.S.j.tk = tk;
       await act(`send|shop|qr|${tk}`); await act('openOffer'); await cap('cap2');
-      X.S.j.code = Net.shopL[tk].chain.shop[0].body.code; X.render(); await cap('cap2b');
+      X.S.j.code = Net.shopL[tk].chain.shop[0].body.code; X.render(); await cap('cap2b'); await act('open');
       X.S.j.via = 'web'; await act('ack'); await wait(); await cap('cap2c');
     },
     async () => {                                  // 3 pay

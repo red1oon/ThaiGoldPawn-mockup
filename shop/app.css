@@ -179,3 +179,4 @@ button.chip2{background:transparent;color:var(--text);font:inherit;cursor:pointe
 .rcpt table{width:100%;border-collapse:collapse;margin:8px 0}.rcpt th,.rcpt td{border-bottom:1px solid var(--line);padding:4px 6px;text-align:left}.rcpt .n{text-align:right;font-variant-numeric:tabular-nums}.rc-tot td{font-weight:600}.rc-note{font-size:.85em;color:var(--muted);margin:6px 0}.rc-sign{display:flex;justify-content:space-around;margin-top:28px;text-align:center}
 @media print{body.print-rcpt *{visibility:hidden}body.print-rcpt .rcpt,body.print-rcpt .rcpt *{visibility:visible}body.print-rcpt .rcpt{position:absolute;left:0;top:0;width:100%;border:none;margin:0}@page{size:A5 landscape;margin:8mm}}
 .spark{width:100%;height:34px;margin:2px 0}
+.lockic{vertical-align:middle;color:var(--s6)}.lockic .material-symbols-rounded{font-size:15px}

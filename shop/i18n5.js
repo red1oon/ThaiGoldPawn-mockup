@@ -132,3 +132,12 @@ Object.assign(window.I18N, {
   ctChannel:['ช่องทาง','Channel'], open:['เปิด','Open']
 });
 Object.assign(window.I18N, { wt_remind:['ครบกำหนดใน 7 วัน หรือเกินกำหนด','Due in 7 days or overdue'], sc_remind:['ต้องแจ้งเตือน','Needs a reminder'] });
+Object.assign(window.I18N, {
+  sealedWaiting:['มีใบเสนอที่ถูกเข้ารหัสรอเปิด สัญญา','A sealed offer is waiting to be opened, ticket'], sealedHint:['ใบเสนอถูกเข้ารหัส เปิดได้ด้วยรหัสครั้งเดียวที่ร้านแจ้งให้ทางอื่น (เช่น SMS) ใส่รหัสเพื่อเปิด','The offer is encrypted. It opens only with the one-time code the shop gives you another way (for example by SMS). Enter it to open.'],
+  openBtn:['เปิดใบเสนอ','Open the offer'], codeBadOpen:['รหัสไม่ถูกต้อง ใบเสนอยังไม่เปิด','Wrong code; the offer stays closed.'], openedByCode:['เปิดด้วยรหัสแล้ว','Opened with the code'], keyId:['รหัสกุญแจ (kid)','Key ID (kid)'],
+  devBound:['กุญแจผูกกับเครื่องนี้ คัดลอกออกไม่ได้','device-bound: it cannot be copied out'], devKeyWarn:['เบราว์เซอร์นี้ผูกกุญแจกับเครื่องไม่ได้ ใช้กุญแจที่คัดลอกได้','this browser cannot bind the key to the device; the key is copyable'],
+  codeBySms:['ส่งรหัสนี้ให้ผู้กู้ทางช่องทางอื่น (เช่น SMS) ใบเสนอใน QR/ลิงก์เปิดได้ด้วยรหัสนี้เท่านั้น','Give this code to the borrower another way (for example by SMS). The offer in the QR or link opens only with it.'],
+  wSealed:['เข้ารหัสแล้ว','sealed'], revokeBtn:['โทรศัพท์หาย: เพิกถอนกุญแจและลงทะเบียนเครื่องใหม่','Phone lost: revoke the key and re-enrol a new device'], newCodeLbl:['รหัสครั้งเดียวใหม่','New one-time code'],
+  reenrolNote:['ส่งลิงก์นี้ไปยังเครื่องใหม่ และแจ้งรหัสทางอื่น เครื่องเดิมใช้กุญแจเดิมไม่ได้อีก ประวัติเดิมยังอยู่และตรวจสอบได้','Send this link to the new device and give the code another way. The old device can no longer sign with its old key. The history stays and still verifies.']
+});
+Object.assign(window.I18N, { ws_sealed:['รอรหัสเพื่อเปิด','waiting for the code'] });

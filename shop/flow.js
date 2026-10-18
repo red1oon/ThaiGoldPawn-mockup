@@ -27,10 +27,12 @@ window.Flow = (function () {
     let body;
     if (!tk) body = `<div class="note">${t('noLive')}</div><div class="actions" style="justify-content:flex-start"><button class="btn" data-j="issue">${t('issueOffer')}</button></div>${S.j.limitMsg ? `<div class="err">\u26A0 ${S.j.limitMsg}</div>` : ''}`;
     else {
-      const l = Net.shopL[tk], st = P.fold(l, Net.today), off = l.chain.shop[0].body, link = Net.share('qr', l.offerToken()).link;
+      const l = Net.shopL[tk], st = P.fold(l, Net.today), off = l.chain.shop[0].body, otok = Net.offerTokenFor(l), link = otok ? Net.share('qr', otok).link : '', pPub = l.chain.phone.length ? l.currentPhonePub() : null;
       body = `<div class="row2"><b>${tk}</b>${stChip(st.status)}</div>
-        <div class="kv"><span>${t('name')}</span><b>${dn(st.name)}</b><span>${t('phone')}</span><b>${st.phone}</b><span>${t('loan')}</span><b>${fmt(st.loan)}</b><span>${t('code')}</span><b>${off.code}</b></div>
-        <div class="note">${t('fundNote')}</div>${qr(link)}
+        <div class="kv"><span>${t('name')}</span><b>${dn(st.name)}</b><span>${t('phone')}</span><b>${st.phone}</b><span>${t('loan')}</span><b>${fmt(st.loan)}</b><span>${t('code')}</span><b>${off.code}</b>${pPub ? `<span>${t('keyId')}</span><b><code>${Net.kidText(pPub)}</code></b>` : ''}</div>
+        ${Net.sealed ? `<div class="note">\uD83D\uDD12 ${t('codeBySms')}</div>` : ''}
+        <div class="note">${t('fundNote')}</div>${link ? qr(link) : `<div class="note">…</div>`}
+        ${pPub ? `<div class="actions" style="justify-content:flex-start"><button class="btn small ghost" data-j="revoke|${tk}">${icon('phonelink_erase')} ${t('revokeBtn')}</button></div>${S.j.reenrol && S.j.reenrol.tk === tk ? `<div class="note"><b>${t('newCodeLbl')}: ${S.j.reenrol.code}</b><br>${t('reenrolNote')}<br><small style="word-break:break-all">${S.j.reenrol.link.slice(0, 120)}…</small></div>` : ''}` : ''}
         <div class="note">${t('sendOffer')}</div><div class="chs">${['qr', 'link', 'email', 'whatsapp', 'line', 'sms', 'nfc', 'web'].map(c => `<button class="chbtn" data-j="send|shop|${c}|${tk}" title="${t('ch_' + c)}">${icon(CH[c])}<small>${t('ch_' + c)}</small></button>`).join('')}</div>
         <div class="sec-title">${t('claimsIn')}</div>${st.claims.length ? st.claims.map(c => `<div class="row2"><span>#${c.claimNo} ${t('m_' + c.mode)} ${fmt(c.amount)}</span><span class="chip2" style="--c:var(${c.status === 'verified' ? '--s6' : c.status === 'rejected' ? '--s8' : '--s4'})">${t('cl_' + c.status)}${c.reason ? ' · ' + c.reason + ' ' + t.raw('code_' + c.reason) : ''}</span>${c.status === 'waiting' ? `<button class="btn small" data-j="retry|${tk}">${t('retryCheck')}</button>` : ''}</div>`).join('') : `<div class="note">–</div>`}
         <div class="sec-title">${t('recvHere')}</div><textarea id="recv_shop" placeholder="${t('pasteTok')}" rows="2"></textarea>
@@ -47,7 +49,7 @@ window.Flow = (function () {
       ${ws.length ? ws.map(w => {
         const r = w.result, res = r ? (r.ok ? `+${r.accepted} ${t('events')}${r.dup ? ` · ${r.dup} ${t('dupDropped')}` : ''}${r.gap ? ` · ⚠ ${t('gap')}` : ''}${r.bad && r.bad.length ? ` · ✖ ${t('refused')} (${r.bad[0].why})` : ''}` : '✖ ' + r.why) : '';
         const link = !['web', 'qr', 'nfc'].includes(w.channel) ? `<a href="${Net.share(w.channel, w.token).href}" target="_blank" rel="noopener">${t('open')} ↗</a>` : '';
-        return `<div class="wi ${w.state}"><div class="row2"><span>${icon(CH[w.channel])} ${t('ch_' + w.channel)}</span><span class="chip2" style="--c:var(${w.state === 'delivered' ? '--s6' : w.state === 'inflight' ? '--s4' : '--s8'})">${t('ws_' + w.state)}</span></div>
+        return `<div class="wi ${w.state}"><div class="row2"><span>${icon(CH[w.channel])} ${t('ch_' + w.channel)}${w.sealed ? ` <span class="lockic" title="${t('wSealed')}">${icon('lock')}</span>` : ''}</span><span class="chip2" style="--c:var(${w.state === 'delivered' ? '--s6' : w.state === 'inflight' ? '--s4' : '--s8'})">${t('ws_' + w.state)}</span></div>
           <div class="note">${t('by_' + w.from)} → ${t('by_' + w.to)} · ${w.tk} · #${w.n} · ${w.size} ${t('chars')}${w.dupOf ? ' · ' + t('copy') : ''}</div>
           ${res ? `<div class="note">${res}</div>` : ''}
           <div class="actions" style="justify-content:flex-start;margin:4px 0 0">${w.state === 'inflight' ? `<button class="btn small" data-j="deliver|${w.id}">${t('deliverBtn')}</button><button class="btn small ghost" style="color:var(--s8)" data-j="lose|${w.id}">${t('loseBtn')}</button>` : ''}<button class="btn small ghost" style="color:var(--accent)" data-j="dup|${w.id}">${t('dupBtn')}</button>${link}</div></div>`;
@@ -56,8 +58,11 @@ window.Flow = (function () {
 
   // ---------- phone ----------
   function phone() {
-    const l = Net.phoneL, on = Net.online.phone;
+    const l = Net.phoneL, on = Net.online.phone, waiting = Net.wire.filter(w => w.to === 'phone' && w.state === 'sealed').pop();
     const top = `<header class="appbar"><h1>${t('myTickets')}</h1><span class="chip">${on ? t('online') : t('offline')}</span><button class="btn small ghost" data-j="online|phone">${on ? t('goOffline') : t('goOnline')}</button></header>`;
+    if (waiting) return `<div class="phone">${top}<div class="card" style="margin:12px"><div class="panel"><div class="okm">\uD83D\uDD12 ${t('sealedWaiting')} ${waiting.tk}</div><div class="note">${t('sealedHint')}</div>
+      <label class="f">${t('codeEnter')}<input data-k="j.code" value="${S.j.code}" inputmode="numeric"></label>${S.j.codeBad ? `<div class="err">\u26A0 ${t('codeBadOpen')}</div>` : ''}
+      <div class="actions"><button class="btn" data-j="open">${t('openBtn')}</button></div></div></div></div>`;
     if (!l || !l.chain.shop.length) return `<div class="phone">${top}<div class="card" style="margin:12px"><div class="panel"><div class="note">${t('phoneEmpty')}</div>
       <div class="actions" style="justify-content:flex-start"><button class="btn" data-j="openOffer">${t('scanBtn')}</button></div>
       <textarea id="recv_phone" placeholder="${t('pasteTok')}" rows="2"></textarea><div class="actions" style="justify-content:flex-start"><button class="btn small" data-j="recv|phone">${t('receive')}</button></div></div></div></div>`;
@@ -69,7 +74,7 @@ window.Flow = (function () {
         <span>${t('collateral')}</span><b>${t('cat_' + st.cat)} · ${st.weight} g × ${st.qty}</b><span>${t('loanable')}</span><b>${fmt(st.ceiling)}</b><span>${t('headroom')}</span><b>${fmt(st.headroom)}</b>
         <span>${t('loan')}</span><b>${fmt(st.loan)}</b><span>${t('rate')}</span><b>${st.rate}% / ${t(st.basis === 'day' ? 'perDay' : 'perMonth')}</b><span>${t('due')}</span><b>${fd(st.due)}</b></div>
         <table><tr><th>${t('inst')}</th><th>${t('date')}</th><th class="n">${t('amount')}</th></tr>${plan(st).map(r => `<tr><td>${r.i}</td><td>${fd(r.date)}</td><td class="n">${fmt(r.amt)}</td></tr>`).join('')}</table>
-        <label class="f">${t('codeEnter')}<input data-k="j.code" value="${S.j.code}" inputmode="numeric"></label><div class="note">${t('codeNote')}</div>
+        ${Net.sealed && Net.phoneCode ? `<div class="note">\uD83D\uDD12 ${t('openedByCode')} · ${t('keyId')}: <code>${Net.kidText(Net.keys.phone.pub)}</code> ${Net.keys.phone.bound ? t('devBound') : '\u26A0 ' + t('devKeyWarn')}</div>` : `<label class="f">${t('codeEnter')}<input data-k="j.code" value="${S.j.code}" inputmode="numeric"></label><div class="note">${t('codeNote')}</div>`}
         ${S.j.codeBad ? `<div class="err">⚠ ${t('codeBad')}</div>` : ''}
         <label class="f">${t('returnVia')}${sel('j.via', S.j.via, chOpts())}</label>
         <div class="actions"><button class="btn" data-j="ack">${t('ackBtn')}</button></div></div></div>`;
@@ -114,6 +119,8 @@ window.Flow = (function () {
     else if (a === 'lose') Net.lose(+b);
     else if (a === 'dup') Net.dup(+b);
     else if (a === 'openOffer') await Net.openOffer(S.j.tk || Object.keys(Net.shopL).pop());
+    else if (a === 'open') { const r = await Net.phoneOpen(S.j.code); S.j.codeBad = !r.ok; if (r.ok) S.j.code = ''; }
+    else if (a === 'revoke') { const r = await Net.shopRevoke(b, 'phone lost'); S.j.reenrol = r.ok ? { tk: b, code: r.code, link: r.link, token: r.token } : null; }
     else if (a === 'ack') { const r = await Net.phoneAck(S.j.code, S.j.via); S.j.codeBad = !r.ok; if (r.ok) S.j.code = ''; }
     else if (a === 'pay') await Net.phoneClaim(S.j.mode, S.j.mode === 'other' ? +S.j.amt : 0, S.j.slip, S.j.via);
     else if (a === 'online') Net.setOnline(b, !Net.online[b]);
