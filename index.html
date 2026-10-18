@@ -1,47 +1,31 @@
 <!doctype html>
-<html lang="th">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Localised Micro Financing System — sample</title>
+<title>Localised Micro Financing System</title>
 <link rel="icon" href="data:,">
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL@24,400,0&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="app.css">
+<style>
+:root{--bg:#f4f6f6;--card:#fff;--ink:#1b2a2a;--muted:#5f6f6f;--hd:#009688;--line:#dde4e4}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#121a1a;--card:#1b2626;--ink:#e6efef;--muted:#9bb0b0;--line:#2b3a3a}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Prompt,system-ui,sans-serif}
+header{background:var(--hd);color:#fff;padding:16px}header h1{margin:0;font-size:1.15rem;font-weight:600}
+main{max-width:720px;margin:0 auto;padding:20px 16px}
+p.lead{color:var(--muted);margin:0 0 18px}
+a.card{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px;color:inherit;text-decoration:none}
+a.card:hover,a.card:focus-visible{border-color:var(--hd);outline:none}
+a.card b{display:block;font-size:1.05rem;margin-bottom:4px}a.card span{color:var(--muted);font-size:.92rem}
+small{color:var(--muted);display:block;margin-top:18px}
+</style>
 </head>
 <body>
-<header class="appbar">
-  <h1 data-t="appTitle"></h1>
-  <span class="chip" id="profileChip"></span>
-  <button class="btn small ghost" id="langBtn">EN</button>
-</header>
-<div class="banner" data-t="mockup"></div>
-<div id="overlay"></div>
-<div class="shell">
-  <nav class="rail" id="rail"></nav>
-  <main id="view"></main>
-</div>
-<script src="lib/qrcode.js"></script>
-<script src="i18n.js"></script>
-<script src="i18n2.js"></script>
-<script src="i18n3.js"></script>
-<script src="i18n4.js"></script>
-<script src="i18nfilm.js"></script>
-<script src="calc.js"></script>
-<script src="views.js"></script>
-<script src="token.js"></script>
-<script src="pay.js"></script>
-<script src="ad_pawn.js"></script>
-<script src="books.js"></script>
-<script src="net.js"></script>
-<script src="sample.js"></script>
-<script src="flow.js"></script>
-<script src="views2.js"></script>
-<script src="dash.js"></script>
-<script src="contacts.js"></script>
-<script src="contacts_view.js"></script>
-<script src="story.js"></script>
-<script src="app.js"></script>
+<header><h1>Localised Micro Financing System · ระบบสินเชื่อรายย่อยท้องถิ่น</h1></header>
+<main>
+<p class="lead">Gold pawn (ขายฝาก) as the worked example. Sample data only. · ตัวอย่างข้อมูลสมมติเท่านั้น</p>
+<a class="card" href="m/"><b>Customer mobile UI · แอปมือถือ</b><span>The first version (3 Oct): counter and phone layout — ticket, interest, top-up, redeem, settings.</span></a>
+<a class="card" href="shop/"><b>Shop dashboard · แดชบอร์ดร้านค้า</b><span>Current version: dashboard, NPL and green list, contacts import, borrower hand-over, books, data model, theme and layout editor.</span></a>
+<small>Each opens its own sample data; nothing is shared between them.</small>
+</main>
 </body>
 </html>

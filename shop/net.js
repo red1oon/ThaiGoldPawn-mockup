@@ -153,7 +153,7 @@
     },
     async shopRetry(tk) { await this.shopProcess(tk, { retry: true }); this.emit(); },
     share(channel, token) {
-      const base = (typeof location !== 'undefined' ? location.href.split('#')[0] : 'https://red1oon.github.io/ThaiGoldPawn-mockup/');
+      const base = (typeof location !== 'undefined' ? location.href.split('#')[0] : 'https://red1oon.github.io/ThaiGoldPawn-mockup/shop/');
       const link = base + '#/t/' + token, q = encodeURIComponent;
       return { link, href: { email: 'mailto:?subject=' + q('Gold pawn') + '&body=' + q(link), whatsapp: 'https://wa.me/?text=' + q(link),
         line: 'https://line.me/R/msg/text/?' + q(link), sms: 'sms:?&body=' + q(link) }[channel] || link };
