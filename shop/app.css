@@ -169,3 +169,5 @@ button.chip2{background:transparent;color:var(--text);font:inherit;cursor:pointe
 .vax i{font-style:normal;font-size:.68em;color:var(--muted);text-align:center}.vfoot{display:flex;justify-content:space-between;font-size:.8em;margin-top:6px;color:var(--muted)}
 .chips{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}.kchip{display:flex;align-items:center;gap:8px;background:color-mix(in srgb,var(--c) 12%,var(--card));border-radius:var(--radius);padding:8px 12px}.kchip .material-symbols-rounded{color:var(--c)}.kchip b{font-size:1.3em}.kchip span:last-child{color:var(--muted);font-size:.85em}
 .seg{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.cnt{width:70px;text-align:right}.slipwarn{display:flex;gap:6px;align-items:center}.slipwarn.warn{color:var(--s4)}.slipwarn.err{color:var(--s8)}
+.reccode{font-family:ui-monospace,monospace;font-size:1.5em;letter-spacing:.08em;background:var(--chip);border-radius:var(--radius);padding:12px;text-align:center;margin:8px 0;user-select:all}.chk{display:flex;gap:8px;align-items:center;margin:6px 0}
+.demo{border:1px dashed var(--line);border-radius:var(--radius);padding:10px;margin:10px 0}
