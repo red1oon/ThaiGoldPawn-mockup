@@ -97,7 +97,7 @@ window.AD = (function () {
     L('PAWN_Audience', 'green', 'Green list customers', 'ลูกค้าดี'), L('PAWN_Audience', 'customers', 'All customers with a ticket', 'ลูกค้าที่มีตั๋วทั้งหมด'), L('PAWN_Audience', 'prospects', 'Contacts without a ticket', 'ผู้ติดต่อที่ยังไม่มีตั๋ว'), L('PAWN_Audience', 'all', 'Everyone who agreed', 'ทุกคนที่ยินยอม'),
     L('PAWN_BcastChannel', 'whatsapp', 'WhatsApp', 'WhatsApp'), L('PAWN_BcastChannel', 'sms', 'SMS', 'SMS'), L('PAWN_BcastChannel', 'line', 'LINE', 'LINE'), L('PAWN_BcastChannel', 'email', 'Email', 'อีเมล'),
     L('PAWN_Status', 'offered', 'Offered', 'รอผู้กู้ยืนยัน'), L('PAWN_Status', 'active', 'Active', 'ใช้งานอยู่'), L('PAWN_Status', 'overdue', 'Overdue', 'เกินกำหนด'),
-    L('PAWN_Status', 'redeemed', 'Redeemed', 'ไถ่ถอนแล้ว'), L('PAWN_Status', 'forfeited', 'Forfeited', 'หลุดจำนำ'),
+    L('PAWN_Status', 'redeemed', 'Redeemed', 'ไถ่ถอนแล้ว'), L('PAWN_Status', 'forfeited', 'Forfeited', 'หลุดจำนำ'), L('PAWN_Status', 'sold', 'Sold', 'ขายแล้ว'),
     L('PAWN_Category', 'ornament', 'Ornament gold', 'ทองรูปพรรณ'), L('PAWN_Category', 'bar', 'Gold bar', 'ทองแท่ง'), L('PAWN_Category', 'silver', 'Silver', 'เงิน'), L('PAWN_Category', 'other', 'Other', 'อื่นๆ'),
     L('PAWN_RateGroup', 'standard', 'Standard', 'ทั่วไป'), L('PAWN_RateGroup', 'vip', 'VIP', 'วีไอพี'), L('PAWN_RateGroup', 'supervip', 'Super VIP', 'ซูเปอร์วีไอพี'), L('PAWN_RateGroup', 'relative', 'Relative', 'ญาติและคนรู้จัก'),
     L('PAWN_Risk', 'ok', 'Ok', 'ปกติ'), L('PAWN_Risk', 'green', 'Green list', 'ลูกค้าดี (เสนอวงเงินเพิ่มได้)'), L('PAWN_Risk', 'watch', 'Watch', 'เฝ้าระวัง'), L('PAWN_Risk', 'npl', 'NPL', 'หนี้ไม่ก่อให้เกิดรายได้ (NPL)'),

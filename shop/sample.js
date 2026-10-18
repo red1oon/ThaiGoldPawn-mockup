@@ -30,13 +30,13 @@
           const q = P.quote(st, 'installment', 0, cover, { taxPoint: 'interest' }), ts = Date.parse(cover + 'T10:00:00Z');
           await pl.append('payment_claim', { claimNo: k, mode: 'installment', amount: q.total, ask: 0, slip: { transRef: no + '-' + k } }, ts);
           await l.receive(pl.makeToken(), 'seed');
-          await l.append('payment_verified', { claimNo: k, mode: 'installment', amt: q.total, int: q.int, vat: q.vat, principalPart: 0, coverTo: q.coverTo, credit: 0, untaxed: 0, slip: { transRef: no + '-' + k } }, ts + 60000);
+          await l.append('payment_verified', { claimNo: k, mode: 'installment', amt: q.total, int: q.int, vat: q.vat, principalPart: 0, coverTo: q.coverTo, credit: 0, untaxed: 0, tender: 'transfer', slip: { transRef: no + '-' + k } }, ts + 60000);
           await pl.receive(l.makeToken(), 'seed'); k++;
         }
         const st = P.fold(l, today), roll = r();
         if (C.D(st.due) <= C.D(today) && roll < 0.45) {       // due and redeemed in full
           const q = P.quote(st, 'full', 0, st.due, { taxPoint: 'interest' }), ts = Date.parse(st.due + 'T11:00:00Z');
-          await l.append('payment_verified', { claimNo: k, mode: 'full', amt: q.total, int: q.int, vat: q.vat, principalPart: q.principalPart, coverTo: q.coverTo, credit: 0, untaxed: 0, slip: { transRef: no + '-F' } }, ts);
+          await l.append('payment_verified', { claimNo: k, mode: 'full', amt: q.total, int: q.int, vat: q.vat, principalPart: q.principalPart, coverTo: q.coverTo, credit: 0, untaxed: 0, ...(Number(no.slice(1)) % 2 === 1 ? { tender: 'cash' } : { tender: 'transfer', slip: { transRef: no + '-F' } }) }, ts);   // paid at the counter in cash, or by transfer with a slip
         } else if (C.D(st.due) < C.D(today) && C.daysBetween(st.due, today) > 110 && roll < 0.6)
           await l.append('closed', { how: 'forfeited' }, Date.parse(C.edate(st.due, 1) + 'T11:00:00Z'));
       }

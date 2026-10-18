@@ -40,7 +40,7 @@ window.Stock = (function () {
     });
     return m;
   }
-  const holds = st => st.status === 'forfeited' ? 'FORFEIT' : st.status === 'redeemed' ? null : 'VAULT';
+  const holds = st => st.status === 'forfeited' ? 'FORFEIT' : (st.status === 'redeemed' || st.status === 'sold') ? null : 'VAULT';
   const tickets = () => Object.values(Net.all()).map(l => P.fold(l, Net.today));
   function view360() {
     const f = fold(), rows = tickets().map(st => {
@@ -88,7 +88,7 @@ window.Stock = (function () {
     const out = [];
     Object.values(Net.all()).forEach(l => l.chain.shop.forEach(e => {
       const b = e.body || {};
-      if (e.type === 'payment_verified') out.push({ ts: e.ts, tk: l.tk, code: '1000', ok: true, ref: b.slip && b.slip.transRef, amt: b.amt });
+      if (e.type === 'payment_verified' && b.slip && b.slip.transRef) out.push({ ts: e.ts, tk: l.tk, code: '1000', ok: true, ref: b.slip && b.slip.transRef, amt: b.amt });
       else if (e.type === 'payment_rejected' && /^10\d\d$/.test(String(b.reason)) && !NO_QUOTA.includes(String(b.reason))) out.push({ ts: e.ts, tk: l.tk, code: String(b.reason), ok: false, ref: b.attachment && b.attachment.title, amt: 0 });
     }));
     return out.sort((a, b) => b.ts - a.ts);

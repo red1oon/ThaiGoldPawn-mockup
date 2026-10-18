@@ -148,7 +148,7 @@
           const attachment = { AD_Table: 'PAWN_Payment', title: 'slipok_' + res.data.transRef + '.json', contentType: 'application/json', sha256: await T.sha(T.canon(json)), json };
           await l.append('payment_verified', { claimNo: c.claimNo, mode: c.mode, realloc: re, amt: q.total, int: q.int, vat: q.vat, principalPart: q.principalPart,
             coverTo: q.coverTo, credit: q.credit, untaxed: q.untaxed, reissue: q.reissue ? { no: 'A' + (this.nextNo++), ref: tk, first: tk } : null,
-            slip: { transRef: res.data.transRef }, attachment }, this.ts());
+            tender: 'transfer', slip: { transRef: res.data.transRef }, attachment }, this.ts());
         } else if (P.SlipOK.WAIT_CODES.includes(res.code)) {                    // not the borrower's fault: wait and re-check (spec §15.3)
           await l.append('payment_wait', { claimNo: c.claimNo, code: res.code, message: res.message, delay: res.data && res.data.delay || null, shopAlert: res.code === '1003' || res.code === '1004' }, this.ts());
         } else {

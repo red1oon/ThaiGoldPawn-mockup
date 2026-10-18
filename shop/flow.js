@@ -7,7 +7,7 @@ window.Flow = (function () {
   const icon = n => `<span class="material-symbols-rounded">${n}</span>`;
   const sel = (k, v, opts) => `<select data-k="${k}">${opts.map(([a, b]) => `<option value="${a}" ${String(a) === String(v) ? 'selected' : ''}>${b}</option>`).join('')}</select>`;
   const chOpts = () => Object.keys(CH).map(c => [c, t('ch_' + c)]);
-  const stChip = s => `<span class="chip2" style="--c:var(${{ offered: '--muted', active: '--s1', overdue: '--s8', redeemed: '--s6', forfeited: '--s2' }[s] || '--muted'})">${t('st_' + s)}</span>`;
+  const stChip = s => `<span class="chip2" style="--c:var(${{ offered: '--muted', active: '--s1', overdue: '--s8', redeemed: '--s6', forfeited: '--s2', sold: '--s7' }[s] || '--muted'})">${t('st_' + s)}</span>`;
 
   function qr(text) {
     try { const q = window.qrcode(0, 'L'); q.addData(text); q.make(); return `<div class="qr">${q.createSvgTag({ cellSize: 3, margin: 2, scalable: true })}</div>`; }
@@ -16,7 +16,7 @@ window.Flow = (function () {
   function buildOffer() {
     const x = S.issue, ap = C.appraise(+x.weight, S.price[x.basis], C.goldTypes[x.type].pct, S.set.mode, +S.set.deduct), rate = C.rateFor(x.grp, +x.loan);
     return { name: x.name, phone: x.phone, address: 'Sample address, Bangkok 10110', cat: ['ornament', 'bar', 'silver', 'other'][x.cat], item: x.item, qty: +x.qty, weight: +x.weight,
-      grp: x.grp, ceiling: ap.limit, pct: C.goldTypes[x.type].pct, loan: +x.loan, headroom: C.r2(ap.limit - x.loan), rate, basis: S.set.basis, rounding: S.set.rounding, date: Net.today, months: Math.min(+x.months, C.checkIssue(x, S.set).maxMonths), tender: x.tender || 'cash', track: x.track, safe: x.safe };
+      grp: x.grp, ceiling: ap.limit, pct: C.goldTypes[x.type].pct, loan: +x.loan, headroom: C.r2(ap.limit - x.loan), rate, basis: S.set.basis, rounding: S.set.rounding, priceRef: window.Price && window.Price.snapshot(x.date), date: Net.today, months: Math.min(+x.months, C.checkIssue(x, S.set).maxMonths), tender: x.tender || 'cash', track: x.track, safe: x.safe };
   }
   const plan = st => [1, 2, 3, 4].slice(0, st.months).map(i => ({ i, date: C.edate(st.date, i), amt: C.r2(st.principal * st.rate / 100) }));
 

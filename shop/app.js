@@ -28,7 +28,7 @@
   // sample records are stored once (Thai names); shown in the language of the screen
   window.dn = n => { n = String(n == null ? '' : n); return S.lang === 'th' ? n.replace(/^Sample address(,)? ?/, 'ที่อยู่ตัวอย่าง$1 ').replace(/ ,/, ',') : n.replace(/^ลูกค้าตัวอย่าง (\d+)$/, 'Sample customer $1'); };
   t.raw = k => (I[k] ? t(k) : k);
-  const OP = window.OpeningView, BK = window.BackupView, SK = window.Stock, CV = window.ContactsView, V2 = window.Views2, F = window.Flow, D = window.Dash, St = window.Story, Net = window.Net;
+  const DE = window.DayEndView, FF = window.ForfeitView, PR = window.PriceView, OP = window.OpeningView, BK = window.BackupView, SK = window.Stock, CV = window.ContactsView, V2 = window.Views2, F = window.Flow, D = window.Dash, St = window.Story, Net = window.Net;
   const fmt = x => Number(x || 0).toLocaleString(S.lang === 'th' ? 'th-TH' : 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const fd = s => { const [y, m, d] = s.split('-'); return `${d}/${m}/${y}`; };
 
@@ -48,7 +48,7 @@
   }
 
   // ---- shell ----
-  const NAV = [['counter', 'storefront', 'navCounter'], ['journey', 'swap_horiz', 'navJourney'], ['dash', 'dashboard', 'navDash'], ['locator', 'inventory_2', 'navLocator'], ['slipuse', 'fact_check', 'navSlip'], ['books', 'account_balance', 'navBooks'], ['ad', 'schema', 'navAd'], ['settings', 'tune', 'navSettings'], ['theme', 'palette', 'navTheme'], ['thai', 'flag', 'navThai'], ['local', 'cloud_off', 'navLocal'], ['contacts', 'contacts', 'navContacts'], ['opening', 'upload_file', 'navOpening'], ['backup', 'cloud_upload', 'navBackup'], ['story', 'movie', 'navStory']];
+  const NAV = [['counter', 'storefront', 'navCounter'], ['journey', 'swap_horiz', 'navJourney'], ['dash', 'dashboard', 'navDash'], ['locator', 'inventory_2', 'navLocator'], ['slipuse', 'fact_check', 'navSlip'], ['books', 'account_balance', 'navBooks'], ['ad', 'schema', 'navAd'], ['settings', 'tune', 'navSettings'], ['theme', 'palette', 'navTheme'], ['thai', 'flag', 'navThai'], ['local', 'cloud_off', 'navLocal'], ['contacts', 'contacts', 'navContacts'], ['dayend', 'point_of_sale', 'navDayEnd'], ['forfeit', 'gavel', 'navForfeit'], ['price', 'monitoring', 'navPrice'], ['opening', 'upload_file', 'navOpening'], ['backup', 'cloud_upload', 'navBackup'], ['story', 'movie', 'navStory']];
   const ACTIONS = [
     ['grpTicket', [['a1', 'receipt_long', '#fff3e0', '#ef6c00']]],
     ['grpMoney', [['a2', 'payments', '#e8f5e9', '#2e7d32'], ['a3', 'swap_vert', '#e3f2fd', '#1565c0']]],
@@ -122,7 +122,7 @@
   }
 
   function render() {
-    V.bind(S, t, fmt, fd); F.bind(S, t, fmt, fd); D.bind(S, t, fmt, fd); V2.bind(S, t, fmt, fd); CV.bind(S, t, fmt, fd); SK.bind(S, t, fmt, fd); BK.bind(S, t, fmt, fd); OP.bind(S, t, fmt, fd); Net.set = S.set; Net.price = +S.price.buy; Net.nplDays = +S.set.nplDays || 90;
+    V.bind(S, t, fmt, fd); F.bind(S, t, fmt, fd); D.bind(S, t, fmt, fd); V2.bind(S, t, fmt, fd); CV.bind(S, t, fmt, fd); SK.bind(S, t, fmt, fd); BK.bind(S, t, fmt, fd); OP.bind(S, t, fmt, fd); PR.bind(S, t, fmt, fd); FF.bind(S, t, fmt, fd); DE.bind(S, t, fmt, fd); { const pl = window.Price.latest(S.issue.date), pn = window.Price.latest(Net.today); if (pl) S.price = { buy: pl.buy, sell: pl.sell, tax: pl.tax }; if (pn) Net.price = pn.buy; } Net.set = S.set; if (!window.Price.latest()) Net.price = +S.price.buy; Net.nplDays = +S.set.nplDays || 90;
     document.documentElement.lang = S.lang;
     document.querySelectorAll('[data-t]').forEach(e => e.textContent = t(e.dataset.t));
     document.getElementById('langBtn').textContent = S.lang === 'th' ? 'EN' : 'ไทย';
@@ -131,7 +131,7 @@
     document.getElementById('rail').innerHTML = NAV.map(([k, ic, lab]) =>
       `<button class="${S.tab === k ? 'on' : ''}" data-tab="${k}"><span class="pill">${icon(ic)}</span>${t(lab)}</button>`).join('');
     const v = document.getElementById('view');
-    v.innerHTML = { counter, journey: () => F.view(), dash: () => D.view(), books: () => V2.books(), ad: () => V2.ad(), settings, theme: themeView, thai: thaiView, local: localView, contacts: () => CV.view(), locator: () => SK.view(), slipuse: () => SK.slipView(), backup: () => BK.view(), opening: () => OP.view(), story: storyView }[S.tab]();
+    v.innerHTML = { counter, journey: () => F.view(), dash: () => D.view(), books: () => V2.books(), ad: () => V2.ad(), settings, theme: themeView, thai: thaiView, local: localView, contacts: () => CV.view(), locator: () => SK.view(), slipuse: () => SK.slipView(), backup: () => BK.view(), opening: () => OP.view(), price: () => PR.view(), forfeit: () => FF.view(), dayend: () => DE.view(), story: storyView }[S.tab]();
     const ov = document.getElementById('overlay');
     const c = St.st.card, cp = St.st.caption;
     ov.innerHTML = (c ? `<div class="chcard house">${c.n || c.kick ? `<div class="chn">${c.n ? t('chapter') + ' ' + c.n : t(c.kick)}</div>` : ''}<h1>${c.t ? t(c.t) : ''}${c.l1 ? `<span class="w">${t(c.l1)}</span>` : ''}${c.l2 ? `<span class="b">${t(c.l2)}</span>` : ''}</h1>${c.s ? `<p>${t(c.s)}</p>` : ''}</div>` : '')
@@ -150,12 +150,15 @@
   }
   document.addEventListener('input', e => {
     const el = e.target;
+    if (el.dataset.de) { DE.input(el); if (el.dataset.de === 'date') { render(); return; } const k = el.dataset.de, pos = el.selectionStart; render(); const again = document.querySelector('[data-de="' + k + '"]'); if (again) { again.focus(); try { again.setSelectionRange(pos, pos); } catch (x) {} } return; }
+    if (el.dataset.ffIn) { FF.input(el); if (el.tagName === 'SELECT') { render(); return; } const k = el.dataset.ffIn, pos = el.selectionStart; render(); const again = document.querySelector('[data-ff-in="' + k + '"]'); if (again) { again.focus(); try { again.setSelectionRange(pos, pos); } catch (x) {} } return; }
+    if (el.dataset.pr) { PR.input(el); return; }
     if (el.dataset.opPaste) { OP.input(el); return; }
     if (el.dataset.bkIn) { const r = BK.input(el); if (r === 'change') render(); return; }
     if (el.dataset.stkIn || el.dataset.stkCnt || el.dataset.slipIn) {
       const r = SK.input(el);
-      if (r === 'type' && (el.dataset.stkIn === 'filter' || el.dataset.slipIn === 'over')) {
-        const sel = el.dataset.stkIn ? '[data-stk-in="filter"]' : '[data-slip-in="over"]', pos = el.selectionStart; render(); const again = document.querySelector(sel); if (again) { again.focus(); try { again.setSelectionRange(pos, pos); } catch (x) {} }
+      if (r === 'type' && (el.dataset.stkIn === 'filter' || el.dataset.slipIn === 'over' || el.dataset.stkCnt)) {
+        const sel = el.dataset.stkCnt ? '[data-stk-cnt="' + el.dataset.stkCnt + '"]' : el.dataset.stkIn ? '[data-stk-in="filter"]' : '[data-slip-in="over"]', pos = el.selectionStart; render(); const again = document.querySelector(sel); if (again) { again.focus(); try { again.setSelectionRange(pos, pos); } catch (x) {} }
       }
       return;
     }
@@ -174,10 +177,11 @@
   });
   document.addEventListener('change', async e => {
     const el = e.target;
+    if (el.dataset.ffIn) { FF.input(el); return; }       // state only: a re-render on blur would swallow the click on the button the user is pressing
     if (el.dataset.opFile) { await OP.file(el); return render(); }
     if (el.dataset.bkFile) { await BK.file(el); return render(); }
     if (el.dataset.bkIn) { BK.input(el); if (el.type === 'checkbox') render(); return; }
-    if (el.dataset.stkIn || el.dataset.stkCnt || el.dataset.slipIn) { SK.input(el); return render(); }
+    if (el.dataset.stkIn || el.dataset.stkCnt || el.dataset.slipIn) { SK.input(el); if (el.tagName === 'SELECT') render(); return; }      // text boxes: state only (a re-render on blur would swallow the click on the button being pressed)
     if (el.dataset.ctFile) { await CV.file(el); await CV.refreshVerify(); return render(); }
     if (el.dataset.ctBc) { if (CV.input(el)) render(); return; }
     if (el.dataset.tick != null) { S.tick[+el.dataset.tick] = el.checked; render(); }
@@ -187,6 +191,9 @@
   });
   document.addEventListener('click', async e => {
     if (S.tab === 'locator' && e.target.closest('[data-stk],[data-stk-wh],[data-stk-cell],[data-stk-pick]')) { if (await SK.click(e.target)) return render(); return; }
+    if (S.tab === 'dayend' && e.target.closest('[data-de-act]')) { if (await DE.click(e.target)) return render(); return; }
+    if (S.tab === 'forfeit' && e.target.closest('[data-ff]')) { if (await FF.click(e.target)) return render(); return; }
+    if (S.tab === 'price' && e.target.closest('[data-pr-act]')) { if (await PR.click(e.target)) return render(); return; }
     if (S.tab === 'opening' && e.target.closest('[data-op]')) { if (await OP.click(e.target)) return render(); return; }
     if (S.tab === 'backup' && e.target.closest('[data-bk]')) { if (await BK.click(e.target)) return render(); return; }
     const jb = e.target.closest('[data-j]');
@@ -212,7 +219,7 @@
   window.__app = { S, render, Net, St, D, setTab: k => { S.tab = k; render(); } };
   (async () => {
     applyTheme(); render();
-    await Net.init(); Net.sample = await window.Sample.build(48); await SK.seed();
+    await Net.init(); Net.sample = await window.Sample.build(48); await SK.seed(); await window.Price.seed();
     const h = location.hash;
     if (h.startsWith('#/t/')) { Net.solo = 'phone'; S.tab = 'journey'; await Net.receiveRaw(h.slice(4), 'phone', 'link'); }
     window.__ready = true; render();

@@ -6,8 +6,8 @@ window.Dash = (function () {
   const bind = (s, tr, f, d) => { S = s; t = tr; fmt = f; fd = d; };
   const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
 
-  const COL = { status: { offered: '--muted', active: '--s1', overdue: '--s8', redeemed: '--s6', forfeited: '--s2' }, risk: { npl: '--s8', watch: '--s4', ok: '--muted', green: '--s6' } };
-  const ORDER = { status: ['offered', 'active', 'overdue', 'redeemed', 'forfeited'], risk: ['npl', 'watch', 'ok', 'green'], ageing: ['over30', 'over0', 'd30', 'd60', 'later'] };
+  const COL = { status: { offered: '--muted', active: '--s1', overdue: '--s8', redeemed: '--s6', forfeited: '--s2', sold: '--s7' }, risk: { npl: '--s8', watch: '--s4', ok: '--muted', green: '--s6' } };
+  const ORDER = { status: ['offered', 'active', 'overdue', 'redeemed', 'forfeited', 'sold'], risk: ['npl', 'watch', 'ok', 'green'], ageing: ['over30', 'over0', 'd30', 'd60', 'later'] };
   const LISTNAME = { status: 'PAWN_Status', cat: 'PAWN_Category', grp: 'PAWN_RateGroup', risk: 'PAWN_Risk', ageing: 'PAWN_Ageing' };
   const dims = () => [...AD.dimensions().map(d => d.dim), 'none'];
   const METRICS = ['count', 'principal', 'owed', 'collected', 'upsell', 'nplratio'];
@@ -22,6 +22,8 @@ window.Dash = (function () {
     { id: 'h_vault', title: 'wt_vault', metric: 'count', scope: 'open', groupBy: 'aisle', chart: 'vault', size: 'm' },
     { id: 'w_month', title: 'wt_month', metric: 'collected', scope: 'all', groupBy: 'month', chart: 'columns', size: 'm' },
     { id: 'h_safe', title: 'wt_safe', metric: 'count', scope: 'all', groupBy: 'none', chart: 'safe', size: 's' },
+    { id: 'h_price', title: 'wt_price', metric: 'count', scope: 'all', groupBy: 'none', chart: 'price', size: 's' },
+    { id: 'h_expo', title: 'wt_expo', metric: 'count', scope: 'all', groupBy: 'none', chart: 'expo', size: 'm' },
     { id: 'k_open', title: 'wt_open', metric: 'count', scope: 'open', groupBy: 'none', chart: 'tile', size: 's', icon: 'receipt_long' },
     { id: 'k_prin', title: 'wt_prin', metric: 'principal', scope: 'open', groupBy: 'none', chart: 'tile', size: 's', icon: 'payments' },
     { id: 'k_owed', title: 'wt_owed', metric: 'owed', scope: 'open', groupBy: 'none', chart: 'tile', size: 's', icon: 'trending_up' },
@@ -108,7 +110,7 @@ window.Dash = (function () {
     let body;
     if (w.chart === 'list') body = listWidget(w, rs);
     else if (w.chart === 'flow') {
-      const IC = { offered: 'outgoing_mail', active: 'verified', overdue: 'schedule', redeemed: 'lock_open', forfeited: 'sell' };
+      const IC = { offered: 'outgoing_mail', active: 'verified', overdue: 'schedule', redeemed: 'lock_open', forfeited: 'sell', sold: 'paid' };
       body = Info.flow(ORDER.status.map(k => ({ label: label('status', k), icon: IC[k], n: rs.filter(r => r.status === k).length, color: `var(${COL.status[k]})`, drill: `${w.id}|status|${k}` })));
     } else if (w.chart === 'donut') {
       const tot = g.reduce((a, x) => a + x.v, 0), short = v => v >= 1e6 ? (v / 1e6).toFixed(2) + 'M' : v >= 1e3 ? (v / 1e3).toFixed(1) + 'k' : String(Math.round(v));
@@ -119,6 +121,15 @@ window.Dash = (function () {
     } else if (w.chart === 'slip') {
       const Sk = window.Stock, u = Sk.usage(Sk.curMonth());
       body = `<div data-tab="slipuse" class="clk">${Info.meter(u.used, u.inc, String, t('slipChecks'), t('slipCost') + ' ' + fmt(u.cost) + ' ' + t('baht') + ' · ' + u.plan + ' · ' + u.month)}</div>`;
+    } else if (w.chart === 'price') {
+      const Pr = window.Price, cur = Pr.latest(Net.today), pv = Pr.prev(), L = Pr.list().slice(-30).map(p => p.buy), d = cur && pv ? cur.buy - pv.buy : 0, st = Pr.stale(Net.today, cur);
+      body = `<div data-tab="price" class="clk"><div class="safe-row" style="--c:${st ? 'var(--s4)' : 'var(--s1)'}"><span class="fl-ic">${Info.icon('sell')}</span><div><b>${cur ? fmt(cur.buy) : '–'}</b><small>${t('prBuy')} · ${cur ? fd(cur.date) : ''}</small></div></div>
+        ${Info.spark(L, 'var(--s1)')}<div class="note" style="color:var(${d < 0 ? '--s8' : '--s6'})">${d > 0 ? '▲ +' : d < 0 ? '▼ ' : ''}${fmt(d)} ${t('prChange')}${st ? ' · ⚠ ' + t('prStaleShort') : ''}</div></div>`;
+    } else if (w.chart === 'expo') {
+      const Pr = window.Price, cur = Pr.latest(Net.today), ex = Pr.exposure(rs.map(r => r.st), cur ? cur.buy : 0), pct = ex.value ? Math.min(100, ex.principal / ex.value * 100) : 0;
+      body = `<div data-tab="price" class="clk"><div class="m-top"><b>${fmt(ex.cushion)}</b> <small>${t('prCushion')}</small></div>
+        <div class="m-bar" role="img" aria-label="${pct.toFixed(0)}%"><div class="m-fill" style="width:${pct}%;background:${ex.cushion < 0 ? 'var(--s8)' : 'var(--s1)'}"></div></div>
+        <div class="m-sub">${t('prPrincipal')} ${fmt(ex.principal)} / ${t('prValue')} ${fmt(ex.value)} · ${t('prUnder')}: <b style="color:var(${ex.under ? '--s8' : '--s6'})">${ex.under}</b></div></div>`;
     } else if (w.chart === 'safe') {
       const BK = window.BackupView, last = BK.last(), st = BK.stale(), st2 = { get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } } }, JN = window.Journal, tot = JN.allEvents(st2).length, pend = JN.pending(st2).length, on = st2.get('gp.journal.on') === '1';
       const bad = !last || (st && st.why === 'days'), col = !last ? 'var(--s8)' : (st && st.why) ? 'var(--s4)' : 'var(--s6)';
@@ -214,7 +225,7 @@ window.Dash = (function () {
     const mk = (arr, e) => { const x = arr.find(y => y.by === e.by && y.n === e.n); return x ? (x.ok ? `<span class="okm">✔ ${t('verified')}</span>` : `<span class="badm">✖ ${t('broken')} (${x.why})</span>`) : '…'; };
     const sum = e => { const b = e.body; return { offer: `${t('loan')} ${fmt(b.loan)} · ${b.rate}%`, ack: t('ackd'), payment_claim: `${AD.label('PAWN_PayMode', b.mode, lang())} ${fmt(b.amount)}`,
       payment_verified: `${AD.label('PAWN_PayMode', b.mode, lang())} ${fmt(b.amt)} (${t('int')} ${fmt(b.int)} + VAT ${fmt(b.vat)} + ${t('principalPart')} ${fmt(b.principalPart)})${b.reissue ? ' → ' + b.reissue.no : ''}`,
-      payment_rejected: `${b.reason} ${t.raw('code_' + b.reason)}${b.attachment ? ' · ' + t('attached') : ''}`, payment_wait: `${b.code} ${t.raw('code_' + b.code)}`, closed: b.how }[e.type] || ''; };
+      payment_rejected: `${b.reason} ${t.raw('code_' + b.reason)}${b.attachment ? ' · ' + t('attached') : ''}`, payment_wait: `${b.code} ${t.raw('code_' + b.code)}`, closed: b.how + (b.appraised != null ? ' · ' + fmt(b.appraised) : ''), sale: `${fmt(b.price)} · ${b.buyer || ''}` }[e.type] || ''; };
     const allOk = v.length && v.every(x => x.ok), crmL = Net.crm[st.no], fu = crmL ? crmL.chain.shop : [];
     const risk = P.classify(st, Net.today, { npl: Net.nplDays, price: Net.price }), ar = P.arrears(st, Net.today), fcols = AD.cols('PAWN_FollowUp').filter(c => c.IsDisplayed === 'Y');
     return `<div class="hist"><h3>${t('history')}: ${st.no} · ${dn(st.name)} <span class="${allOk ? 'okm' : 'badm'}">${v.length ? (allOk ? '✔ ' + t('chainOk') : '✖ ' + t('chainBroken')) : ''}</span> ${risk ? chip('risk', risk) : ''}</h3>

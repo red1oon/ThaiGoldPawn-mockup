@@ -38,5 +38,11 @@ window.Info = (function () {
       <div class="m-bar" role="img" aria-label="${Math.round(pct)}%"><div class="m-fill" style="width:${w}%;background:${pct >= 100 ? 'var(--s8)' : pct >= 80 ? 'var(--s4)' : 'var(--s1)'}"></div><i class="m-tick" style="left:80%"></i></div>
       <div class="m-sub">${esc(sub)}</div></div>`;
   }
-  return { donut, gauge, flow, meter, icon };
+  // sparkline: values -> small SVG polyline with the last point marked
+  function spark(vals, color) {
+    if (!vals.length) return ''; const min = Math.min(...vals), max = Math.max(...vals), w = 120, h = 34, span = max - min || 1;
+    const pts = vals.map((v, i) => [(i / Math.max(1, vals.length - 1)) * w, h - 3 - (v - min) / span * (h - 6)]), last = pts[pts.length - 1];
+    return `<svg class="spark" viewBox="0 0 ${w} ${h}" role="img"><polyline fill="none" stroke="${color}" stroke-width="1.6" stroke-linejoin="round" points="${pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ')}"/><circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="2.4" fill="${color}"/></svg>`;
+  }
+  return { donut, gauge, flow, meter, spark, icon };
 })();
