@@ -6,10 +6,10 @@
 
   const S = {
     lang: store.get('gp.lang') || 'th', tab: 'counter', action: 'a1', profile: 'c1', showTicket: false,
-    set: { taxType: 'VAT', taxPoint: 'interest', incl: 'exclude', mode: 'P', deduct: 2000, defMonths: 4, rounding: 'half', basis: 'month', vat: 7, nplDays: 90 },
+    set: { taxType: 'VAT', taxPoint: 'interest', incl: 'exclude', mode: 'P', deduct: 2000, defMonths: 4, rounding: 'half', basis: 'month', vat: 7, nplDays: 90, kycAt: 700000, amloAt: 2000000 },
     price: { buy: 100000, sell: 100200, tax: 99900 },   // sample board, per baht-weight (partner sketch: 100,000)
     issue: { name: 'สมชาย ตัวอย่าง', phone: '0800000001', grp: 'standard', cat: 0, item: 0, qty: 1, weight: 15.16, type: 0,
-             basis: 'buy', loan: 80000, date: '2025-07-14', months: 4, agreed: '', track: 'BAG-0001', safe: 'SAFE-A1' },
+             basis: 'buy', loan: 80000, date: '2025-07-14', months: 4, agreed: '', track: 'BAG-0001', safe: 'SAFE-A1', idNo: '', idCopy: false, tender: 'cash' },
     ticket: { no: 'A100', first: 'A100', name: 'สมชาย ตัวอย่าง', date: '2025-07-14', loan: 80000, weight: 15.16, type: 0, grp: 'standard',
               paid: [true, false, false, false], lastPaid: '2025-08-14', paidInterest: 1000, chainUntaxed: 0 },
     tick: [false, true, false, false],
@@ -68,6 +68,8 @@
     return `<div class="card"><div class="panel"><h2>${t('navSettings')}</h2><div class="sub">${t('profileNote')}</div>
       <fieldset><legend>${t('profile')}</legend><div class="fields">
         ${f(t('profile'), sel('profile', S.profile, [['c1', t('case1')], ['c2', t('case2')]]))}</div></fieldset>
+      <fieldset><legend>${t('limitsHead')}</legend><div class="fields">
+        ${f(t('kycAtLbl'), inp('set.kycAt', s.kycAt))}${f(t('amloAtLbl'), inp('set.amloAt', s.amloAt))}</div><div class="note">${t('limitsNote')}</div></fieldset>
       <fieldset><legend>${t('branchParams')}</legend><div class="fields">
         ${f(t('taxType'), sel('set.taxType', s.taxType, [['VAT', 'VAT'], ['SBT', 'SBT']]))}
         ${f(t('taxPoint'), sel('set.taxPoint', s.taxPoint, [['interest', t('atInterest')], ['close', t('atClose')], ['final', t('atFinal')]]))}
@@ -157,6 +159,7 @@
       return;
     }
     if (el.dataset.ctFilter || el.dataset.ctBc) { if (CV.input(el)) { const k = el.dataset.ctFilter ? 'data-ct-filter' : 'data-ct-bc', pos = el.selectionStart; render(); const again = document.querySelector('[' + k + ']'); if (again && el.dataset.ctFilter) { again.focus(); try { again.setSelectionRange(pos, pos); } catch (x) {} } } return; }
+    if (el.dataset.bool) return;
     if (el.dataset.k) {
       if (el.dataset.num) { const c = el.value.replace(/[^0-9.]/g, ''); if (c !== el.value) el.value = c; }
       const k = el.dataset.k, pos = el.selectionStart;
@@ -176,6 +179,7 @@
     if (el.dataset.ctFile) { await CV.file(el); await CV.refreshVerify(); return render(); }
     if (el.dataset.ctBc) { if (CV.input(el)) render(); return; }
     if (el.dataset.tick != null) { S.tick[+el.dataset.tick] = el.checked; render(); }
+    else if (el.dataset.k && el.dataset.bool) { setPath(el.dataset.k, el.checked); render(); }
     else if (el.dataset.k && el.tagName === 'SELECT') { setPath(el.dataset.k, el.value); render(); }
     else if (el.dataset.tok) render();
   });

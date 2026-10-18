@@ -29,6 +29,10 @@
       const l = this.crmL(tk), body = { ...f }; if (!l.chain.shop.length) body.pub = T.pubOf(this.keys.shop.pub);
       const e = await l.append('followup', body, ts || this.ts()); if (this.shopL[tk]) l.live = true; this.persist(); this.emit(); return e;
     },
+    async logKyc(tk, k) {                                 // customer identification (spec §16.2): shop-internal signed chain, never in a token
+      const l = this.crmL(tk), b = { ...k }; if (!l.chain.shop.length) b.pub = T.pubOf(this.keys.shop.pub); l.live = true;
+      const e = await l.append('kyc', b, this.ts()); this.persist(); this.emit(); return e;
+    },
     // contact imports and broadcasts: signed, shop-internal chain (never put in a token)
     async logContact(type, body, ts) {
       const l = this.crmL('_contacts'), b = { ...body }; l.live = true; if (!l.chain.shop.length) b.pub = T.pubOf(this.keys.shop.pub);

@@ -16,7 +16,7 @@ window.Flow = (function () {
   function buildOffer() {
     const x = S.issue, ap = C.appraise(+x.weight, S.price[x.basis], C.goldTypes[x.type].pct, S.set.mode, +S.set.deduct), rate = C.rateFor(x.grp, +x.loan);
     return { name: x.name, phone: x.phone, address: 'Sample address, Bangkok 10110', cat: ['ornament', 'bar', 'silver', 'other'][x.cat], item: x.item, qty: +x.qty, weight: +x.weight,
-      grp: x.grp, ceiling: ap.limit, pct: C.goldTypes[x.type].pct, loan: +x.loan, headroom: C.r2(ap.limit - x.loan), rate, basis: S.set.basis, rounding: S.set.rounding, date: Net.today, months: +x.months, track: x.track, safe: x.safe };
+      grp: x.grp, ceiling: ap.limit, pct: C.goldTypes[x.type].pct, loan: +x.loan, headroom: C.r2(ap.limit - x.loan), rate, basis: S.set.basis, rounding: S.set.rounding, date: Net.today, months: Math.min(+x.months, C.checkIssue(x, S.set).maxMonths), tender: x.tender || 'cash', track: x.track, safe: x.safe };
   }
   const plan = st => [1, 2, 3, 4].slice(0, st.months).map(i => ({ i, date: C.edate(st.date, i), amt: C.r2(st.principal * st.rate / 100) }));
 
@@ -25,7 +25,7 @@ window.Flow = (function () {
     const tks = Object.keys(Net.shopL), tk = S.j.tk && Net.shopL[S.j.tk] ? S.j.tk : tks[tks.length - 1];
     const on = Net.online.shop;
     let body;
-    if (!tk) body = `<div class="note">${t('noLive')}</div><div class="actions" style="justify-content:flex-start"><button class="btn" data-j="issue">${t('issueOffer')}</button></div>`;
+    if (!tk) body = `<div class="note">${t('noLive')}</div><div class="actions" style="justify-content:flex-start"><button class="btn" data-j="issue">${t('issueOffer')}</button></div>${S.j.limitMsg ? `<div class="err">\u26A0 ${S.j.limitMsg}</div>` : ''}`;
     else {
       const l = Net.shopL[tk], st = P.fold(l, Net.today), off = l.chain.shop[0].body, link = Net.share('qr', l.offerToken()).link;
       body = `<div class="row2"><b>${tk}</b>${stChip(st.status)}</div>
@@ -107,7 +107,7 @@ window.Flow = (function () {
   // ---------- actions ----------
   async function act(spec) {
     const [a, b, c, d] = spec.split('|');
-    if (a === 'issue') { const o = buildOffer(); S.j.tk = await Net.issueOffer(o); if (window.Stock) await window.Stock.putAway(S.j.tk, window.Stock.defaultLoc(o.loan, 'VAULT')); }
+    if (a === 'issue') { const ck = C.checkIssue(S.issue, S.set); S.j.limitMsg = ck.blocking.length ? ck.blocking.map(b => t('lim_block_' + b)).join(' · ') : ''; if (ck.blocking.length) return; const o = buildOffer(); S.j.tk = await Net.issueOffer(o); if (ck.kycNeeded || S.issue.idNo) await Net.logKyc(S.j.tk, { idNo: S.issue.idNo, copy: !!S.issue.idCopy, needed: ck.kycNeeded }); if (window.Stock) await window.Stock.putAway(S.j.tk, window.Stock.defaultLoc(o.loan, 'VAULT')); }
     else if (a === 'send') { S.j.tk = d || S.j.tk; const w = await Net.send(b, c, d || S.j.tk); if (c === 'nfc' && w) { const r = await Net.nfcWrite(Net.share('link', w.token).link); w.note = r.ok ? 'NFC written' : 'NFC ' + r.why; } }
     else if (a === 'deliver') await Net.deliver(+b);
     else if (a === 'retry') await Net.shopRetry(b);

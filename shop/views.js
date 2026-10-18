@@ -31,7 +31,7 @@ window.Views = (function () {
     const perDay = C.r2(x.loan * rate / 100 * 12 / 365);
     const asked = x.agreed === '' || x.agreed == null ? perMonth : +x.agreed;
     const maxAgreed = C.r2(+x.loan * C.LEGAL.maxMonthly / 100), overLegal = asked > maxAgreed + 0.004, agreed = overLegal ? maxAgreed : asked;   // spec §14: ≤ 15 %/year
-    const due = C.edate(x.date, +x.months);
+    const lim = C.checkIssue(x, S.set), months = Math.min(+x.months, lim.maxMonths), due = C.edate(x.date, months);
     const rt = C.termByRatio(ratio);
     const cats = S.lang === 'th' ? ['ทองรูปพรรณ', 'ทองแท่ง', 'เงิน', 'อื่นๆ'] : ['Ornament gold', 'Gold bar', 'Silver', 'Other'];
     const items = S.lang === 'th' ? ['สร้อย', 'แหวน', 'จี้', 'สร้อยข้อมือ/กำไล', 'อื่นๆ'] : ['Necklace', 'Ring', 'Pendant', 'Bracelet/bangle', 'Other'];
@@ -65,6 +65,14 @@ window.Views = (function () {
       ${o(t('legalCap'), fmt(maxAgreed) + ' / ' + t('perMonth'))}
       ${o(t('discount'), fmt(perMonth - agreed))}
     </div>${overLegal ? `<div class="err">⚠ ${t('overLegal')} ${fmt(maxAgreed)}</div>` : ''}<div class="note">${t('legalNote')}</div><div class="note">${t('ratioTerm')} ${rt ?? '-'} ${t('monthsU')} ${conf('qRatio')}</div></fieldset>
+    <fieldset><legend>${t('limitsHead')}</legend><div class="fields">
+      ${f(t('lim_tender'), sel('issue.tender', x.tender || 'cash', [['cash', t('tender_cash')], ['transfer', t('tender_transfer')]]))}
+      ${f(t('lim_idNo'), inp('issue.idNo', x.idNo || '', 'text'))}
+      <label class="f chk"><input type="checkbox" data-k="issue.idCopy" data-bool="1" ${x.idCopy ? 'checked' : ''}> ${t('lim_idCopy')}</label>
+    </div>
+    <div class="lim ${lim.kycOk ? 'ok' : 'bad'}">${lim.kycOk ? '✔' : '✖'} ${t('lim_kyc')} ${fmt(lim.kycAt)} ${lim.kycNeeded ? (lim.kycOk ? t('lim_kycDone') : t('lim_kycNeed')) : t('lim_kycNo')}</div>
+    <div class="lim ${lim.termCapped ? 'warn' : 'ok'}">${lim.termCapped ? '⚠' : '✔'} ${t('lim_term')} ${lim.maxMonths} ${t('monthsU')}${lim.termCapped ? ' — ' + t('lim_termCut') : ''}</div>
+    <div class="lim ${lim.amlo ? 'warn' : 'ok'}">${lim.amlo ? '⚠ ' + t('lim_amloFlag') : '✔ ' + t('lim_amloNo')} (${fmt(lim.amloAt)})</div></fieldset>
     <div class="total"><span>${t('cashOut')}</span><span class="big">${fmt(+x.loan)} ${t('baht')}</span></div>
     <div class="actions"><button class="btn ghost" data-act="ticket">${t('preview')}</button><button class="btn" data-j="issue">${t('issueGo')}</button></div>
     <div id="ticketBox">${S.showTicket ? printed(x, due, items[x.item], agreed) : ''}</div></div>`;
@@ -75,7 +83,7 @@ window.Views = (function () {
     return `<div class="ticket" style="margin-top:14px">
       <div class="hd"><div class="logo">G</div><div style="flex:1"><b>${t('ticketHead')}</b><br><small>${S.lang === 'th' ? 'ที่อยู่ร้าน · โทร · เลขประจำตัวผู้เสียภาษี' : 'Shop address · phone · tax ID'}</small></div><b>${t('keepCard')}</b></div>
       <div style="display:flex;justify-content:space-between"><span>${t('ticketNo')}: A100</span><span>${t('date')}: ${fd(x.date)}</span></div>
-      <p>${t('tkLine1')} ${x.name} ${t('tkLine2')} ${item} × ${x.qty} · ${x.weight} g · ${t('months')} ${x.months} · ${t('due')} ${fd(due)}<br>
+      <p>${t('tkLine1')} ${x.name} ${t('tkLine2')} ${item} × ${x.qty} · ${x.weight} g · ${t('months')} ${Math.min(+x.months, C.checkIssue(x, S.set).maxMonths)} · ${t('due')} ${fd(due)}<br>
       <b>${t('loan')}: ${fmt(+x.loan)} ${t('baht')}</b></p>
       <p>${t('tkLate')}</p><p><b>${t('tkCert')}</b></p>
       <table><tr><th>${t('inst')}</th><th>${t('date')}</th><th class="n">${t('amount')}</th></tr>

@@ -172,3 +172,4 @@ button.chip2{background:transparent;color:var(--text);font:inherit;cursor:pointe
 .reccode{font-family:ui-monospace,monospace;font-size:1.5em;letter-spacing:.08em;background:var(--chip);border-radius:var(--radius);padding:12px;text-align:center;margin:8px 0;user-select:all}.chk{display:flex;gap:8px;align-items:center;margin:6px 0}
 .demo{border:1px dashed var(--line);border-radius:var(--radius);padding:10px;margin:10px 0}
 .safe-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}.safe-row .fl-ic{background:var(--c)}.safe-row b{display:block;font-size:1.2em}.safe-row small{color:var(--muted)}
+.lim{font-size:.86em;margin:3px 0}.lim.ok{color:var(--s6)}.lim.bad{color:var(--s8)}.lim.warn{color:var(--s4)}

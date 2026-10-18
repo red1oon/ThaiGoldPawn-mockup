@@ -63,3 +63,14 @@ Object.assign(window.I18N, {
 Object.assign(window.I18N, { bkJServer:['รายการในบันทึกสำรองของเซิร์ฟเวอร์','Records in the server journal'] });
 Object.assign(window.I18N, { wt_safe:['ความปลอดภัยของข้อมูล','Data safety'], bkNone:['ยังไม่เคย','never'], bkJOff:['บันทึกสำรองอัตโนมัติปิดอยู่','Automatic journal is off'] });
 Object.assign(window.I18N, { bkEmpty:['ยังไม่มีบันทึกของร้านในเครื่องนี้ ข้อมูลตัวอย่างไม่ถูกสำรอง ออกใบขายฝากก่อนเพื่อลองสำรอง','There are no shop records on this device yet. Sample data is not backed up; issue a ticket first to try a backup.'] });
+Object.assign(window.I18N, {
+  limitsHead:['ข้อจำกัดตามกฎหมาย','Statutory limits'], lim_tender:['วิธีจ่ายเงินให้ลูกค้า','How the shop pays out'], tender_cash:['เงินสด','Cash'], tender_transfer:['โอนเงิน','Bank transfer'],
+  lim_idNo:['เลขบัตรประชาชน / หนังสือเดินทาง','ID or passport no.'], lim_idCopy:['แนบสำเนาบัตรแล้ว','ID copy attached'],
+  lim_kyc:['ยืนยันตัวตนลูกค้าเมื่อมูลค่าตั้งแต่','Customer identification at or above'], lim_kycNo:['— ยังไม่ถึงเกณฑ์','— not required for this amount'], lim_kycNeed:['— ต้องกรอกเลขบัตรและแนบสำเนาก่อนออกใบ','— enter the ID number and attach the copy before issuing'], lim_kycDone:['— ครบแล้ว','— complete'],
+  lim_term:['สิทธิไถ่ถอนไม่เกิน 3 ปีนับจากวันขายฝากครั้งแรก ระยะสูงสุดของใบนี้','Redemption right is at most 3 years from the first sale; the longest term for this ticket is'], lim_termCut:['ระยะที่ใส่เกินถูกตัดให้เท่าที่กฎหมายให้','the term entered was cut to the legal maximum'],
+  lim_amloFlag:['ธุรกรรมเงินสดถึงเกณฑ์รายงาน ปปง. ร้านเป็นผู้รายงาน','Cash transaction at the reporting threshold; the shop files the report'], lim_amloNo:['ไม่ถึงเกณฑ์รายงานเงินสด','Below the cash-report threshold'],
+  lim_block_kyc:['ต้องยืนยันตัวตนลูกค้าก่อน','Customer identification is required first'], lim_block_term:['ครบ 3 ปีแล้ว ออกใบต่อไม่ได้','The 3-year limit is reached; no further renewal'],
+  kycAtLbl:['เกณฑ์ยืนยันตัวตน (บาท)','Customer identification from (THB)'], amloAtLbl:['เกณฑ์รายงานเงินสด (บาท)','Cash report from (THB)'],
+  limitsNote:['ตัวเลขตั้งต้นตามที่อ้างในสเปก §14 (คู่มือกรมสรรพากร 2560) ร้านปรับให้เข้มกว่าได้ ตรวจกฎล่าสุดก่อนใช้จริง ระบบแจ้งเตือนและบล็อก แต่ร้านเป็นผู้ยื่นรายงานเอง','Defaults are the figures cited in spec §14 (2017 RD manual). A shop may set stricter ones; re-check current rules before real use. The system warns and blocks; the shop files any report itself.'],
+  wt_amlo:['รายการเงินสดที่ต้องรายงาน','Cash transactions to report'], sc_amlo:['ถึงเกณฑ์รายงานเงินสด','Cash report'], k_amlo_unit:['รายการ','items']
+});

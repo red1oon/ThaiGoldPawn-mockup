@@ -29,6 +29,18 @@ window.Calc = (function () {
   // Legal ceiling (spec §14): Civil Code §499 — a redemption price above the real price + 15 % a year is cut back to it, so no rate is applied above 15 %/year.
   // ⚠ confirmed from legal-text sites, not the Royal Gazette; re-check the current text (the sale-with-redemption law has been under reform).
   const LEGAL = { pctYear: 15, section: 'Civil Code §499', maxMonthly: 15 / 12 };
+  // Statutory limits (spec §16.2). Civil Code §494(2): redemption right on movables max 3 years from the sale; AMLO: identify the customer at/over kycAt,
+  // report cash legs at/over amloAt. The two amounts are branch settings (defaults = the figures cited in spec §14, from the 2017 RD manual — re-check before production).
+  const LIMITS = { years: 3, kycAt: 700000, amloAt: 2000000 };
+  function monthsWithin(first, start, years) {                 // longest term (months) from `start` that ends on/before first + years
+    const lim = D(edate(first, 12 * (years || LIMITS.years))); let m = 0; while (m < 120 && D(edate(start, m + 1)) <= lim) m++; return m;
+  }
+  function checkIssue(x, set, firstDate) {
+    const kycAt = +(set && set.kycAt) || LIMITS.kycAt, amloAt = +(set && set.amloAt) || LIMITS.amloAt, loan = +x.loan || 0, first = firstDate || x.date;
+    const maxMonths = monthsWithin(first, x.date), kycNeeded = loan >= kycAt, kycOk = !kycNeeded || (String(x.idNo || '').trim().length >= 5 && !!x.idCopy);
+    const amlo = loan >= amloAt && (x.tender || 'cash') === 'cash';
+    return { kycAt, amloAt, maxMonths, termCapped: +x.months > maxMonths, kycNeeded, kycOk, amlo, blocking: [...(kycOk ? [] : ['kyc']), ...(maxMonths < 1 ? ['term'] : [])] };
+  }
   function rateFor(grp, amount) {
     const row = rates.find(r => r.grp === grp && amount >= r.from && amount <= r.to)
       || rates.find(r => r.grp === grp);
@@ -81,5 +93,5 @@ window.Calc = (function () {
     return { periods, unit: 'month', amount: r2(agreedMonthly * periods), days };
   }
 
-  return { LEGAL, GRAM_PER_BAHT, r2, goldTypes, rates, ratioTerm, profiles, rateFor, termByRatio, appraise, edate, daysBetween, owed, D };
+  return { LIMITS, monthsWithin, checkIssue, LEGAL, GRAM_PER_BAHT, r2, goldTypes, rates, ratioTerm, profiles, rateFor, termByRatio, appraise, edate, daysBetween, owed, D };
 })();
