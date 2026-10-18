@@ -74,7 +74,7 @@
       ${s.mode === 'A' ? `<div class="note">${conf('qA')} ${t('qA')}</div>` : ''}</fieldset>
       <fieldset><legend>${t('goldTypes')}</legend><table>${C.goldTypes.map((g, i) => `<tr><td>${L(g)}</td><td class="n">${inp('gt.' + i, g.pct)}</td></tr>`).join('')}</table></fieldset>
       <fieldset><legend>${t('rates')}</legend><table><tr><th>${t('rateGrp')}</th><th class="n">${t('from')}</th><th class="n">${t('to')}</th><th class="n">%</th></tr>
-        ${C.rates.map(r => `<tr><td>${r.grp}</td><td class="n">${fmt(r.from)}</td><td class="n">${fmt(r.to)}</td><td class="n">${r.rate}</td></tr>`).join('')}</table></fieldset>
+        ${C.rates.map(r => `<tr><td>${t('grp_' + r.grp)}</td><td class="n">${fmt(r.from)}</td><td class="n">${fmt(r.to)}</td><td class="n">${r.rate}</td></tr>`).join('')}</table></fieldset>
       <fieldset><legend>${t('ratioTbl')} ${conf('qRatio')}</legend><table>${C.ratioTerm.map(r => `<tr><td>${r.from}–${r.to}%</td><td class="n">${r.months}</td></tr>`).join('')}</table></fieldset>
     </div></div>`;
   }
@@ -83,7 +83,7 @@
     const keys = [['header', 'tHeader'], ['header-text', 'tHeaderText'], ['bg', 'tBg'], ['card', 'tCard'], ['text', 'tText'], ['label', 'tLabel'], ['accent', 'tAccent'], ['chip', 'tChip']];
     return `<div class="grid"><div class="card"><div class="panel"><h2>${t('themeTitle')}</h2><div class="sub">${t('themeSub')}</div>
       <div class="sec-title">${t('presets')}</div><div class="actions" style="justify-content:flex-start">
-        ${Object.keys(THEMES).map(k => `<button class="btn small" style="background:${THEMES[k].header}" data-preset="${k}">${k}</button>`).join('')}</div>
+        ${Object.keys(THEMES).map(k => `<button class="btn small" style="background:${THEMES[k].header}" data-preset="${k}">${t('th_' + k)}</button>`).join('')}</div>
       <div class="sec-title">${t('tokens')}</div>
       ${keys.map(([k, lab]) => `<div class="tok"><span>${t(lab)}</span><input type="color" data-tok="${k}" value="${theme[k]}"></div>`).join('')}
       <div class="tok"><span>${t('radius')} (${theme.radius}px)</span><input type="range" min="0" max="24" data-tok="radius" value="${theme.radius}"></div>

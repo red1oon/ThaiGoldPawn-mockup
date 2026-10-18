@@ -1,5 +1,11 @@
 // Contacts import + broadcast strings (spec §15.13). Key → [th, en]. Plain wording.
 Object.assign(window.I18N, {
+  grp_standard:['ทั่วไป','Standard'], grp_vip:['วีไอพี','VIP'], grp_supervip:['ซูเปอร์วีไอพี','Super VIP'], grp_relative:['ญาติและคนรู้จัก','Relative'], grp_promotion:['โปรโมชัน','Promotion'],
+  th_quickgold:['เขียวอมฟ้า (แบบแอปเดิม)','Teal (original app)'], th_gold:['ทอง','Gold'], th_night:['กลางคืน','Night'],
+  ev_offer:['เสนอสัญญา','Offer'], ev_ack:['ผู้กู้รับทราบ','Acknowledged'], ev_payment_claim:['ผู้กู้แจ้งชำระ','Payment claimed'], ev_payment_verified:['ร้านตรวจสลิปแล้ว','Payment verified'],
+  ev_payment_rejected:['ปฏิเสธการชำระ','Payment rejected'], ev_payment_wait:['รอตรวจสลิป','Waiting to check'], ev_closed:['ปิดตั๋ว','Closed'], ev_import:['นำเข้ารายชื่อ','Import'], ev_broadcast:['ส่งข้อความ','Broadcast'], ev_followup:['บันทึกการติดตาม','Follow-up'],
+  drLbl:['เดบิต','Dr'], crLbl:['เครดิต','Cr'], ev_forfeit:['ทำหลุด','Forfeit'],
+  ev_issue:['ออกตั๋ว','Issue'], ev_installment:['ส่งงวด','Installment'], ev_full:['ชำระเต็มจำนวน','Pay in full'], ev_other:['จำนวนอื่น','Another amount'],
   navContacts:['รายชื่อลูกค้า','Contacts'], yes:['ใช่','Yes'], no:['ไม่','No'],
   ctSub:['นำรายชื่อลูกค้าจากไฟล์ที่ร้านมีอยู่แล้วเข้ามา ตรวจเบอร์ ตัดรายชื่อซ้ำ แล้วเตรียมข้อเสนอหรือข่าวสารส่งให้','Bring in the customer lists the shop already has, check the numbers, remove duplicates, then prepare an offer or news for them.'],
   ctTotal:['รายชื่อทั้งหมด','Contacts'], ctConsent:['ยินยอมรับข้อเสนอและข่าวสาร','Agreed to offers and news'], ctCustomers:['เป็นลูกค้าที่มีตั๋วแล้ว','Already have a ticket'],
@@ -14,7 +20,7 @@ Object.assign(window.I18N, {
   ctReview:['ตรวจก่อนเพิ่ม','Check before adding'], ctAdd:['เพิ่มเข้ารายชื่อ','Add to the list'], ctDiscard:['ยกเลิก','Discard'], ctAdded:['เพิ่มแล้ว','Added'], ctMore:['รายการเพิ่มเติม','more'],
   cts_read:['แถวที่อ่าน','Rows read'], cts_added:['รายชื่อใหม่','New contacts'], cts_merged:['ซ้ำ รวมเข้าแล้ว','Duplicates merged'], cts_invalid:['เบอร์ไม่ถูกต้อง','Invalid numbers'], cts_noPhone:['ไม่มีช่องทางติดต่อ','No way to reach'], cts_existingCustomers:['เป็นลูกค้าอยู่แล้ว','Already customers'], cts_withLine:['มี LINE ID','With a LINE ID'],
   ctf_name:['ชื่อ','Name'], ctf_first:['ชื่อจริง','First name'], ctf_last:['นามสกุล','Last name'], ctf_phone:['เบอร์โทร','Phone'], ctf_email:['อีเมล','Email'], ctf_line:['LINE ID','LINE ID'], ctf_address:['ที่อยู่','Address'], ctf_consent:['ความยินยอม','Consent'], ctf_skip:['ข้าม','skip'],
-  ctCustomer:['ลูกค้า','Customer'], ctGreen:['Green list','Green list'],
+  ctCustomer:['ลูกค้า','Customer'], ctGreen:['ลูกค้าดี','Green list'],
   ctAgreeAll:['รายชื่อชุดนี้ยินยอมรับข้อเสนอและข่าวสารแล้ว','This batch has agreed to receive offers and news'], ctConsentNote:['ส่งข้อความการตลาดได้เฉพาะคนที่ยินยอม (พ.ร.บ.คุ้มครองข้อมูลส่วนบุคคล) ถ้าไฟล์มีคอลัมน์ความยินยอม ระบบใช้ตามนั้น','Offers and news go only to people who agreed (PDPA). If the file has a consent column, it is used.'],
   ctList:['รายชื่อ','Contact list'], ctSearch:['ค้นหาชื่อ เบอร์ อีเมล','Search name, phone, email'],
   ctBroadcast:['ส่งข้อเสนอหรือข่าวสาร','Send an offer or news'], ctBroadcastSub:['เลือกกลุ่มผู้รับ ช่องทาง และข้อความ ระบบเตรียมข้อความรายคนให้','Choose the audience, the channel and the message. The app prepares one message per person.'],

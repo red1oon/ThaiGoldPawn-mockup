@@ -36,7 +36,7 @@ window.Views = (function () {
     return `<div class="panel"><h2>${t('a1')}</h2><div class="sub">${t('a1s')}</div>
     <fieldset><legend>${t('customer')}</legend><div class="fields">
       ${f(t('name'), inp('issue.name', x.name, 'text'))}${f(t('phone'), inp('issue.phone', x.phone, 'text'))}
-      ${f(t('rateGrp'), sel('issue.grp', x.grp, ['standard', 'vip', 'supervip', 'relative'].map(g => [g, g])))}
+      ${f(t('rateGrp'), sel('issue.grp', x.grp, ['standard', 'vip', 'supervip', 'relative'].map(g => [g, t('grp_' + g)])))}
     </div></fieldset>
     <fieldset><legend>${t('asset')}</legend><div class="fields">
       ${f(t('category'), sel('issue.cat', x.cat, cats.map((c, i) => [i, c])))}

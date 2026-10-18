@@ -88,7 +88,7 @@ window.Dash = (function () {
   function listWidget(w, rs) {
     const sel = rs.filter(r => inScope(r, w)).sort((a, b) => w.scope === 'green' ? b.upsell - a.upsell : w.scope === 'fudue' ? C.D(a.next) - C.D(b.next) : b.overdueDays - a.overdueDays).slice(0, 6);
     const extra = r => w.scope === 'green' ? `<b>+${fmt(r.upsell)}</b>` : w.scope === 'fudue' ? `<b>${fd(r.next)}</b>` : `<b>${r.overdueDays} ${t('days')}</b>`;
-    return sel.length ? sel.map(r => `<div class="li clk" data-hist="${r.tk}"><span>${r.tk} · ${r.st.name}</span><span>${extra(r)}</span><small>${fmt(r.st.principal)} · ${r.last ? t('lastContact') + ' ' + fd(r.lastDate) + ' · ' + AD.label('PAWN_Outcome', r.last.Outcome, lang()) : t('noContact')}</small></div>`).join('')
+    return sel.length ? sel.map(r => `<div class="li clk" data-hist="${r.tk}"><span>${r.tk} · ${dn(r.st.name)}</span><span>${extra(r)}</span><small>${fmt(r.st.principal)} · ${r.last ? t('lastContact') + ' ' + fd(r.lastDate) + ' · ' + AD.label('PAWN_Outcome', r.last.Outcome, lang()) : t('noContact')}</small></div>`).join('')
       : `<div class="note">${t('none')}</div>`;
   }
   function widget(w, rs) {
@@ -130,7 +130,7 @@ window.Dash = (function () {
   }
 
   // listing columns come from the AD (IsDisplayedGrid, SeqNo) — spec §15.8
-  const FIELD = { DocumentNo: r => r.tk + (r.live ? ' ★' : ''), Name: r => r.st.name, Category: r => r.cat, LoanAmt: r => r.st.loan, PrincipalAmt: r => r.st.principal, DateDue: r => r.st.due, Status: r => r.status, Risk: r => r.risk || '' };
+  const FIELD = { DocumentNo: r => r.tk + (r.live ? ' ★' : ''), Name: r => dn(r.st.name), Category: r => r.cat, LoanAmt: r => r.st.loan, PrincipalAmt: r => r.st.principal, DateDue: r => r.st.due, Status: r => r.status, Risk: r => r.risk || '' };
   const LISTOF = { Category: 'cat', Status: 'status', Risk: 'risk' };
   function cell(c, r) {
     const v = FIELD[c.ColumnName](r);
@@ -184,10 +184,10 @@ window.Dash = (function () {
       payment_rejected: `${b.reason} ${t.raw('code_' + b.reason)}${b.attachment ? ' · ' + t('attached') : ''}`, payment_wait: `${b.code} ${t.raw('code_' + b.code)}`, closed: b.how }[e.type] || ''; };
     const allOk = v.length && v.every(x => x.ok), crmL = Net.crm[st.no], fu = crmL ? crmL.chain.shop : [];
     const risk = P.classify(st, Net.today, { npl: Net.nplDays, price: Net.price }), ar = P.arrears(st, Net.today), fcols = AD.cols('PAWN_FollowUp').filter(c => c.IsDisplayed === 'Y');
-    return `<div class="hist"><h3>${t('history')}: ${st.no} · ${st.name} <span class="${allOk ? 'okm' : 'badm'}">${v.length ? (allOk ? '✔ ' + t('chainOk') : '✖ ' + t('chainBroken')) : ''}</span> ${risk ? chip('risk', risk) : ''}</h3>
-      <div class="note">${st.phone} · ${st.address || ''} · ${label('cat', st.cat)} ${st.weight} g · ${t('loan')} ${fmt(st.loan)} · ${t('principalNow')} ${fmt(st.principal)}${risk ? ` · ${t('overdueDays')} ${ar.overdueDays} · ${t('lateDays')} ${ar.lateDays}` : ''}${risk === 'green' ? ` · ${t('headroomNow')} ${fmt(P.upsell(st, Net.price))}` : ''}</div>
+    return `<div class="hist"><h3>${t('history')}: ${st.no} · ${dn(st.name)} <span class="${allOk ? 'okm' : 'badm'}">${v.length ? (allOk ? '✔ ' + t('chainOk') : '✖ ' + t('chainBroken')) : ''}</span> ${risk ? chip('risk', risk) : ''}</h3>
+      <div class="note">${st.phone} · ${dn(st.address || '')} · ${label('cat', st.cat)} ${st.weight} g · ${t('loan')} ${fmt(st.loan)} · ${t('principalNow')} ${fmt(st.principal)}${risk ? ` · ${t('overdueDays')} ${ar.overdueDays} · ${t('lateDays')} ${ar.lateDays}` : ''}${risk === 'green' ? ` · ${t('headroomNow')} ${fmt(P.upsell(st, Net.price))}` : ''}</div>
       <div class="tablewrap"><table><tr><th>#</th><th>${t('by')}</th><th>${t('event')}</th><th>${t('date')}</th><th>${t('detail')}</th><th>${t('hash')}</th><th>${t('check')}</th></tr>
-      ${evs.map(e => `<tr><td>${e.n}</td><td>${t('by_' + e.by)}</td><td>${e.type}</td><td>${new Date(e.ts).toISOString().slice(0, 10)}</td><td>${sum(e)}</td><td><code>${e.hash.slice(0, 8)}</code></td><td>${mk(v, e)}</td></tr>`).join('')}</table></div>
+      ${evs.map(e => `<tr><td>${e.n}</td><td>${t('by_' + e.by)}</td><td>${t.raw('ev_' + e.type)}</td><td>${new Date(e.ts).toISOString().slice(0, 10)}</td><td>${sum(e)}</td><td><code>${e.hash.slice(0, 8)}</code></td><td>${mk(v, e)}</td></tr>`).join('')}</table></div>
       <div class="actions" style="justify-content:flex-start">${st.paid.length ? (l.tamper ? `<button class="btn small" data-repair="${st.no}">${t('repair')}</button>` : `<button class="btn small" style="background:var(--s8)" data-tamper="${st.no}">${t('tamper')}</button>`) : ''}</div>
       <div class="note">${t('tamperNote')}</div>
       ${atts(st, l)}

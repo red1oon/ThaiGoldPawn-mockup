@@ -25,6 +25,8 @@
   let theme = (() => { try { return JSON.parse(store.get('gp.theme')) || { ...THEMES.quickgold }; } catch (e) { return { ...THEMES.quickgold }; } })();
 
   const t = k => (I[k] ? I[k][S.lang === 'th' ? 0 : 1] : k);
+  // sample records are stored once (Thai names); shown in the language of the screen
+  window.dn = n => { n = String(n == null ? '' : n); return S.lang === 'th' ? n.replace(/^Sample address(,)? ?/, 'ที่อยู่ตัวอย่าง$1 ').replace(/ ,/, ',') : n.replace(/^ลูกค้าตัวอย่าง (\d+)$/, 'Sample customer $1'); };
   t.raw = k => (I[k] ? t(k) : k);
   const CV = window.ContactsView, V2 = window.Views2, F = window.Flow, D = window.Dash, St = window.Story, Net = window.Net;
   const fmt = x => Number(x || 0).toLocaleString(S.lang === 'th' ? 'th-TH' : 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -80,7 +82,7 @@
       ${s.mode === 'A' ? `<div class="note">${conf('qA')} ${t('qA')}</div>` : ''}</fieldset>
       <fieldset><legend>${t('goldTypes')}</legend><table>${C.goldTypes.map((g, i) => `<tr><td>${L(g)}</td><td class="n">${inp('gt.' + i, g.pct)}</td></tr>`).join('')}</table></fieldset>
       <fieldset><legend>${t('rates')}</legend><table><tr><th>${t('rateGrp')}</th><th class="n">${t('from')}</th><th class="n">${t('to')}</th><th class="n">%</th><th class="n">${t('perYear')}</th></tr>
-        ${C.rates.map(r => { const e = Math.min(r.rate, C.LEGAL.maxMonthly); return `<tr><td>${r.grp}</td><td class="n">${fmt(r.from)}</td><td class="n">${fmt(r.to)}</td><td class="n">${e}${e < r.rate ? ' ⚠' : ''}</td><td class="n">${(e * 12).toFixed(2)}%</td></tr>`; }).join('')}</table><div class="note">${t('legalNote')}</div></fieldset>
+        ${C.rates.map(r => { const e = Math.min(r.rate, C.LEGAL.maxMonthly); return `<tr><td>${t('grp_' + r.grp)}</td><td class="n">${fmt(r.from)}</td><td class="n">${fmt(r.to)}</td><td class="n">${e}${e < r.rate ? ' ⚠' : ''}</td><td class="n">${(e * 12).toFixed(2)}%</td></tr>`; }).join('')}</table><div class="note">${t('legalNote')}</div></fieldset>
       <fieldset><legend>${t('ratioTbl')} ${conf('qRatio')}</legend><table>${C.ratioTerm.map(r => `<tr><td>${r.from}–${r.to}%</td><td class="n">${r.months}</td></tr>`).join('')}</table></fieldset>
     </div></div>`;
   }
@@ -89,7 +91,7 @@
     const keys = [['header', 'tHeader'], ['header-text', 'tHeaderText'], ['bg', 'tBg'], ['card', 'tCard'], ['text', 'tText'], ['label', 'tLabel'], ['accent', 'tAccent'], ['chip', 'tChip']];
     return `<div class="grid"><div class="card"><div class="panel"><h2>${t('themeTitle')}</h2><div class="sub">${t('themeSub')}</div>
       <div class="sec-title">${t('presets')}</div><div class="actions" style="justify-content:flex-start">
-        ${Object.keys(THEMES).map(k => `<button class="btn small" style="background:${THEMES[k].header}" data-preset="${k}">${k}</button>`).join('')}</div>
+        ${Object.keys(THEMES).map(k => `<button class="btn small" style="background:${THEMES[k].header}" data-preset="${k}">${t('th_' + k)}</button>`).join('')}</div>
       <div class="sec-title">${t('tokens')}</div>
       ${keys.map(([k, lab]) => `<div class="tok"><span>${t(lab)}</span><input type="color" data-tok="${k}" value="${theme[k]}"></div>`).join('')}
       <div class="tok"><span>${t('radius')} (${theme.radius}px)</span><input type="range" min="0" max="24" data-tok="radius" value="${theme.radius}"></div>

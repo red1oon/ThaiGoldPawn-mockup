@@ -29,7 +29,7 @@ window.Flow = (function () {
     else {
       const l = Net.shopL[tk], st = P.fold(l, Net.today), off = l.chain.shop[0].body, link = Net.share('qr', l.offerToken()).link;
       body = `<div class="row2"><b>${tk}</b>${stChip(st.status)}</div>
-        <div class="kv"><span>${t('name')}</span><b>${st.name}</b><span>${t('phone')}</span><b>${st.phone}</b><span>${t('loan')}</span><b>${fmt(st.loan)}</b><span>${t('code')}</span><b>${off.code}</b></div>
+        <div class="kv"><span>${t('name')}</span><b>${dn(st.name)}</b><span>${t('phone')}</span><b>${st.phone}</b><span>${t('loan')}</span><b>${fmt(st.loan)}</b><span>${t('code')}</span><b>${off.code}</b></div>
         <div class="note">${t('fundNote')}</div>${qr(link)}
         <div class="note">${t('sendOffer')}</div><div class="chs">${['qr', 'link', 'email', 'whatsapp', 'line', 'sms', 'nfc', 'web'].map(c => `<button class="chbtn" data-j="send|shop|${c}|${tk}" title="${t('ch_' + c)}">${icon(CH[c])}<small>${t('ch_' + c)}</small></button>`).join('')}</div>
         <div class="sec-title">${t('claimsIn')}</div>${st.claims.length ? st.claims.map(c => `<div class="row2"><span>#${c.claimNo} ${t('m_' + c.mode)} ${fmt(c.amount)}</span><span class="chip2" style="--c:var(${c.status === 'verified' ? '--s6' : c.status === 'rejected' ? '--s8' : '--s4'})">${t('cl_' + c.status)}${c.reason ? ' · ' + c.reason + ' ' + t.raw('code_' + c.reason) : ''}</span>${c.status === 'waiting' ? `<button class="btn small" data-j="retry|${tk}">${t('retryCheck')}</button>` : ''}</div>`).join('') : `<div class="note">–</div>`}
@@ -65,7 +65,7 @@ window.Flow = (function () {
     let main;
     if (st.status === 'offered') {
       main = `<div class="card" style="margin:12px"><div class="panel"><div class="okm">✔ ${t('shopSigOk')}</div><h2>${t('offerFor')} ${st.no}</h2>
-        <div class="kv"><span>${t('phone')}</span><b>${st.phone}</b><span>${t('name')}</span><b>${st.name}</b><span>${t('address')}</span><b>${st.address}</b>
+        <div class="kv"><span>${t('phone')}</span><b>${st.phone}</b><span>${t('name')}</span><b>${dn(st.name)}</b><span>${t('address')}</span><b>${dn(st.address)}</b>
         <span>${t('collateral')}</span><b>${t('cat_' + st.cat)} · ${st.weight} g × ${st.qty}</b><span>${t('loanable')}</span><b>${fmt(st.ceiling)}</b><span>${t('headroom')}</span><b>${fmt(st.headroom)}</b>
         <span>${t('loan')}</span><b>${fmt(st.loan)}</b><span>${t('rate')}</span><b>${st.rate}% / ${t(st.basis === 'day' ? 'perDay' : 'perMonth')}</b><span>${t('due')}</span><b>${fd(st.due)}</b></div>
         <table><tr><th>${t('inst')}</th><th>${t('date')}</th><th class="n">${t('amount')}</th></tr>${plan(st).map(r => `<tr><td>${r.i}</td><td>${fd(r.date)}</td><td class="n">${fmt(r.amt)}</td></tr>`).join('')}</table>
