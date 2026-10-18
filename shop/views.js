@@ -170,7 +170,9 @@ window.Views = (function () {
       <tr><td>${t('vat')} ${S.set.vat}% ${incl ? '(' + t('include') + ')' : ''}</td><td class="n">${fmt(vat)}</td></tr></table>
     <div class="total"><span>${t('redeemTotal')} ${whoPays(-1)}</span><span class="big">${fmt(total)} ${t('baht')}</span></div>
     <fieldset style="margin-top:12px"><legend>${t('tender')}</legend><div class="fields">
-      ${f(t('cash'), inp('tx.cash', w.cash))}${o(t('transfer'), fmt(Math.max(0, total - (+w.cash || 0))))}</div></fieldset></div>`;
+      ${f(t('cash'), inp('tx.cash', w.cash))}${o(t('transfer'), fmt(Math.max(0, total - (+w.cash || 0))))}</div></fieldset>
+    <div class="actions"><button class="btn ghost" data-act="rcpt">${t('rcShow')}</button>${S.showRcpt ? `<button class="btn" data-act="print">${t('rcPrint')}</button>` : ''}</div>
+    ${S.showRcpt ? window.Receipt.html(window.Receipt.build([{ tk: tk.no, item: S.lang === 'th' ? 'ทองรูปพรรณ' : 'Gold ornament', weightG: tk.weight, qty: 1, redeem: C.r2(tk.loan + ow.amount - disc), pawn: tk.loan, base, vat, inclVat: incl ? C.r2(tk.loan + ow.amount - disc) : C.r2(tk.loan + ow.amount - disc + vat) }], { lastInterest: C.r2(total - tk.loan), cash: Math.min(+w.cash || 0, total), transfer: Math.max(0, C.r2(total - (+w.cash || 0))) }), { t, fmt, fd, no: 'R-' + tk.no, date: w.today, shop: { name: t('rcShopName'), addr: t('rcShopAddr'), taxId: '1 2345 6789 10 1' }, cust: { name: tk.name, addr: S.lang === 'th' ? 'ที่อยู่ตัวอย่าง' : 'Sample address', taxId: '3 1234 56789 01 2' } }) : ''}</div>`;
   }
 
   // ---- 5. Forfeit (§7) ----

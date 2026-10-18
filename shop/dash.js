@@ -223,6 +223,8 @@ window.Dash = (function () {
       ${evs.map(e => `<tr><td>${e.n}</td><td>${t('by_' + e.by)}</td><td>${t.raw('ev_' + e.type)}</td><td>${new Date(e.ts).toISOString().slice(0, 10)}</td><td>${sum(e)}</td><td><code>${e.hash.slice(0, 8)}</code></td><td>${mk(v, e)}</td></tr>`).join('')}</table></div>
       <div class="actions" style="justify-content:flex-start">${st.paid.length ? (l.tamper ? `<button class="btn small" data-repair="${st.no}">${t('repair')}</button>` : `<button class="btn small" style="background:var(--s8)" data-tamper="${st.no}">${t('tamper')}</button>`) : ''}</div>
       <div class="note">${t('tamperNote')}</div>
+      ${(() => { const fe = l.chain.shop.filter(e => e.type === 'payment_verified' && e.body.mode === 'full').pop(); if (!fe) return ''; const ctx = { t, fmt, fd, no: 'R-' + st.no, date: new Date(fe.ts).toISOString().slice(0, 10), shop: { name: t('rcShopName'), addr: t('rcShopAddr'), taxId: '1 2345 6789 10 1' }, cust: { name: dn(st.name), addr: dn(st.address || ''), taxId: '' } };
+        return `<div class="actions" style="justify-content:flex-start"><button class="btn small" data-rcpt="${st.no}">${t('rcShow')}</button>${D.rcpt === st.no ? `<button class="btn small" data-act="print">${t('rcPrint')}</button>` : ''}</div>${D.rcpt === st.no ? window.Receipt.html(window.Receipt.fromEvent(st, fe), ctx) : ''}`; })()}
       ${atts(st, l)}
       <h3 style="margin-top:14px">${t('crmHead')}</h3><div class="note">${t('crmNote')}</div>
       ${fu.length ? `<div class="tablewrap"><table><tr><th>#</th>${fcols.map(c => `<th>${gl(c)}</th>`).join('')}<th>${t('check')}</th></tr>
@@ -283,6 +285,7 @@ window.Dash = (function () {
     if ((n = q('data-hist-close'))) { D.hist = null; return true; }
     if ((n = q('data-fu'))) { logFu(n.dataset.fu).then(() => window.dispatchEvent(new Event('gp-render'))); return false; }
     if ((n = q('data-tamper'))) { Net.tamper(n.dataset.tamper); showHist(n.dataset.tamper).then(() => window.dispatchEvent(new Event('gp-render'))); return true; }
+    if ((n = q('data-rcpt'))) { D.rcpt = D.rcpt === n.dataset.rcpt ? null : n.dataset.rcpt; return true; }
     if ((n = q('data-repair'))) { Net.repair(n.dataset.repair); showHist(n.dataset.repair).then(() => window.dispatchEvent(new Event('gp-render'))); return true; }
     if ((n = q('data-hist'))) { showHist(n.dataset.hist).then(() => window.dispatchEvent(new Event('gp-render'))); return false; }
     if ((n = q('data-drill'))) { D.drill = n.dataset.drill.split('|'); D.hist = null; return true; }

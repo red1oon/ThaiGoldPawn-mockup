@@ -33,6 +33,10 @@
       const l = this.crmL(tk), b = { ...k }; if (!l.chain.shop.length) b.pub = T.pubOf(this.keys.shop.pub); l.live = true;
       const e = await l.append('kyc', b, this.ts()); this.persist(); this.emit(); return e;
     },
+    async logInternal(chain, type, body) {                 // generic shop-internal signed event (never in a token)
+      const l = this.crmL(chain), b = { ...body }; l.live = true; if (!l.chain.shop.length) b.pub = T.pubOf(this.keys.shop.pub);
+      const e = await l.append(type, b, this.ts()); this.persist(); this.emit(); return e;
+    },
     // contact imports and broadcasts: signed, shop-internal chain (never put in a token)
     async logContact(type, body, ts) {
       const l = this.crmL('_contacts'), b = { ...body }; l.live = true; if (!l.chain.shop.length) b.pub = T.pubOf(this.keys.shop.pub);

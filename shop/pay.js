@@ -19,6 +19,7 @@
         const c = st.claims.find(x => x.claimNo === b.claimNo); if (c) c.status = 'verified';
       } else if (e.type === 'payment_wait') { const c = st.claims.find(x => x.claimNo === b.claimNo); if (c) { c.status = 'waiting'; c.reason = b.code; c.message = b.message; c.shopAlert = !!b.shopAlert; }
       } else if (e.type === 'payment_rejected') { const c = st.claims.find(x => x.claimNo === b.claimNo); if (c) { c.status = 'rejected'; c.reason = b.reason; c.message = b.message; } }
+      else if (e.type === 'opening') { st.acked = true; st.opening = true; st.paidTo = b.paidTo; st.credit = 0; st.untaxed = b.untaxed || 0; if (b.principal != null) st.principal = b.principal; }   // imported live ticket (spec §20.2): the shop is the authority, no borrower ack
       else if (e.type === 'closed') st.closed = b.how;
     }
     if (!st.offered && st.loan == null) { st.status = 'none'; return st; }

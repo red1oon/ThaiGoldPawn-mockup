@@ -173,3 +173,8 @@ button.chip2{background:transparent;color:var(--text);font:inherit;cursor:pointe
 .demo{border:1px dashed var(--line);border-radius:var(--radius);padding:10px;margin:10px 0}
 .safe-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}.safe-row .fl-ic{background:var(--c)}.safe-row b{display:block;font-size:1.2em}.safe-row small{color:var(--muted)}
 .lim{font-size:.86em;margin:3px 0}.lim.ok{color:var(--s6)}.lim.bad{color:var(--s8)}.lim.warn{color:var(--s4)}
+
+/* receipt / tax invoice */
+.rcpt{border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-top:12px;background:var(--card);font-size:.85em}.rcpt h3{text-align:center;margin:8px 0}.rc-meta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:2px 0}
+.rcpt table{width:100%;border-collapse:collapse;margin:8px 0}.rcpt th,.rcpt td{border-bottom:1px solid var(--line);padding:4px 6px;text-align:left}.rcpt .n{text-align:right;font-variant-numeric:tabular-nums}.rc-tot td{font-weight:600}.rc-note{font-size:.85em;color:var(--muted);margin:6px 0}.rc-sign{display:flex;justify-content:space-around;margin-top:28px;text-align:center}
+@media print{body.print-rcpt *{visibility:hidden}body.print-rcpt .rcpt,body.print-rcpt .rcpt *{visibility:visible}body.print-rcpt .rcpt{position:absolute;left:0;top:0;width:100%;border:none;margin:0}@page{size:A5 landscape;margin:8mm}}

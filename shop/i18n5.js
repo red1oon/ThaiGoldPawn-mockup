@@ -74,3 +74,23 @@ Object.assign(window.I18N, {
   limitsNote:['ตัวเลขตั้งต้นตามที่อ้างในสเปก §14 (คู่มือกรมสรรพากร 2560) ร้านปรับให้เข้มกว่าได้ ตรวจกฎล่าสุดก่อนใช้จริง ระบบแจ้งเตือนและบล็อก แต่ร้านเป็นผู้ยื่นรายงานเอง','Defaults are the figures cited in spec §14 (2017 RD manual). A shop may set stricter ones; re-check current rules before real use. The system warns and blocks; the shop files any report itself.'],
   wt_amlo:['รายการเงินสดที่ต้องรายงาน','Cash transactions to report'], sc_amlo:['ถึงเกณฑ์รายงานเงินสด','Cash report'], k_amlo_unit:['รายการ','items']
 });
+Object.assign(window.I18N, {
+  rcShow:['ดูใบเสร็จรับเงิน / ใบกำกับภาษี','Show receipt / tax invoice'], rcPrint:['พิมพ์','Print'], rcTitle:['ใบเสร็จรับเงิน / ใบกำกับภาษี (ไถ่ถอน)','Receipt / tax invoice (redemption)'], rcNo:['เลขที่','No.'], rcName:['ชื่อ-สกุลผู้ไถ่ถอน','Redeemer'], rcTaxId:['เลขประจำตัวผู้เสียภาษี','Tax ID'],
+  rcSeq:['ลำดับ','#'], rcItem:['หลักประกัน','Collateral'], rcWeight:['น้ำหนัก (กรัม)','Weight (g)'], rcInclVat:['ราคารวมภาษีมูลค่าเพิ่ม','Price incl. VAT'], rcRedeem:['สินไถ่','Redemption'], rcPawn:['ขายฝาก','Pawn value'], rcBase:['ฐานภาษี','Tax base'], rcVat:['ภาษีมูลค่าเพิ่ม','VAT'],
+  rcComplete:['ใบเสร็จรับเงินนี้จะสมบูรณ์ต่อเมื่อบริษัทฯได้รับเงินอย่างครบถ้วน','This receipt is complete only when the company has received the full amount.'], rcLastInt:['ผลประโยชน์ครั้งสุดท้าย (รวมภาษีที่เรียกเก็บ)','Last interest (incl. VAT where charged)'], rcDiscount:['ส่วนต่าง (สินไถ่ − ราคารวมภาษี)','Difference (redemption − price incl. VAT)'],
+  rcNet:['ร้านรับ (ลูกค้าจ่าย) รวม','Received from the customer'], rcTenderBad:['เงินสดและเงินโอนรวมไม่เท่ากับยอดที่รับ','Cash and transfer do not add up to the amount received'], rcRedeemer:['ผู้ไถ่ถอนและรับคืนหลักประกัน','Redeemer, receives the collateral back'], rcReceiver:['ผู้รับไถ่ถอนและคืนหลักประกัน','Receiver, returns the collateral'],
+  rcShopName:['ร้านตัวอย่าง ทองคำ จำกัด','Sample Gold Shop Co., Ltd.'], rcShopAddr:['ที่อยู่ร้านตัวอย่าง','Sample shop address']
+});
+Object.assign(window.I18N, {
+  navOpening:['นำเข้าสัญญาเดิม','Import existing tickets'],
+  opSub:['นำสัญญาที่ยังเปิดอยู่จากบันทึกเดิมของร้านเข้ามาเป็นยอดยกมา ระบบไม่สร้างประวัติการชำระย้อนหลัง มีเพียงเงินต้นและวันที่ชำระดอกเบี้ยถึง ตรวจทุกแถวก่อน ถ้าแถวใดไม่ผ่านจะไม่นำเข้าและบอกเหตุผล','Bring in the live tickets from the shop’s existing records as opening balances. No payment history is invented: only the principal and the date interest is paid to. Every row is checked first; a row that fails is not imported and the reason is shown.'],
+  opCols:['คอลัมน์','Columns'], opTemplate:['ดาวน์โหลดไฟล์ตัวอย่าง','Download a template'], opFile:['ไฟล์ Excel หรือ CSV','Excel or CSV file'], opPaste:['หรือวางตารางที่คัดลอกมา','or paste a copied table'], opReview:['ตรวจสอบ','Review'],
+  opReviewHead:['ผลการตรวจ','Review'], opRead:['แถวที่อ่าน','rows read'], opValid:['นำเข้าได้','valid'], opInvalid:['ไม่ผ่าน','invalid'], opPrincipal:['เงินต้นรวมที่นำเข้า','principal to import'],
+  opKycMissing:['สัญญาถึงเกณฑ์ยืนยันตัวตนแต่ยังไม่มีข้อมูลบัตร ต้องเก็บภายหลัง','tickets at the identification threshold have no ID on file; collect it afterwards'], opRateCapped:['สัญญาที่อัตราเกินเพดานกฎหมาย ถูกปรับเหลือ 15% ต่อปี','tickets with a rate above the legal ceiling were cut to 15% a year'],
+  opRow:['แถว','Row'], opWhy:['เหตุผล','Reason'], opPaidTo:['ชำระดอกเบี้ยถึง','Interest paid to'], opMore:['แถวที่เหลือ','more rows'],
+  opCommitNote:['การนำเข้าบันทึกเป็นเหตุการณ์ที่เซ็นกำกับ พร้อมชื่อไฟล์ ค่าแฮช และจำนวน นำเข้าไฟล์เดิมซ้ำจะไม่เพิ่มสัญญาซ้ำ','The import is recorded as a signed event with the file name, hash and counts. Importing the same file again adds no duplicates.'], opCommit:['นำเข้า','Import'], opDone:['นำเข้าแล้ว','Imported'], opPasted:['ข้อความที่วาง','pasted text'],
+  opMissingCols:['ไม่พบคอลัมน์ที่จำเป็น','Required columns not found'],
+  opwhy_ticketNo:['ไม่มีเลขที่ตั๋ว','no ticket number'], 'opwhy_duplicate-existing':['เลขที่ตั๋วซ้ำกับที่มีอยู่แล้ว','ticket number already exists'], 'opwhy_duplicate-in-file':['เลขที่ตั๋วซ้ำในไฟล์','ticket number repeated in the file'], opwhy_date:['วันที่ไม่ถูกต้อง','invalid date'], 'opwhy_date-future':['วันที่เป็นอนาคต','date is in the future'],
+  opwhy_loan:['เงินต้นไม่ถูกต้อง','invalid principal'], opwhy_months:['จำนวนเดือนต้องอยู่ระหว่าง 1–36','months must be 1–36'], opwhy_paidTo:['วันที่ชำระถึงไม่ถูกต้อง','invalid paid-to date'], 'opwhy_paidTo-range':['วันที่ชำระถึงต้องอยู่ระหว่างวันที่ออกและวันนี้','paid-to must be between the ticket date and today'],
+  opwhy_category:['ประเภททรัพย์ไม่รู้จัก','unknown collateral type'], opwhy_weight:['น้ำหนักไม่ถูกต้อง','invalid weight'], opwhy_rate:['อัตราไม่ถูกต้อง','invalid rate']
+});
