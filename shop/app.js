@@ -28,7 +28,7 @@
   // sample records are stored once (Thai names); shown in the language of the screen
   window.dn = n => { n = String(n == null ? '' : n); return S.lang === 'th' ? n.replace(/^Sample address(,)? ?/, 'ที่อยู่ตัวอย่าง$1 ').replace(/ ,/, ',') : n.replace(/^ลูกค้าตัวอย่าง (\d+)$/, 'Sample customer $1'); };
   t.raw = k => (I[k] ? t(k) : k);
-  const CV = window.ContactsView, V2 = window.Views2, F = window.Flow, D = window.Dash, St = window.Story, Net = window.Net;
+  const SK = window.Stock, CV = window.ContactsView, V2 = window.Views2, F = window.Flow, D = window.Dash, St = window.Story, Net = window.Net;
   const fmt = x => Number(x || 0).toLocaleString(S.lang === 'th' ? 'th-TH' : 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const fd = s => { const [y, m, d] = s.split('-'); return `${d}/${m}/${y}`; };
 
@@ -48,7 +48,7 @@
   }
 
   // ---- shell ----
-  const NAV = [['counter', 'storefront', 'navCounter'], ['journey', 'swap_horiz', 'navJourney'], ['dash', 'dashboard', 'navDash'], ['books', 'account_balance', 'navBooks'], ['ad', 'schema', 'navAd'], ['settings', 'tune', 'navSettings'], ['theme', 'palette', 'navTheme'], ['thai', 'flag', 'navThai'], ['local', 'cloud_off', 'navLocal'], ['contacts', 'contacts', 'navContacts'], ['story', 'movie', 'navStory']];
+  const NAV = [['counter', 'storefront', 'navCounter'], ['journey', 'swap_horiz', 'navJourney'], ['dash', 'dashboard', 'navDash'], ['locator', 'inventory_2', 'navLocator'], ['slipuse', 'fact_check', 'navSlip'], ['books', 'account_balance', 'navBooks'], ['ad', 'schema', 'navAd'], ['settings', 'tune', 'navSettings'], ['theme', 'palette', 'navTheme'], ['thai', 'flag', 'navThai'], ['local', 'cloud_off', 'navLocal'], ['contacts', 'contacts', 'navContacts'], ['story', 'movie', 'navStory']];
   const ACTIONS = [
     ['grpTicket', [['a1', 'receipt_long', '#fff3e0', '#ef6c00']]],
     ['grpMoney', [['a2', 'payments', '#e8f5e9', '#2e7d32'], ['a3', 'swap_vert', '#e3f2fd', '#1565c0']]],
@@ -120,7 +120,7 @@
   }
 
   function render() {
-    V.bind(S, t, fmt, fd); F.bind(S, t, fmt, fd); D.bind(S, t, fmt, fd); V2.bind(S, t, fmt, fd); CV.bind(S, t, fmt, fd); Net.set = S.set; Net.price = +S.price.buy; Net.nplDays = +S.set.nplDays || 90;
+    V.bind(S, t, fmt, fd); F.bind(S, t, fmt, fd); D.bind(S, t, fmt, fd); V2.bind(S, t, fmt, fd); CV.bind(S, t, fmt, fd); SK.bind(S, t, fmt, fd); Net.set = S.set; Net.price = +S.price.buy; Net.nplDays = +S.set.nplDays || 90;
     document.documentElement.lang = S.lang;
     document.querySelectorAll('[data-t]').forEach(e => e.textContent = t(e.dataset.t));
     document.getElementById('langBtn').textContent = S.lang === 'th' ? 'EN' : 'ไทย';
@@ -129,7 +129,7 @@
     document.getElementById('rail').innerHTML = NAV.map(([k, ic, lab]) =>
       `<button class="${S.tab === k ? 'on' : ''}" data-tab="${k}"><span class="pill">${icon(ic)}</span>${t(lab)}</button>`).join('');
     const v = document.getElementById('view');
-    v.innerHTML = { counter, journey: () => F.view(), dash: () => D.view(), books: () => V2.books(), ad: () => V2.ad(), settings, theme: themeView, thai: thaiView, local: localView, contacts: () => CV.view(), story: storyView }[S.tab]();
+    v.innerHTML = { counter, journey: () => F.view(), dash: () => D.view(), books: () => V2.books(), ad: () => V2.ad(), settings, theme: themeView, thai: thaiView, local: localView, contacts: () => CV.view(), locator: () => SK.view(), slipuse: () => SK.slipView(), story: storyView }[S.tab]();
     const ov = document.getElementById('overlay');
     const c = St.st.card, cp = St.st.caption;
     ov.innerHTML = (c ? `<div class="chcard house">${c.n || c.kick ? `<div class="chn">${c.n ? t('chapter') + ' ' + c.n : t(c.kick)}</div>` : ''}<h1>${c.t ? t(c.t) : ''}${c.l1 ? `<span class="w">${t(c.l1)}</span>` : ''}${c.l2 ? `<span class="b">${t(c.l2)}</span>` : ''}</h1>${c.s ? `<p>${t(c.s)}</p>` : ''}</div>` : '')
@@ -148,6 +148,13 @@
   }
   document.addEventListener('input', e => {
     const el = e.target;
+    if (el.dataset.stkIn || el.dataset.stkCnt || el.dataset.slipIn) {
+      const r = SK.input(el);
+      if (r === 'type' && (el.dataset.stkIn === 'filter' || el.dataset.slipIn === 'over')) {
+        const sel = el.dataset.stkIn ? '[data-stk-in="filter"]' : '[data-slip-in="over"]', pos = el.selectionStart; render(); const again = document.querySelector(sel); if (again) { again.focus(); try { again.setSelectionRange(pos, pos); } catch (x) {} }
+      }
+      return;
+    }
     if (el.dataset.ctFilter || el.dataset.ctBc) { if (CV.input(el)) { const k = el.dataset.ctFilter ? 'data-ct-filter' : 'data-ct-bc', pos = el.selectionStart; render(); const again = document.querySelector('[' + k + ']'); if (again && el.dataset.ctFilter) { again.focus(); try { again.setSelectionRange(pos, pos); } catch (x) {} } } return; }
     if (el.dataset.k) {
       if (el.dataset.num) { const c = el.value.replace(/[^0-9.]/g, ''); if (c !== el.value) el.value = c; }
@@ -162,6 +169,7 @@
   });
   document.addEventListener('change', async e => {
     const el = e.target;
+    if (el.dataset.stkIn || el.dataset.stkCnt || el.dataset.slipIn) { SK.input(el); return render(); }
     if (el.dataset.ctFile) { await CV.file(el); await CV.refreshVerify(); return render(); }
     if (el.dataset.ctBc) { if (CV.input(el)) render(); return; }
     if (el.dataset.tick != null) { S.tick[+el.dataset.tick] = el.checked; render(); }
@@ -169,6 +177,7 @@
     else if (el.dataset.tok) render();
   });
   document.addEventListener('click', async e => {
+    if (S.tab === 'locator' && e.target.closest('[data-stk],[data-stk-wh],[data-stk-cell],[data-stk-pick]')) { if (await SK.click(e.target)) return render(); return; }
     const jb = e.target.closest('[data-j]');
     if (jb) { await F.act(jb.dataset.j); if (jb.dataset.j === 'issue') S.tab = 'journey'; return render(); }
     const sb = e.target.closest('[data-story]');
@@ -190,7 +199,7 @@
   window.__app = { S, render, Net, St, D, setTab: k => { S.tab = k; render(); } };
   (async () => {
     applyTheme(); render();
-    await Net.init(); Net.sample = await window.Sample.build(48);
+    await Net.init(); Net.sample = await window.Sample.build(48); await SK.seed();
     const h = location.hash;
     if (h.startsWith('#/t/')) { Net.solo = 'phone'; S.tab = 'journey'; await Net.receiveRaw(h.slice(4), 'phone', 'link'); }
     window.__ready = true; render();

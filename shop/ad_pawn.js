@@ -9,7 +9,9 @@ window.AD = (function () {
     T(1000002, 'Pawn Payment', 'PAWN_Payment', 'Folded from payment_claim / payment_verified / payment_rejected events'),
     T(1000003, 'Pawn Follow-up', 'PAWN_FollowUp', 'Shop-internal CRM chain (never sent in a token)'),
     T(1000004, 'Pawn Contact', 'PAWN_Contact', 'Customer / prospect contact list (imported from Excel, CSV, vCard, LINE, phone picker)'),
-    T(1000005, 'Pawn Broadcast', 'PAWN_Broadcast', 'Offer or news prepared for an audience of consented contacts')
+    T(1000005, 'Pawn Broadcast', 'PAWN_Broadcast', 'Offer or news prepared for an audience of consented contacts'),
+    T(1000006, 'Pawn Locate', 'PAWN_Locate', 'Collateral put-away / move / out / forfeit — signed shop-internal events (M_Warehouse, M_Locator, M_Lot)'),
+    T(1000007, 'Pawn SlipOK Check', 'PAWN_SlipCheck', 'One row per shop-side SlipOK call, folded from payment events (quota and cost estimate)')
   ];
   let cid = 2000000;
   // C(table, ColumnName, Name, th, ref, opts)
@@ -35,6 +37,10 @@ window.AD = (function () {
     C(1000001, 'Status', 'Status', 'สถานะ', 17, { list: 'PAWN_Status', sel: 1, grid: 1, ro: 1, virt: 'fold(events)' }),
     C(1000001, 'Risk', 'Risk class', 'ระดับความเสี่ยง', 17, { list: 'PAWN_Risk', sel: 1, grid: 1, ro: 1, virt: 'classify(overdueDays, lateDays, nplDays)' }),
     C(1000001, 'Ageing', 'Due-date ageing', 'อายุตามกำหนด', 17, { list: 'PAWN_Ageing', sel: 1, ro: 1, virt: 'bucket(DateDue − today)' }),
+    C(1000001, 'LocatorAisle', 'Locator aisle', 'แถวที่เก็บ', 10, { len: 2, sel: 1, ro: 1, virt: 'M_Locator.X of fold(PAWN_Locate)' }),
+    C(1000001, 'M_Locator_ID', 'Locator', 'ช่องเก็บ', 19, { ro: 1, virt: 'fold(PAWN_Locate).locator (aisle-bin-level)' }),
+    C(1000001, 'AssetTrackNo', 'Bag / pack no.', 'เลขถุง/ห่อทรัพย์', 10, { len: 30, ro: 1, virt: 'fold(PAWN_Locate).bag' }),
+    C(1000001, 'M_Lot_ID', 'Lot', 'ล็อต', 19, { ro: 1, virt: "'LOT-' + 1stTicketNo" }),
     // PAWN_Payment
     C(1000002, 'PAWN_Ticket_ID', 'Ticket', 'ใบขายฝาก', 19, { m: 1, hide: 1 }),
     C(1000002, 'ClaimNo', 'Claim no.', 'ครั้งที่', 11, { m: 1, ro: 1 }),
@@ -69,6 +75,21 @@ window.AD = (function () {
     C(1000005, 'Body', 'Message', 'ข้อความ', 14, { seq: 50 })
   );
   const L = (list, value, name, th) => ({ AD_Reference_Name: list, Value: value, Name: name, th, IsActive: 'Y' });
+  columns.push(
+    C(1000006, 'PAWN_Ticket_ID', 'Ticket', 'ใบขายฝาก', 19, { m: 1, hide: 1 }),
+    C(1000006, 'How', 'Action', 'การดำเนินการ', 10, { len: 10, m: 1, ro: 1 }),
+    C(1000006, 'M_Warehouse_ID', 'Warehouse', 'คลัง', 19, { ro: 1 }),
+    C(1000006, 'M_Locator_ID', 'To locator', 'ช่องเก็บปลายทาง', 19, { ro: 1 }),
+    C(1000006, 'FromLocator', 'From locator', 'ช่องเก็บเดิม', 10, { len: 12, ro: 1 }),
+    C(1000006, 'AssetTrackNo', 'Bag / pack no.', 'เลขถุง/ห่อทรัพย์', 10, { len: 30, ro: 1 }),
+    C(1000006, 'M_Lot_ID', 'Lot', 'ล็อต', 19, { ro: 1 }),
+    C(1000007, 'PAWN_Ticket_ID', 'Ticket', 'ใบขายฝาก', 19, { m: 1, hide: 1 }),
+    C(1000007, 'TransRef', 'Slip reference', 'เลขอ้างอิงสลิป', 10, { len: 40, ro: 1 }),
+    C(1000007, 'Code', 'Result code', 'รหัสผลตรวจ', 10, { len: 6, m: 1, ro: 1 }),
+    C(1000007, 'QuotaUsed', 'Quota used', 'ใช้โควตา', 20, { ro: 1 }),
+    C(1000007, 'CheckedAt', 'Checked at', 'วันที่ตรวจ', 15, { ro: 1 }),
+    C(1000007, 'Amount', 'Amount', 'จำนวนเงิน', 12, { ro: 1 })
+  );
   const refLists = [
     L('PAWN_ContactSource', 'excel', 'Excel', 'Excel'), L('PAWN_ContactSource', 'csv', 'CSV / pasted table', 'CSV / ตารางที่วาง'), L('PAWN_ContactSource', 'vcf', 'Phone contacts (vCard / Google CSV)', 'รายชื่อในโทรศัพท์ (vCard / Google CSV)'),
     L('PAWN_ContactSource', 'line', 'LINE', 'LINE'), L('PAWN_ContactSource', 'picker', 'Phone contact picker', 'เลือกจากรายชื่อในโทรศัพท์'), L('PAWN_ContactSource', 'manual', 'Typed in', 'พิมพ์เอง'),
@@ -99,7 +120,7 @@ window.AD = (function () {
   const list = n => refLists.filter(r => r.AD_Reference_Name === n);
   const label = (n, v, lang) => { const r = list(n).find(x => x.Value === v); return r ? (lang === 'th' ? r.th : r.Name) : v; };
   // ColumnName → key in the dashboard row (the fold's field name)
-  const ROWKEY = { Status: 'status', Category: 'cat', RateGroup: 'grp', Risk: 'risk', Ageing: 'ageing', DateTicket: 'month' };
+  const ROWKEY = { Status: 'status', Category: 'cat', RateGroup: 'grp', Risk: 'risk', Ageing: 'ageing', DateTicket: 'month', LocatorAisle: 'aisle' };
   const dimensions = () => cols('PAWN_Ticket').filter(c => c.IsSelectionColumn === 'Y' && ROWKEY[c.ColumnName]).map(c => ({ dim: ROWKEY[c.ColumnName], col: c }));
   return { tables, columns, refLists, windows, attachments, tableOf, cols, list, label, ROWKEY, dimensions };
 })();

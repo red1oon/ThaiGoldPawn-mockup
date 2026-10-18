@@ -11,26 +11,33 @@ window.Dash = (function () {
   const LISTNAME = { status: 'PAWN_Status', cat: 'PAWN_Category', grp: 'PAWN_RateGroup', risk: 'PAWN_Risk', ageing: 'PAWN_Ageing' };
   const dims = () => [...AD.dimensions().map(d => d.dim), 'none'];
   const METRICS = ['count', 'principal', 'owed', 'collected', 'upsell', 'nplratio'];
-  const SCOPES = ['open', 'all', 'overdue', 'offered', 'npl', 'watch', 'green', 'fudue'];
+  const SCOPES = ['open', 'all', 'overdue', 'offered', 'npl', 'watch', 'green', 'fudue', 'unlocated'];
 
   const DEFAULT = [
-    { id: 'k_open', title: 'wt_open', metric: 'count', scope: 'open', groupBy: 'none', chart: 'tile', size: 's' },
-    { id: 'k_prin', title: 'wt_prin', metric: 'principal', scope: 'open', groupBy: 'none', chart: 'tile', size: 's' },
-    { id: 'k_owed', title: 'wt_owed', metric: 'owed', scope: 'open', groupBy: 'none', chart: 'tile', size: 's' },
-    { id: 'k_over', title: 'wt_over', metric: 'principal', scope: 'overdue', groupBy: 'none', chart: 'tile', size: 's' },
-    { id: 'k_npl', title: 'wt_npl', metric: 'principal', scope: 'npl', groupBy: 'none', chart: 'tile', size: 's' },
-    { id: 'k_nplr', title: 'wt_nplr', metric: 'nplratio', scope: 'open', groupBy: 'none', chart: 'tile', size: 's' },
-    { id: 'k_green', title: 'wt_green', metric: 'count', scope: 'green', groupBy: 'none', chart: 'tile', size: 's' },
-    { id: 'k_upsell', title: 'wt_upsell', metric: 'upsell', scope: 'green', groupBy: 'none', chart: 'tile', size: 's' },
+    // big picture first: lifecycle, loan book, NPL gauge, SlipOK meter, vault map, cash collected
+    { id: 'h_flow', title: 'wt_flow', metric: 'count', scope: 'all', groupBy: 'status', chart: 'flow', size: 'l' },
+    { id: 'h_book', title: 'wt_book', metric: 'principal', scope: 'open', groupBy: 'risk', chart: 'donut', size: 'm' },
+    { id: 'h_npl', title: 'wt_nplg', metric: 'nplratio', scope: 'open', groupBy: 'none', chart: 'gauge', size: 's' },
+    { id: 'h_slip', title: 'wt_slipm', metric: 'count', scope: 'all', groupBy: 'none', chart: 'slip', size: 's' },
+    { id: 'h_vault', title: 'wt_vault', metric: 'count', scope: 'open', groupBy: 'aisle', chart: 'vault', size: 'm' },
+    { id: 'w_month', title: 'wt_month', metric: 'collected', scope: 'all', groupBy: 'month', chart: 'columns', size: 'm' },
+    { id: 'k_open', title: 'wt_open', metric: 'count', scope: 'open', groupBy: 'none', chart: 'tile', size: 's', icon: 'receipt_long' },
+    { id: 'k_prin', title: 'wt_prin', metric: 'principal', scope: 'open', groupBy: 'none', chart: 'tile', size: 's', icon: 'payments' },
+    { id: 'k_owed', title: 'wt_owed', metric: 'owed', scope: 'open', groupBy: 'none', chart: 'tile', size: 's', icon: 'trending_up' },
+    { id: 'k_over', title: 'wt_over', metric: 'principal', scope: 'overdue', groupBy: 'none', chart: 'tile', size: 's', icon: 'schedule' },
+    { id: 'k_npl', title: 'wt_npl', metric: 'principal', scope: 'npl', groupBy: 'none', chart: 'tile', size: 's', icon: 'warning' },
+    { id: 'k_green', title: 'wt_green', metric: 'count', scope: 'green', groupBy: 'none', chart: 'tile', size: 's', icon: 'verified' },
+    { id: 'k_upsell', title: 'wt_upsell', metric: 'upsell', scope: 'green', groupBy: 'none', chart: 'tile', size: 's', icon: 'add_card' },
+    { id: 'k_unloc', title: 'wt_unloc', metric: 'count', scope: 'unlocated', groupBy: 'none', chart: 'tile', size: 's', icon: 'location_off' },
     { id: 'l_npl', title: 'wt_nplist', metric: 'principal', scope: 'npl', groupBy: 'none', chart: 'list', size: 'm' },
     { id: 'l_green', title: 'wt_greenlist', metric: 'upsell', scope: 'green', groupBy: 'none', chart: 'list', size: 'm' },
     { id: 'l_fu', title: 'wt_fulist', metric: 'principal', scope: 'fudue', groupBy: 'none', chart: 'list', size: 'm' },
     { id: 'w_risk', title: 'wt_risk', metric: 'principal', scope: 'open', groupBy: 'risk', chart: 'bars', size: 'm' },
     { id: 'w_status', title: 'wt_status', metric: 'count', scope: 'all', groupBy: 'status', chart: 'bars', size: 'm' },
     { id: 'w_cat', title: 'wt_cat', metric: 'principal', scope: 'open', groupBy: 'cat', chart: 'bars', size: 'm' },
-    { id: 'w_month', title: 'wt_month', metric: 'collected', scope: 'all', groupBy: 'month', chart: 'columns', size: 'm' },
     { id: 'w_age', title: 'wt_age', metric: 'principal', scope: 'open', groupBy: 'ageing', chart: 'bars', size: 'm' }
   ];
+
   // extensions the shop can switch on (same JSON shape — no code)
   const CATALOG = [
     { id: 'x_grp', title: 'wt_grp', metric: 'principal', scope: 'open', groupBy: 'grp', chart: 'bars', size: 'm' },
@@ -38,17 +45,20 @@ window.Dash = (function () {
     { id: 'x_owedcat', title: 'wt_owedcat', metric: 'owed', scope: 'open', groupBy: 'cat', chart: 'bars', size: 'm' },
     { id: 'x_issued', title: 'wt_issued', metric: 'principal', scope: 'all', groupBy: 'month', chart: 'columns', size: 'm' },
     { id: 'x_pending', title: 'wt_pending', metric: 'count', scope: 'offered', groupBy: 'none', chart: 'tile', size: 's' },
+    { id: 'x_aisle', title: 'wt_aisle', metric: 'principal', scope: 'open', groupBy: 'aisle', chart: 'bars', size: 'm' },
+    { id: 'x_donutcat', title: 'wt_donutcat', metric: 'principal', scope: 'open', groupBy: 'cat', chart: 'donut', size: 'm' },
     { id: 'x_upcat', title: 'wt_upcat', metric: 'upsell', scope: 'green', groupBy: 'cat', chart: 'bars', size: 'm' }
   ];
   const D = { layout: null, edit: false, drill: null, hist: null, dragId: null, msg: '', fuMsg: '' };
-  try { D.layout = JSON.parse(store.get('gp.dash2')); } catch (e) {}
+  try { D.layout = JSON.parse(store.get('gp.dash3')); } catch (e) {}
   if (!Array.isArray(D.layout)) D.layout = DEFAULT.map(w => ({ ...w }));
-  const save = () => store.set('gp.dash2', JSON.stringify(D.layout));
+  const save = () => store.set('gp.dash3', JSON.stringify(D.layout));
   const lang = () => S.lang;
   const label = (dim, k) => LISTNAME[dim] ? AD.label(LISTNAME[dim], k, lang()) : k;
 
   // ---- data: one derived row per ticket (fold, never stored totals) ----
   function rows() {
+    const LOC = {}; if (window.Stock) window.Stock.view360().forEach(x => { LOC[x.tk] = x; });
     return Object.values(Net.all()).map(l => {
       const st = P.fold(l, Net.today), open = st.status === 'active' || st.status === 'overdue';
       const owed = open ? P.interestTo(st, Net.today) : 0, dd = C.daysBetween(Net.today, st.due || Net.today);
@@ -58,10 +68,10 @@ window.Dash = (function () {
       return { tk: st.no, st, open, owed, ageing, status: st.status, cat: st.cat || 'other', grp: st.grp || 'standard', risk,
         month: (st.date || Net.today).slice(0, 7), principal: open ? st.principal : 0, collected: st.paid.reduce((a, p) => a + p.amt, 0), live: !!l.live,
         upsell: risk === 'green' ? P.upsell(st, Net.price) : 0, last, lastDate: last && last.DateContact, next,
-        fuDue: open && !!next && C.D(next) <= C.D(Net.today), overdueDays: open ? P.arrears(st, Net.today).overdueDays : 0 };
+        fuDue: open && !!next && C.D(next) <= C.D(Net.today), aisle: LOC[st.no] ? LOC[st.no].aisle : null, loc: LOC[st.no] ? LOC[st.no].loc : null, unlocated: !!(LOC[st.no] && LOC[st.no].unlocated), overdueDays: open ? P.arrears(st, Net.today).overdueDays : 0 };
     });
   }
-  const inScope = (r, w) => ({ all: true, open: r.open, overdue: r.status === 'overdue', offered: r.status === 'offered', npl: r.risk === 'npl', watch: r.risk === 'watch', green: r.risk === 'green', fudue: r.fuDue }[w.scope]);
+  const inScope = (r, w) => ({ all: true, open: r.open, overdue: r.status === 'overdue', offered: r.status === 'offered', npl: r.risk === 'npl', watch: r.risk === 'watch', green: r.risk === 'green', fudue: r.fuDue, unlocated: r.unlocated }[w.scope]);
   const valueOf = (r, m) => m === 'count' ? 1 : m === 'principal' || m === 'nplratio' ? r.principal : m === 'owed' ? r.owed : m === 'upsell' ? r.upsell : r.collected;
   const keyOf = (r, g) => g === 'none' ? 'all' : r[g];
   const monthOf = ts => new Date(ts).toISOString().slice(0, 7);
@@ -95,10 +105,26 @@ window.Dash = (function () {
     const g = group(w, rs), max = Math.max(1, ...g.map(x => x.v)), title = t.raw(w.title);
     let body;
     if (w.chart === 'list') body = listWidget(w, rs);
+    else if (w.chart === 'flow') {
+      const IC = { offered: 'outgoing_mail', active: 'verified', overdue: 'schedule', redeemed: 'lock_open', forfeited: 'sell' };
+      body = Info.flow(ORDER.status.map(k => ({ label: label('status', k), icon: IC[k], n: rs.filter(r => r.status === k).length, color: `var(${COL.status[k]})`, drill: `${w.id}|status|${k}` })));
+    } else if (w.chart === 'donut') {
+      const tot = g.reduce((a, x) => a + x.v, 0), short = v => v >= 1e6 ? (v / 1e6).toFixed(2) + 'M' : v >= 1e3 ? (v / 1e3).toFixed(1) + 'k' : String(Math.round(v));
+      body = Info.donut(g.map(x => ({ k: x.k, label: label(w.groupBy, x.k), v: x.v, color: colOf(w.groupBy, x.k), drill: `${w.id}|${w.groupBy}|${x.k}` })), money(w) ? short(tot) : String(tot), money(w) ? t('baht') : t('tickets'), v => fv(w, v));
+    } else if (w.chart === 'gauge') {
+      const np = rs.filter(r => r.risk === 'npl').reduce((a, r) => a + r.principal, 0), op = rs.filter(r => r.open).reduce((a, r) => a + r.principal, 0), v = C.r2(op ? np / op * 100 : 0);
+      body = `<div data-drill="${w.id}|none|all" class="clk">${Info.gauge(v, 50, 'var(--s8)', v.toFixed(1) + '%', t('wt_nplr'), t('nplRule') + ' ' + Net.nplDays + ' ' + t('days'))}</div>`;
+    } else if (w.chart === 'slip') {
+      const Sk = window.Stock, u = Sk.usage(Sk.curMonth());
+      body = `<div data-tab="slipuse" class="clk">${Info.meter(u.used, u.inc, String, t('slipChecks'), t('slipCost') + ' ' + fmt(u.cost) + ' ' + t('baht') + ' · ' + u.plan + ' · ' + u.month)}</div>`;
+    } else if (w.chart === 'vault') {
+      const un = rs.filter(r => r.unlocated).length, inV = rs.filter(r => r.loc && window.Stock.whOf(r.loc) === 'VAULT').length;
+      body = `<div data-tab="locator" class="clk">${window.Stock.mapHtml('VAULT', false)}<div class="vfoot"><span>${t('stkInVault')}: <b>${inV}</b></span><span style="color:var(${un ? '--s8' : '--s6'})">${t('stkUnlocated')}: <b>${un}</b></span></div></div>`;
+    }
     else if (w.chart === 'tile' || w.groupBy === 'none') {
       let v = g.reduce((a, x) => a + x.v, 0);
       if (w.metric === 'nplratio') { const np = rs.filter(r => r.risk === 'npl').reduce((a, r) => a + r.principal, 0), op = rs.filter(r => r.open).reduce((a, r) => a + r.principal, 0); v = op ? np / op * 100 : 0; }
-      body = `<div class="tile" data-drill="${w.id}|none|all"><div class="big">${fv(w, C.r2(v))}</div><div class="unit">${w.metric === 'nplratio' ? t('ofOpen') : money(w) ? t('baht') : t('tickets')}</div></div>`;
+      body = `<div class="tile" data-drill="${w.id}|none|all">${w.icon ? `<span class="ti"><span class="material-symbols-rounded">${w.icon}</span></span>` : ''}<div class="big">${fv(w, C.r2(v))}</div><div class="unit">${w.metric === 'nplratio' ? t('ofOpen') : money(w) ? t('baht') : t('tickets')}</div></div>`;
     } else if (w.chart === 'columns') {
       body = `<div class="cols">${g.map(x => `<div class="col" data-drill="${w.id}|${w.groupBy}|${x.k}" title="${w.groupBy === 'month' ? x.k : label(w.groupBy, x.k)}: ${fv(w, x.v)}">
         <span class="cv">${money(w) ? Math.round(x.v).toLocaleString() : x.v}</span><div class="cb" style="height:${Math.max(2, x.v / max * 100)}%;background:${colOf(w.groupBy, x.k)}"></div><span class="cl">${w.groupBy === 'month' ? x.k.slice(5) + '/' + x.k.slice(2, 4) : label(w.groupBy, x.k)}</span></div>`).join('')}</div>`;
@@ -121,7 +147,7 @@ window.Dash = (function () {
       <div class="sec-title">${t('extNew')}</div><div class="note">${t('groupFromAD')}</div>
       <div class="fields"><label class="f">${t('wTitle')}<input id="nwT" value=""></label><label class="f">${t('wMetric')}${sel('nwM', METRICS, x => t('m_' + x))}</label><label class="f">${t('wGroup')}${sel('nwG', dims(), gname)}</label>
         <label class="f">${t('wScope')}${sel('nwS', SCOPES, x => t('sc_' + x))}</label>
-        <label class="f">${t('wChart')}<select id="nwC"><option value="bars">${t('c_bars')}</option><option value="columns">${t('c_columns')}</option><option value="tile">${t('c_tile')}</option><option value="list">${t('c_list')}</option></select></label></div>
+        <label class="f">${t('wChart')}<select id="nwC"><option value="bars">${t('c_bars')}</option><option value="columns">${t('c_columns')}</option><option value="tile">${t('c_tile')}</option><option value="list">${t('c_list')}</option><option value="donut">${t('c_donut')}</option></select></label></div>
       <div class="actions" style="justify-content:flex-start"><button class="btn small" data-wnew="1">${t('add')}</button></div>
       <div class="sec-title">${t('layoutJson')}</div>
       <textarea id="layoutJson">${JSON.stringify(D.layout, null, 1)}</textarea>

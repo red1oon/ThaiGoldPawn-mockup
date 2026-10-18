@@ -5,7 +5,7 @@
   const CATS = [['ornament', 'necklace'], ['ornament', 'ring'], ['ornament', 'pendant'], ['ornament', 'bangle'], ['bar', 'bar'], ['silver', 'silver'], ['other', 'other']];
   const GRPS = ['standard', 'standard', 'standard', 'vip', 'vip', 'supervip', 'relative'];
   async function build(n) {
-    const r = rng(20251004), today = Net.today, key = await T.newKey(), out = {};
+    const xr = rng(31), r = rng(20251004), today = Net.today, key = await T.newKey(), out = {};
     const price = 100000;
     for (let i = 0; i < n; i++) {
       const no = 'S' + String(i + 1).padStart(3, '0');
@@ -49,6 +49,10 @@
           const last = j === k - 1, oc = cls === 'green' ? 'upsell' : (last && r() < 0.4 ? 'noanswer' : ['promised', 'noanswer', 'promised'][Math.floor(r() * 3)]);
           await Net.logFollowup(no, { DateContact: d, Channel: ch[Math.floor(r() * 4)], Outcome: oc, Note: cls === 'green' ? 'Sample note' : 'Sample note', DateNext: last ? isoPlus(today, Math.floor(r() * 12) - 4) : '' }, Date.parse(d + 'T14:00:00Z'));
         }
+      }
+      if (xr() < 0.1) {                                          // a duplicate slip re-sent by the borrower: SlipOK 1012 (counted as a check)
+        const v = l.chain.shop.filter(e => e.type === 'payment_verified').pop();
+        if (v) await l.append('payment_rejected', { claimNo: (v.body.claimNo || 0) + 100, reason: '1012', message: 'duplicate slip' }, v.ts + 120000);
       }
       l.sample = true; out[no] = l;
     }

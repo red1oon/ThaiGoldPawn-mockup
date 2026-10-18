@@ -107,7 +107,7 @@ window.Flow = (function () {
   // ---------- actions ----------
   async function act(spec) {
     const [a, b, c, d] = spec.split('|');
-    if (a === 'issue') { S.j.tk = await Net.issueOffer(buildOffer()); }
+    if (a === 'issue') { const o = buildOffer(); S.j.tk = await Net.issueOffer(o); if (window.Stock) await window.Stock.putAway(S.j.tk, window.Stock.defaultLoc(o.loan, 'VAULT')); }
     else if (a === 'send') { S.j.tk = d || S.j.tk; const w = await Net.send(b, c, d || S.j.tk); if (c === 'nfc' && w) { const r = await Net.nfcWrite(Net.share('link', w.token).link); w.note = r.ok ? 'NFC written' : 'NFC ' + r.why; } }
     else if (a === 'deliver') await Net.deliver(+b);
     else if (a === 'retry') await Net.shopRetry(b);
