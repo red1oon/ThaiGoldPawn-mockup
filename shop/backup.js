@@ -94,5 +94,11 @@
     if (bundle.keys) { if (bundle.keys.shop && store.get('gp.key.shop') == null) store.set('gp.key.shop', JSON.stringify(bundle.keys.shop)); if (bundle.keys.phone && store.get('gp.key.phone') == null) store.set('gp.key.phone', JSON.stringify(bundle.keys.phone)); }
     return { applied, skipped };
   }
-  root.Backup = { snapshot, seal, open, verify, compare, apply, recoveryCode, norm, sha256, events, heads, SETTINGS, KDF_ITER, b64, unb64 };
+  // 19.4 channel 3: the mail text carries a digest only (never ciphertext); the file travels as an attachment / share-sheet file
+  function mailto(to, name, events, sha, created) {
+    const subject = 'Backup ' + created.slice(0, 10) + ' (' + events + ' records)';
+    const body = 'Encrypted backup file: ' + name + '\nRecords: ' + events + '\nCreated: ' + created + '\nSHA-256: ' + sha + '\n\nAttach the saved file, then send. The recovery code is NOT in this message.';
+    return { subject, body, url: 'mailto:' + encodeURIComponent(to || '').replace(/%40/g, '@') + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body) };
+  }
+  root.Backup = { mailto, snapshot, seal, open, verify, compare, apply, recoveryCode, norm, sha256, events, heads, SETTINGS, KDF_ITER, b64, unb64 };
 })(typeof window !== 'undefined' ? window : globalThis);

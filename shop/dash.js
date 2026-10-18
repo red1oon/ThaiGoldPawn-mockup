@@ -21,6 +21,7 @@ window.Dash = (function () {
     { id: 'h_slip', title: 'wt_slipm', metric: 'count', scope: 'all', groupBy: 'none', chart: 'slip', size: 's' },
     { id: 'h_vault', title: 'wt_vault', metric: 'count', scope: 'open', groupBy: 'aisle', chart: 'vault', size: 'm' },
     { id: 'w_month', title: 'wt_month', metric: 'collected', scope: 'all', groupBy: 'month', chart: 'columns', size: 'm' },
+    { id: 'h_safe', title: 'wt_safe', metric: 'count', scope: 'all', groupBy: 'none', chart: 'safe', size: 's' },
     { id: 'k_open', title: 'wt_open', metric: 'count', scope: 'open', groupBy: 'none', chart: 'tile', size: 's', icon: 'receipt_long' },
     { id: 'k_prin', title: 'wt_prin', metric: 'principal', scope: 'open', groupBy: 'none', chart: 'tile', size: 's', icon: 'payments' },
     { id: 'k_owed', title: 'wt_owed', metric: 'owed', scope: 'open', groupBy: 'none', chart: 'tile', size: 's', icon: 'trending_up' },
@@ -117,6 +118,11 @@ window.Dash = (function () {
     } else if (w.chart === 'slip') {
       const Sk = window.Stock, u = Sk.usage(Sk.curMonth());
       body = `<div data-tab="slipuse" class="clk">${Info.meter(u.used, u.inc, String, t('slipChecks'), t('slipCost') + ' ' + fmt(u.cost) + ' ' + t('baht') + ' · ' + u.plan + ' · ' + u.month)}</div>`;
+    } else if (w.chart === 'safe') {
+      const BK = window.BackupView, last = BK.last(), st = BK.stale(), st2 = { get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } } }, JN = window.Journal, tot = JN.allEvents(st2).length, pend = JN.pending(st2).length, on = st2.get('gp.journal.on') === '1';
+      const bad = !last || (st && st.why === 'days'), col = !last ? 'var(--s8)' : (st && st.why) ? 'var(--s4)' : 'var(--s6)';
+      body = `<div data-tab="backup" class="clk"><div class="safe-row" style="--c:${col}"><span class="fl-ic">${Info.icon(bad ? 'gpp_maybe' : 'verified_user')}</span><div><b>${last ? new Date(last.ts).toISOString().slice(0, 10) : t('bkNone')}</b><small>${t('bkLast')}${last ? ' · ' + t('bkch_' + last.channel) : ''}</small></div></div>
+        ${on ? Info.meter(tot - pend, tot || 1, String, t('bkJSynced'), pend ? pend + ' ' + t('bkJPending') : t('bkAGood')) : `<div class="note">${t('bkJOff')}</div>`}</div>`;
     } else if (w.chart === 'vault') {
       const un = rs.filter(r => r.unlocated).length, inV = rs.filter(r => r.loc && window.Stock.whOf(r.loc) === 'VAULT').length;
       body = `<div data-tab="locator" class="clk">${window.Stock.mapHtml('VAULT', false)}<div class="vfoot"><span>${t('stkInVault')}: <b>${inV}</b></span><span style="color:var(${un ? '--s8' : '--s6'})">${t('stkUnlocated')}: <b>${un}</b></span></div></div>`;

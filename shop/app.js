@@ -198,7 +198,7 @@
     render();
   });
 
-  Net.on(() => render()); window.addEventListener('gp-render', () => render());
+  Net.on(() => { render(); BK.kick(); }); window.addEventListener('gp-render', () => render());
   St.init({ S, render, setTab: k => { S.tab = k; }, preset: k => { theme = { ...THEMES[k] }; applyTheme(); } });
   window.__app = { S, render, Net, St, D, setTab: k => { S.tab = k; render(); } };
   (async () => {
