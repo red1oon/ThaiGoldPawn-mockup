@@ -120,6 +120,36 @@ system to another kind of lending</a></li>
 <li><a href="#troubleshooting" id="toc-troubleshooting">15.
 Troubleshooting</a></li>
 <li><a href="#glossary" id="toc-glossary">16. Glossary</a></li>
+<li><a
+href="#appendix-a.-cost-comparison-estimate-of-others-in-thailand"
+id="toc-appendix-a.-cost-comparison-estimate-of-others-in-thailand">Appendix
+A. Cost comparison estimate of others in Thailand</a>
+<ul>
+<li><a href="#a.1-the-shop-being-priced-an-assumption"
+id="toc-a.1-the-shop-being-priced-an-assumption">A.1 The shop being
+priced (an assumption)</a></li>
+<li><a href="#a.2-who-is-being-compared"
+id="toc-a.2-who-is-being-compared">A.2 Who is being compared</a></li>
+<li><a href="#a.3-ballpark-running-cost-per-month-per-shop"
+id="toc-a.3-ballpark-running-cost-per-month-per-shop">A.3 Ballpark
+running cost per month, per shop</a></li>
+<li><a href="#a.4-cloud-price-points-behind-the-numbers"
+id="toc-a.4-cloud-price-points-behind-the-numbers">A.4 Cloud price
+points behind the numbers</a></li>
+<li><a href="#a.5-what-this-system-needs-from-the-cloud-if-anything"
+id="toc-a.5-what-this-system-needs-from-the-cloud-if-anything">A.5 What
+this system needs from the cloud, if anything</a></li>
+<li><a href="#a.6-one-off-costs-mostly-guesses"
+id="toc-a.6-one-off-costs-mostly-guesses">A.6 One-off costs (mostly
+guesses)</a></li>
+<li><a
+href="#a.7-business-models-how-each-earns-and-what-that-means-for-us"
+id="toc-a.7-business-models-how-each-earns-and-what-that-means-for-us">A.7
+Business models (how each earns, and what that means for us)</a></li>
+<li><a href="#a.8-what-would-change-these-numbers"
+id="toc-a.8-what-would-change-these-numbers">A.8 What would change these
+numbers</a></li>
+</ul></li>
 </ul>
 </nav>
 <h1 id="about-this-manual">0. About this manual</h1>
@@ -1534,5 +1564,300 @@ bring the other side up to date</td>
 </tr>
 </tbody>
 </table>
+<hr />
+<h1
+id="appendix-a.-cost-comparison-estimate-of-others-in-thailand">Appendix
+A. Cost comparison estimate of others in Thailand</h1>
+<blockquote>
+<p><strong>Read this first — it is a cursory analysis.</strong> I could
+find <strong>no published price list for any Thai pawn or
+sale-with-redemption software</strong>; the one Thai vendor listing I
+found is a custom-built program priced on request (<a
+href="https://www.yellowpages.co.th/lp/agencygenius/catalog/item/800404930003">Agencygenius
+listing</a>). Figures below mix a few <strong>sourced</strong> numbers
+with many <strong>assumptions</strong>, and each line says which it is.
+Exchange rate assumed: <strong>1 USD ≈ 35 THB</strong>.
+<strong>Corrections are welcome and expected</strong>: if you know a
+real quote or a wrong figure, send it and this appendix will be
+corrected. Do not use it as a quotation.</p>
+</blockquote>
+<h2 id="a.1-the-shop-being-priced-an-assumption">A.1 The shop being
+priced (an assumption)</h2>
+<p>One shop, 2–4 staff, about <strong>300 open tickets</strong>, about
+<strong>60 new tickets</strong> and <strong>250 payments</strong> a
+month, of which about <strong>150 payments come with a slip to
+check</strong>, and about <strong>40 reminder or offer messages</strong>
+a month. A busier shop scales some lines below, and not others.</p>
+<h2 id="a.2-who-is-being-compared">A.2 Who is being compared</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Option</th>
+<th>What it is</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>This system</strong></td>
+<td>Local-first; no cloud server needed for the core</td>
+<td>This manual</td>
+</tr>
+<tr class="even">
+<td><strong>Thai custom-built pawn software</strong></td>
+<td>A vendor builds and hosts a loan-management program for
+sale-with-redemption and pawn</td>
+<td>Listing exists, <strong>price on request</strong></td>
+</tr>
+<tr class="odd">
+<td><strong>Hosted pawn SaaS (overseas benchmark)</strong></td>
+<td>Bravo / PawnMaster (US)</td>
+<td><a
+href="https://www.getapp.com/pawn-shop-software/a/pawnmaster">Bravo
+listing from about USD 79 a month</a> — US law, US shops</td>
+</tr>
+<tr class="even">
+<td><strong>Open-source microfinance</strong></td>
+<td>Apache Fineract + Mifos X, with an <a
+href="https://docs.mifos.org/staff-ui-platforms/fineract-1.x/mobile-field-officer-applications/android-client">Android
+field-officer app with offline mode</a></td>
+<td>General loan book, <strong>not</strong> pawn or collateral
+specific</td>
+</tr>
+<tr class="odd">
+<td><strong>The partner’s existing app (QuickGold)</strong></td>
+<td>A hand-coded app (about a year, from my notes)</td>
+<td>No price known</td>
+</tr>
+</tbody>
+</table>
+<p>Other lending SaaS products and other Thai vendors were
+<strong>not</strong> researched.</p>
+<h2 id="a.3-ballpark-running-cost-per-month-per-shop">A.3 Ballpark
+running cost per month, per shop</h2>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Line</th>
+<th>This system</th>
+<th>Custom-built, vendor-hosted</th>
+<th>Hosted SaaS (benchmark)</th>
+<th>Open-source, self-hosted</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Cloud for the core</strong></td>
+<td><strong>0</strong> — runs on the shop’s own devices</td>
+<td>Included in vendor fee, or about <strong>1,500–2,500</strong> if you
+host (see A.4)</td>
+<td>Included in the subscription</td>
+<td>about <strong>1,400–2,800</strong> (assumed 2 vCPU / 4–8 GB
+machine)</td>
+</tr>
+<tr class="even">
+<td><strong>Subscription or support</strong></td>
+<td>0 (optional hosting add-on, A.5)</td>
+<td>assumed <strong>10–20% of build cost a year</strong></td>
+<td>about <strong>2,800</strong> (USD 79, <strong>sourced, US</strong>);
+Thai price unknown</td>
+<td>0 licence; implementation partner on retainer,
+<strong>assumed</strong></td>
+</tr>
+<tr class="odd">
+<td><strong>Slip checking (SlipOK)</strong></td>
+<td><strong>0–350</strong> (sourced from the vendor’s plans: free for
+100 slips, 1.00 THB over; 350 for 500 slips)</td>
+<td>same</td>
+<td>same</td>
+<td>same</td>
+</tr>
+<tr class="even">
+<td><strong>Reminders</strong></td>
+<td><strong>0</strong> — the borrower’s phone reminds itself; shop-side
+messages only for late tickets</td>
+<td>per message</td>
+<td>per message</td>
+<td>per message</td>
+</tr>
+<tr class="odd">
+<td><strong>Messages: LINE / SMS</strong></td>
+<td>SMS about <strong>0.15–0.30 THB</strong> each (<a
+href="https://member.thaibulksms.com/en/">third-party price pages</a>);
+LINE official account: free tier, or about 1,200 THB (15,000 messages)
+per <a href="https://thestandard.co/?p=273801">older news</a> —
+<strong>check LINE’s current price</strong></td>
+<td>same</td>
+<td>same</td>
+<td>same</td>
+</tr>
+<tr class="even">
+<td><strong>Bank / gateway fees</strong></td>
+<td>Ordinary PromptPay transfers: <strong>ask your bank</strong> (not
+verified)</td>
+<td>same, plus gateway fees if used</td>
+<td>same</td>
+<td>same</td>
+</tr>
+<tr class="odd">
+<td><strong>Approximate total</strong></td>
+<td><strong>about 0–1,000</strong></td>
+<td><strong>about 2,000–5,000+</strong></td>
+<td><strong>about 3,000–5,000+</strong> (assumed for Thailand)</td>
+<td><strong>about 2,000–5,000+</strong> plus support</td>
+</tr>
+</tbody>
+</table>
+<h2 id="a.4-cloud-price-points-behind-the-numbers">A.4 Cloud price
+points behind the numbers</h2>
+<p>Third-party price trackers (not AWS’s own pages) put <strong>Amazon’s
+Bangkok region</strong> at about <strong>USD 0.024 an hour for a small
+server (t3.small), roughly USD 17 a month</strong>, and about
+<strong>USD 18 a month for a small PostgreSQL database</strong>, compute
+only (<a href="https://aws-pricing.com/t3.small.html">t3.small
+tracker</a>, <a
+href="https://www.bytebase.com/dbcost/rds/instance/db.t3.micro/">database
+tracker</a>). Storage, backups and data transfer are extra. At 35 THB
+per USD that is about <strong>610 + 630 ≈ 1,240 THB</strong> before
+storage and transfer, which is why a hosted custom build lands near
+<strong>1,500–2,500 THB a month</strong>. A shop’s data is small (a few
+megabytes a year), so the cost is the machine, not the data.</p>
+<h2 id="a.5-what-this-system-needs-from-the-cloud-if-anything">A.5 What
+this system needs from the cloud, if anything</h2>
+<ul>
+<li><strong>The core:</strong> nothing. Plain files from any web host,
+or the shop’s own computer.</li>
+<li><strong>Optional, per shop:</strong> a small always-on program for
+the <strong>journal and backup store</strong> and, if the slip service
+cannot be called straight from a browser, a <strong>relay</strong> for
+the slip check. One small server (about USD 5–17 a month, assumed
+175–600 THB) can serve <strong>many</strong> shops because each shop’s
+data is encrypted and tiny.</li>
+<li><strong>So the marginal cloud cost per shop is a few tens of baht a
+month</strong>, against the per-shop cost of a dedicated hosted app.
+This is an <strong>estimate</strong>, not a measurement.</li>
+</ul>
+<h2 id="a.6-one-off-costs-mostly-guesses">A.6 One-off costs (mostly
+guesses)</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Item</th>
+<th>Ballpark</th>
+<th>Basis</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>This system: to go from demonstration to production</strong>
+(real ledger posting, real hosting, slip-service connection, legal and
+accounting review, security review)</td>
+<td><strong>not estimated</strong> — likely <strong>a few
+person-months</strong> plus professional fees</td>
+<td><strong>My guess</strong>, not quoted; depends on scope and on
+counsel and accountant findings</td>
+</tr>
+<tr class="even">
+<td><strong>Custom-built vendor program</strong></td>
+<td><strong>assumed THB 150,000–600,000</strong></td>
+<td>Assumption: Thai vendors quote on request</td>
+</tr>
+<tr class="odd">
+<td><strong>Hosted SaaS onboarding</strong></td>
+<td><strong>assumed THB 10,000–50,000</strong></td>
+<td>Assumption</td>
+</tr>
+<tr class="even">
+<td><strong>Open-source implementation for pawn and gold</strong></td>
+<td><strong>assumed THB 300,000–1,000,000+</strong></td>
+<td>Assumption; pawn and gold rules are not native to it. A 2026 vendor
+blog gives far larger figures for a <strong>core-banking replacement for
+a microfinance institution</strong> in Africa; it is not comparable to
+one shop</td>
+</tr>
+</tbody>
+</table>
+<h2
+id="a.7-business-models-how-each-earns-and-what-that-means-for-us">A.7
+Business models (how each earns, and what that means for us)</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Option</th>
+<th>How money is made</th>
+<th>Consequence</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Thai custom vendor</td>
+<td>Project fee, then maintenance</td>
+<td>High entry cost; the shop depends on the vendor for change</td>
+</tr>
+<tr class="even">
+<td>Hosted SaaS</td>
+<td>Monthly subscription per shop or seat</td>
+<td>Low entry cost; ongoing cost never ends; data sits with the
+vendor</td>
+</tr>
+<tr class="odd">
+<td>Open-source microfinance</td>
+<td>Services: implementation, hosting, support</td>
+<td>Free to get; real cost is customisation</td>
+</tr>
+<tr class="even">
+<td><strong>This system</strong></td>
+<td>The software is open (MIT, from my notes); money would come from
+<strong>implementation, hosting of the optional journal and backup,
+support, and keeping the Thai rules current</strong></td>
+<td>Very low running cost for the shop, but <strong>no licence fee to
+rely on</strong>: a competitor can copy the code, so the lasting value
+is trust, support and up-to-date rules</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Pricing idea (an assumption to test, not a
+recommendation):</strong> a one-time setup fee, plus a small monthly fee
+for the optional journal and backup hosting that covers its tiny cost
+and support, with SlipOK and messaging passed through at cost. A shop
+could then run for a fraction of a per-seat subscription.</p>
+<h2 id="a.8-what-would-change-these-numbers">A.8 What would change these
+numbers</h2>
+<ul>
+<li>A <strong>real quote</strong> from the Thai vendor, or a Thai SaaS
+price list.</li>
+<li>Whether the <strong>slip service accepts calls from a
+browser</strong> (decides whether the relay exists).</li>
+<li>The shop’s <strong>actual volume</strong> (more slips raise the
+slip-check line; more late tickets raise the message line).</li>
+<li><strong>Legal and accounting requirements</strong> that may force a
+hosted, audited ledger.</li>
+<li><strong>Exchange rate and cloud price changes</strong>; the tracker
+pages used here were third-party and of mixed dates.</li>
+</ul>
+<p><strong>To correct this appendix:</strong> send the figure, where it
+comes from, and which line it replaces.</p>
 </body>
 </html>
