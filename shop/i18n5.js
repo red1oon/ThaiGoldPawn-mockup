@@ -123,3 +123,12 @@ Object.assign(window.I18N, {
   deLimits:['ผลต่างเป็นลบหมายถึงเงินสดขาด ระบบไม่แก้ตัวเลขให้เท่ากัน ผลตรวจนับของห้องนิรภัยมาจากหน้าคลังหลักประกัน','A negative variance means cash is short. The system never forces the numbers to agree. The vault count comes from the collateral locator page.']
 });
 Object.assign(window.I18N, { deOpening:['เงินสดยกมา (ตั้งต้น)','Opening float'] });
+Object.assign(window.I18N, {
+  navRemind:['แจ้งเตือนครบกำหนด','Due-date reminders'],
+  rmSub:['สัญญาที่เปิดอยู่และครบกำหนดภายในจำนวนวันที่ตั้ง หรือเกินกำหนดแล้ว ระบบเตรียมข้อความของลูกค้าแต่ละคนพร้อมยอดของสัญญานั้นเอง ส่งเฉพาะคนที่ยินยอมรับข้อความ ร้านเป็นผู้กดส่ง การเตรียมข้อความถูกบันทึกในประวัติการติดตาม','Open tickets due within the days set, or already overdue. A message is prepared per person with that ticket’s own amounts. Only people who agreed to receive messages are included, and the shop presses send. Preparing a message is logged in the follow-up history.'],
+  rmDays:['แจ้งล่วงหน้า (วัน)','Look ahead (days)'], rmDue:['ครบกำหนดหรือเกินกำหนด','due or overdue'], rmReady:['พร้อมส่ง','ready to send'], rmNoConsent:['ยังไม่ยินยอม','no consent yet'], rmDueIn:['อีก (วัน)','In (days)'],
+  rmPrepare:['เตรียมข้อความ','Prepare message'], rmConsent:['บันทึกว่ายินยอม','Record consent'], rmNoWay:['ติดต่อทางช่องนี้ไม่ได้','cannot be reached this way'], rmConsentSaved:['บันทึกความยินยอมแล้ว','Consent recorded'], rmNoPhone:['ไม่มีเบอร์โทรที่ใช้ได้','No usable phone number'], rmLogged:['เตรียมข้อความแล้ว และบันทึกในประวัติการติดตาม','Message prepared and logged in the follow-up history'],
+  rmLimits:['ระบบเปิดแอปส่งข้อความให้ แต่ไม่ส่งเอง การส่งอัตโนมัติต้องใช้บริการ SMS หรือบัญชีทางการของ LINE ซึ่งยังไม่ได้เชื่อมต่อ','The system opens the messaging app but does not send by itself. Unattended sending needs an SMS service or an official LINE account, which are not connected.'],
+  ctChannel:['ช่องทาง','Channel'], open:['เปิด','Open']
+});
+Object.assign(window.I18N, { wt_remind:['ครบกำหนดใน 7 วัน หรือเกินกำหนด','Due in 7 days or overdue'], sc_remind:['ต้องแจ้งเตือน','Needs a reminder'] });

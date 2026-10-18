@@ -11,7 +11,7 @@ window.Dash = (function () {
   const LISTNAME = { status: 'PAWN_Status', cat: 'PAWN_Category', grp: 'PAWN_RateGroup', risk: 'PAWN_Risk', ageing: 'PAWN_Ageing' };
   const dims = () => [...AD.dimensions().map(d => d.dim), 'none'];
   const METRICS = ['count', 'principal', 'owed', 'collected', 'upsell', 'nplratio'];
-  const SCOPES = ['open', 'all', 'overdue', 'offered', 'npl', 'watch', 'green', 'fudue', 'unlocated', 'amlo'];
+  const SCOPES = ['open', 'all', 'overdue', 'offered', 'npl', 'watch', 'green', 'fudue', 'unlocated', 'amlo', 'remind'];
 
   const DEFAULT = [
     // big picture first: lifecycle, loan book, NPL gauge, SlipOK meter, vault map, cash collected
@@ -32,6 +32,7 @@ window.Dash = (function () {
     { id: 'k_green', title: 'wt_green', metric: 'count', scope: 'green', groupBy: 'none', chart: 'tile', size: 's', icon: 'verified' },
     { id: 'k_upsell', title: 'wt_upsell', metric: 'upsell', scope: 'green', groupBy: 'none', chart: 'tile', size: 's', icon: 'add_card' },
     { id: 'k_unloc', title: 'wt_unloc', metric: 'count', scope: 'unlocated', groupBy: 'none', chart: 'tile', size: 's', icon: 'location_off' },
+    { id: 'k_remind', title: 'wt_remind', metric: 'count', scope: 'remind', groupBy: 'none', chart: 'tile', size: 's', icon: 'notifications_active' },
     { id: 'k_amlo', title: 'wt_amlo', metric: 'count', scope: 'amlo', groupBy: 'none', chart: 'tile', size: 's', icon: 'policy' },
     { id: 'l_npl', title: 'wt_nplist', metric: 'principal', scope: 'npl', groupBy: 'none', chart: 'list', size: 'm' },
     { id: 'l_green', title: 'wt_greenlist', metric: 'upsell', scope: 'green', groupBy: 'none', chart: 'list', size: 'm' },
@@ -72,10 +73,10 @@ window.Dash = (function () {
       return { tk: st.no, st, open, owed, ageing, status: st.status, cat: st.cat || 'other', grp: st.grp || 'standard', risk,
         month: (st.date || Net.today).slice(0, 7), principal: open ? st.principal : 0, collected: st.paid.reduce((a, p) => a + p.amt, 0), live: !!l.live,
         upsell: risk === 'green' ? P.upsell(st, Net.price) : 0, last, lastDate: last && last.DateContact, next,
-        fuDue: open && !!next && C.D(next) <= C.D(Net.today), aisle: LOC[st.no] ? LOC[st.no].aisle : null, loc: LOC[st.no] ? LOC[st.no].loc : null, unlocated: !!(LOC[st.no] && LOC[st.no].unlocated), amlo: st.loan >= (+Net.set.amloAt || C.LIMITS.amloAt) && ((l.chain.shop[0].body && l.chain.shop[0].body.tender) || 'cash') === 'cash', overdueDays: open ? P.arrears(st, Net.today).overdueDays : 0 };
+        fuDue: open && !!next && C.D(next) <= C.D(Net.today), aisle: LOC[st.no] ? LOC[st.no].aisle : null, loc: LOC[st.no] ? LOC[st.no].loc : null, unlocated: !!(LOC[st.no] && LOC[st.no].unlocated), remind: open && C.daysBetween(Net.today, st.due) <= 7, amlo: st.loan >= (+Net.set.amloAt || C.LIMITS.amloAt) && ((l.chain.shop[0].body && l.chain.shop[0].body.tender) || 'cash') === 'cash', overdueDays: open ? P.arrears(st, Net.today).overdueDays : 0 };
     });
   }
-  const inScope = (r, w) => ({ all: true, open: r.open, overdue: r.status === 'overdue', offered: r.status === 'offered', npl: r.risk === 'npl', watch: r.risk === 'watch', green: r.risk === 'green', fudue: r.fuDue, unlocated: r.unlocated, amlo: r.amlo }[w.scope]);
+  const inScope = (r, w) => ({ all: true, open: r.open, overdue: r.status === 'overdue', offered: r.status === 'offered', npl: r.risk === 'npl', watch: r.risk === 'watch', green: r.risk === 'green', fudue: r.fuDue, unlocated: r.unlocated, amlo: r.amlo, remind: r.remind }[w.scope]);
   const valueOf = (r, m) => m === 'count' ? 1 : m === 'principal' || m === 'nplratio' ? r.principal : m === 'owed' ? r.owed : m === 'upsell' ? r.upsell : r.collected;
   const keyOf = (r, g) => g === 'none' ? 'all' : r[g];
   const monthOf = ts => new Date(ts).toISOString().slice(0, 7);

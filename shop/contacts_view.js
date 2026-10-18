@@ -148,5 +148,10 @@ window.ContactsView = (function () {
   }
   function readForm() { AD.cols('PAWN_Broadcast').forEach(c => { const e = document.getElementById('bc_' + c.ColumnName); if (e) C.form[c.ColumnName] = e.value; }); }
   function input(el) { if (el.dataset.ctFilter) { C.filter = el.value; return true; } if (el.dataset.ctBc) { C.form[el.dataset.ctBc] = el.value; return el.dataset.ctBc === 'Kind'; } return false; }
-  return { bind, view, click, input, file, state: C, customers, refreshVerify, prepare, confirmBatch, stageBatch, readFile };
+  function addConsented(it) {                       // a customer agreed at the counter: record it as a consented contact (PDPA: consent is kept with the contact)
+    const n = K.normPhone(it.phone); if (!n) return false; const have = C.list.find(c => c.phone === n.n);
+    if (have) { have.consent = 'Y'; if (!have.name) have.name = it.name; } else C.list.push({ name: it.name || '', phone: n.n, email: '', lineUserId: '', source: 'counter', consent: 'Y', mobile: !!n.mobile, address: '' });
+    save(); return true;
+  }
+  return { addConsented, bind, view, click, input, file, state: C, customers, refreshVerify, prepare, confirmBatch, stageBatch, readFile };
 })();

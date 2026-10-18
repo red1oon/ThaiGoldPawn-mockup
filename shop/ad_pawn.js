@@ -105,8 +105,8 @@ window.AD = (function () {
     L('PAWN_Ageing', 'd60', 'Due in 31–60 days', 'ครบใน 31–60 วัน'), L('PAWN_Ageing', 'later', 'Due after 60 days', 'ครบหลัง 60 วัน'),
     L('PAWN_PayMode', 'installment', 'Installment', 'ส่งงวด'), L('PAWN_PayMode', 'full', 'Pay in full (redeem)', 'ชำระเต็มจำนวน (ไถ่ถอน)'), L('PAWN_PayMode', 'other', 'Another amount', 'จำนวนอื่น'),
     L('PAWN_ClaimStatus', 'pending', 'Waiting for the shop', 'รอร้านตรวจ'), L('PAWN_ClaimStatus', 'waiting', 'Waiting for bank check', 'รอตรวจกับธนาคาร'), L('PAWN_ClaimStatus', 'verified', 'Verified', 'ตรวจแล้ว'), L('PAWN_ClaimStatus', 'rejected', 'Rejected', 'ไม่ผ่าน'),
-    L('PAWN_Channel', 'call', 'Phone call', 'โทรศัพท์'), L('PAWN_Channel', 'line', 'LINE', 'LINE'), L('PAWN_Channel', 'sms', 'SMS', 'SMS'), L('PAWN_Channel', 'visit', 'Visit', 'พบที่ร้าน/เยี่ยม'), L('PAWN_Channel', 'email', 'Email', 'อีเมล'),
-    L('PAWN_Outcome', 'promised', 'Promised to pay', 'รับปากว่าจะชำระ'), L('PAWN_Outcome', 'paid', 'Paid', 'ชำระแล้ว'), L('PAWN_Outcome', 'noanswer', 'No answer', 'ติดต่อไม่ได้'),
+    L('PAWN_Channel', 'call', 'Phone call', 'โทรศัพท์'), L('PAWN_Channel', 'line', 'LINE', 'LINE'), L('PAWN_Channel', 'sms', 'SMS', 'SMS'), L('PAWN_Channel', 'visit', 'Visit', 'พบที่ร้าน/เยี่ยม'), L('PAWN_Channel', 'email', 'Email', 'อีเมล'), L('PAWN_Channel', 'whatsapp', 'WhatsApp', 'WhatsApp'),
+    L('PAWN_Outcome', 'promised', 'Promised to pay', 'รับปากว่าจะชำระ'), L('PAWN_Outcome', 'paid', 'Paid', 'ชำระแล้ว'), L('PAWN_Outcome', 'noanswer', 'No answer', 'ติดต่อไม่ได้'), L('PAWN_Outcome', 'reminder', 'Reminder prepared', 'เตรียมข้อความเตือนแล้ว'),
     L('PAWN_Outcome', 'upsell', 'Offered more lending', 'เสนอวงเงินเพิ่ม'), L('PAWN_Outcome', 'other', 'Other', 'อื่นๆ')
   ];
   // window → tabs (AD_Window / AD_Tab); the grid of each tab lists its table's IsDisplayedGrid columns
